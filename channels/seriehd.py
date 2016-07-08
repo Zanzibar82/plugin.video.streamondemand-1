@@ -209,53 +209,41 @@ def findvideos(item):
     logger.info("[seriehd1.py] findvideos")
     itemlist = []
 
-    data = scrapertools.cache_page(item.url).replace('\n', '')
+    data = scrapertools.anti_cloudflare(item.url).replace('\n', '')
 
     patron = '<iframe id="iframeVid" width=".+?" height=".+?" src="([^"]+)" allowfullscreen="">'
     url = scrapertools.find_single_match(data, patron)
 
-    if 'hdpass' in url:
-        data = scrapertools.cache_page(url, headers=headers).replace('\n', '').replace('> <', '><')
+    data = scrapertools.cache_page(url, headers=headers).replace('\n', '').replace('> <', '><')
 
-        # patron = '<form method="get" action="">'
-        # patron += '<input type="hidden" name="([^"]*)" value="([^"]*)"/>'
-        # patron += '<input type="hidden" name="([^"]*)" value="([^"]*)"/>'
-        # patron += '<input type="hidden" name="([^"]*)" value="([^"]*)"/>'
-        # patron += '<input type="hidden" name="([^"]*)" value="([^"]*)"/>'
-        # patron += '<input type="submit" class="[^"]*" name="([^"]*)" value="([^"]*)"/>'
-        # patron += '</form>'
-        #
-        # for name1, val1, name2, val2, name3, val3, name4, val4, name5, val5 in re.compile(patron).findall(data):
-        #
-        #     get_data = '%s=%s&%s=%s&%s=%s&%s=%s&%s=%s' % (
-        #         name1, val1, name2, val2, name3, val3, name4, val4, name5, val5)
-        #
-        #     tmp_data = scrapertools.cache_page('http://hdpass.xyz/film.php?' + get_data, headers=headers)
+    patron_res = '<div class="row mobileRes">(.*?)</div>'
+    patron_mir = '<div class="row mobileMirrs">(.*?)</div>'
+    patron_media = r'<input type="hidden" name="urlEmbed" data-mirror="([^"]+)" id="urlEmbed" value="([^"]+)"/>'
 
-        patron = r'<input type="hidden" name="urlEmbed" data-mirror="([^"]+)" id="urlEmbed" value="([^"]+)"/>'
+    res = scrapertools.find_single_match(data, patron_res)
 
-        for media_label, media_url in re.compile(patron).findall(data):
-            media_label = scrapertools.decodeHtmlentities(media_label.replace("hosting", "hdload"))
+    for res_url, res_video in scrapertools.find_multiple_matches(res, '<option.*?value="([^"]+?)">([^<]+?)</option>'):
 
-            itemlist.append(
-                Item(channel=__channel__,
-                     server=media_label,
-                     action="play",
-                     title=' - [Player]' if media_label == '' else ' - [Player @%s]' % media_label,
-                     url=url_decode(media_url),
-                     folder=False))
+        data = scrapertools.cache_page(urlparse.urljoin(item.url, res_url), headers=headers).replace('\n', '').replace('> <', '><')
+
+        mir = scrapertools.find_single_match(data, patron_mir)
+
+        for mir_url in scrapertools.find_multiple_matches(mir, '<option.*?value="([^"]+?)">[^<]+?</value>'):
+
+            data = scrapertools.cache_page(urlparse.urljoin(item.url, mir_url), headers=headers).replace('\n', '').replace('> <', '><')
+
+            for media_label, media_url in re.compile(patron_media).findall(data):
+                media_label = scrapertools.decodeHtmlentities(media_label)
+
+                itemlist.append(
+                    Item(channel=__channel__,
+                         server=media_label,
+                         action="play",
+                         title=item.title + ' - [%s @%s]' % (media_label, res_video),
+                         url=url_decode(media_url),
+                         folder=False))
 
     return itemlist
-
-
-def parseJSString(s):
-    try:
-        offset = 1 if s[0] == '+' else 0
-        val = int(eval(s.replace('!+[]', '1').replace('!![]', '1').replace('[]', '0').replace('(', 'str(')[offset:]))
-        return val
-    except:
-        pass
-
 
 
 def url_decode(url_enc):
@@ -279,4 +267,3 @@ def url_decode(url_enc):
     reverse = url_enc[::-1]
     reverse = reverse + last_car
     return base64.b64decode(reverse)
-
