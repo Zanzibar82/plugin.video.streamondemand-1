@@ -27,7 +27,7 @@ elif thumbnail_type=="2":
 
 ROOT_DIR = config.get_runtime_path()
 
-REMOTE_VERSION_FILE = "https://raw.githubusercontent.com/Zanzibar82/plugin.video.streamondemand/master/version.xml"
+REMOTE_VERSION_FILE = "https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/version.xml"
 LOCAL_VERSION_FILE = os.path.join( ROOT_DIR , "version.xml" )
 LOCAL_FILE = os.path.join( ROOT_DIR , config.PLUGIN_NAME+"-" )
 
@@ -38,42 +38,42 @@ try:
     logger.info("streamondemand.core.updater get_system_platform="+config.get_system_platform())
     if config.get_platform()=="kodi-jarvis":
         import xbmc
-        REMOTE_FILE = "https://github.com/Zanzibar82/plugin.video.streamondemand/archive/master.zip"
+        REMOTE_FILE = "https://github.com/streamondemand/plugin.video.streamondemand/archive/master.zip"
         DESTINATION_FOLDER = xbmc.translatePath( "special://home/addons")
     elif config.get_platform()=="kodi-isengard":
         import xbmc
-        REMOTE_FILE = "https://github.com/Zanzibar82/plugin.video.streamondemand/archive/master.zip"
+        REMOTE_FILE = "https://github.com/streamondemand/plugin.video.streamondemand/archive/master.zip"
         DESTINATION_FOLDER = xbmc.translatePath( "special://home/addons")
     elif config.get_platform()=="kodi-helix":
         import xbmc
-        REMOTE_FILE = "https://github.com/Zanzibar82/plugin.video.streamondemand/archive/master.zip"
+        REMOTE_FILE = "https://github.com/streamondemand/plugin.video.streamondemand/archive/master.zip"
         DESTINATION_FOLDER = xbmc.translatePath( "special://home/addons")
     elif config.get_platform()=="xbmc-eden":
         import xbmc
-        REMOTE_FILE = "https://github.com/Zanzibar82/plugin.video.streamondemand/archive/master.zip"
+        REMOTE_FILE = "https://github.com/streamondemand/plugin.video.streamondemand/archive/master.zip"
         DESTINATION_FOLDER = xbmc.translatePath( "special://home/addons")
     elif config.get_platform()=="xbmc-frodo":
         import xbmc
-        REMOTE_FILE = "https://github.com/Zanzibar82/plugin.video.streamondemand/archive/master.zip"
+        REMOTE_FILE = "https://github.com/streamondemand/plugin.video.streamondemand/archive/master.zip"
         DESTINATION_FOLDER = xbmc.translatePath( "special://home/addons")
     elif config.get_platform()=="xbmc-gotham":
         import xbmc
-        REMOTE_FILE = "https://github.com/Zanzibar82/plugin.video.streamondemand/archive/master.zip"
+        REMOTE_FILE = "https://github.com/streamondemand/plugin.video.streamondemand/archive/master.zip"
         DESTINATION_FOLDER = xbmc.translatePath( "special://home/addons")
     elif config.get_platform()=="xbmc":
         import xbmc
-        REMOTE_FILE = "https://github.com/Zanzibar82/plugin.video.streamondemand/archive/master.zip"
+        REMOTE_FILE = "https://github.com/streamondemand/plugin.video.streamondemand/archive/master.zip"
         DESTINATION_FOLDER = xbmc.translatePath( "special://home/plugins/video")
     elif config.get_platform()=="wiimc":
-        REMOTE_FILE = "https://github.com/Zanzibar82/plugin.video.streamondemand/archive/master.zip"
+        REMOTE_FILE = "https://github.com/streamondemand/plugin.video.streamondemand/archive/master.zip"
         DESTINATION_FOLDER = os.path.join(config.get_runtime_path(),"..")
     elif config.get_platform()=="rss":
-        REMOTE_FILE = "https://github.com/Zanzibar82/plugin.video.streamondemand/archive/master.zip"
+        REMOTE_FILE = "https://github.com/streamondemand/plugin.video.streamondemand/archive/master.zip"
         DESTINATION_FOLDER = os.path.join(config.get_runtime_path(),"..")
 
 except:
     import xbmc
-    REMOTE_FILE = "https://github.com/Zanzibar82/plugin.video.streamondemand/archive/master.zip"
+    REMOTE_FILE = "https://github.com/streamondemand/plugin.video.streamondemand/archive/master.zip"
     DESTINATION_FOLDER = xbmc.translatePath("special://home/addons")
 
 def checkforupdates(plugin_mode=True):
@@ -227,7 +227,7 @@ def update(params):
     logger.info("streamondemand.core.updater ...fichero borrado")
 
 def get_channel_remote_url(channel_name):
-    _remote_channel_url_ = "https://raw.githubusercontent.com/Zanzibar82/plugin.video.streamondemand/master/"
+    _remote_channel_url_ = "https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/"
     if channel_name <> "channelselector":
         _remote_channel_url_+= "channels/"
 

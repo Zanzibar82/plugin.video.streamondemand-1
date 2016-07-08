@@ -11,7 +11,7 @@
         "thumbnail": "http://css.hd-cdn.it/new_files/templates/theme_darklight/img/logos_wt/logohdhardware.png",
         "fanart": "",
         "bannermenu": "http://css.hd-cdn.it/new_files/templates/theme_darklight/img/logos_wt/logohdhardware.png",
-        "update_url": "https://raw.githubusercontent.com/dentaku65/plugin.video.sod/master/channels/hdblog.xml",
+        "update_url": "https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/hdblog.xml",
         "version": "1",
         "changes": "update",
         "date": "26/06/2016"

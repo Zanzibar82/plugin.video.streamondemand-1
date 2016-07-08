@@ -13,7 +13,7 @@
         "thumbnail": "http://i.imgur.com/xuz7YWR.png",
         "fanart": "",
         "bannermenu": "http://i.imgur.com/xuz7YWR.png",
-        "update_url": "https://raw.githubusercontent.com/dentaku65/plugin.video.sod/master/channels/cinemalibero.xml",
+        "update_url": "https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/cinemalibero.xml",
         "version": "1",
         "changes": "update",
         "date": "26/06/2016"

@@ -12,7 +12,7 @@
         "thumbnail": "http://i.imgur.com/4mt0Df1.png",
         "fanart": "",
         "bannermenu": "http://i.imgur.com/4mt0Df1.png",
-        "update_url": "https://raw.githubusercontent.com/dentaku65/plugin.video.sod/master/channels/hdgratis.xml",
+        "update_url": "https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/hdgratis.xml",
         "version": "1",
         "changes": "update",
         "date": "26/06/2016"

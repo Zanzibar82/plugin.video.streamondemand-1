@@ -11,7 +11,7 @@
         "thumbnail": "http://ricettevideo.net/wp-content/uploads/2013/08/Ricette-Video-Logo.png",
         "fanart": "",
         "bannermenu": "http://ricettevideo.net/wp-content/uploads/2013/08/Ricette-Video-Logo.png",
-        "update_url": "https://raw.githubusercontent.com/dentaku65/plugin.video.sod/master/channels/ricettevideo.xml",
+        "update_url": "https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/ricettevideo.xml",
         "version": "1",
         "changes": "update",
         "date": "26/06/2016"

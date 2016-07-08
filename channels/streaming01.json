@@ -11,7 +11,7 @@
         "thumbnail": "https://raw.githubusercontent.com/Zanzibar82/images/master/posters/streaming01.png",
         "fanart": "",
         "bannermenu": "https://raw.githubusercontent.com/Zanzibar82/images/master/posters/streaming01.png",
-        "update_url": "https://raw.githubusercontent.com/dentaku65/plugin.video.sod/master/channels/streaming01.xml",
+        "update_url": "https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/streaming01.xml",
         "version": "1",
         "changes": "update",
         "date": "26/06/2016"
