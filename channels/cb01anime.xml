@@ -8,11 +8,11 @@
 	<language>it</language>
 
 	<fanart></fanart>
-	<thumbnail>https://raw.githubusercontent.com/Zanzibar82/images/master/posters/cineblog01.png</thumbnail>
-	<bannermenu>https://raw.githubusercontent.com/Zanzibar82/images/master/posters/cineblog01.png</bannermenu>
+	<thumbnail>http://i.imgur.com/bHoUMo2.png</thumbnail>
+	<bannermenu>http://i.imgur.com/bHoUMo2.png</bannermenu>
 
 	<update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
-	<version>1</version>
+	<version>2</version>
 	<date>16/06/2016</date>
 	<changes>update</changes>
 

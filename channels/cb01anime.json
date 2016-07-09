@@ -8,11 +8,11 @@
                      "anime"
                     ],
         "language": "it",
-        "thumbnail": "https://raw.githubusercontent.com/Zanzibar82/images/master/posters/cineblog01.png",
+        "thumbnail": "http://i.imgur.com/bHoUMo2.png",
         "fanart": "",
-        "bannermenu": "https://raw.githubusercontent.com/Zanzibar82/images/master/posters/cineblog01.png",
+        "bannermenu": "http://i.imgur.com/bHoUMo2.png",
         "update_url": "https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/cineblog01.xml",
-        "version": "1",
+        "version": "2",
         "changes": "update",
         "date": "26/06/2016"
    },
