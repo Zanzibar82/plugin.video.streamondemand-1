@@ -209,7 +209,7 @@ def findvideos(item):
     logger.info("[seriehd1.py] findvideos")
     itemlist = []
 
-    data = scrapertools.anti_cloudflare(item.url).replace('\n', '')
+    data = scrapertools.anti_cloudflare(item.url, headers).replace('\n', '')
 
     patron = '<iframe id="iframeVid" width=".+?" height=".+?" src="([^"]+)" allowfullscreen="">'
     url = scrapertools.find_single_match(data, patron)
