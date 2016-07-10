@@ -13,7 +13,7 @@
         "fanart": "",
         "bannermenu": "http://www.leserie.tv/templates/LeserieTv/images/logo.png",
         "update_url": "https://raw.githubusercontent.com/plugin.video.streamondemand/channels/leserietv.xml",
-        "version": "5",
+        "version": "6",
         "changes": "se elimina referencia a requests por problemas con otras plataformas, anticloudflare",
         "date": "10/01/2016"
    },
