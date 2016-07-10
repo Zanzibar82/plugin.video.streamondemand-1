@@ -322,7 +322,7 @@ def findvideos(item):
     data = scrapertools.anti_cloudflare(item.url, headers).replace('\n', '')
 
     patron = r'<iframe width=".+?" height=".+?" src="([^"]+)" allowfullscreen frameborder="0">'
-    url = scrapertools.find_single_match(data, patron).replace("?hdgratis", "")
+    url = scrapertools.find_single_match(data, patron).replace("?ita", "")
 
     if 'hdpass.net' in url:
         data = scrapertools.cache_page(url, headers=headers)

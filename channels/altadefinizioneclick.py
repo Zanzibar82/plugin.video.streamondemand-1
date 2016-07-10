@@ -4,7 +4,11 @@
 # Canal para altadefinizioneclick
 # http://blog.tvalacarta.info/plugin-xbmc/streamondemand.
 # ------------------------------------------------------------
+import base64
 import re
+import time
+import urllib
+import urlparse
 
 from core import config
 from core import logger
@@ -22,9 +26,11 @@ __language__ = "IT"
 host = "http://altadefinizione.site"
 
 headers = [
-    ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0'],
+    ['User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0'],
+    ['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'],
     ['Accept-Encoding', 'gzip, deflate'],
-    ['Referer', host]
+    ['Referer', host],
+    ['Cache-Control', 'max-age=0']
 ]
 
 def isGeneric():
@@ -213,77 +219,72 @@ def fichas(item):
 
     return itemlist
 
-
 def findvideos(item):
-    logger.info("[altadefinizioneclick.py] findvideos")
+    logger.info("[italiafilmvideohd.py] findvideos")
 
     itemlist = []
 
     # Descarga la página
-    data = scrapertools.anti_cloudflare(item.url, headers)
+    data = scrapertools.anti_cloudflare(item.url, headers).replace('\n', '')
 
-    patron = r'<iframe id="iframeVid" width="100%" height="500px" src="([^"]+)" allowfullscreen>'
+    patron = r'<iframe width=".+?" height=".+?" src="([^"]+)" allowfullscreen frameborder="0">'
+    url = scrapertools.find_single_match(data, patron).replace("?alta", "")
 
-    url = scrapertools.find_single_match(data, patron)
-
-    if 'hdpass.xyz' in url:
-        headers.append(['Referer', url])
+    if 'hdpass.net' in url:
         data = scrapertools.cache_page(url, headers=headers)
 
-        start = data.find('<ul id="mirrors">')
-        end = data.find('</ul>', start)
+        start = data.find('<div class="row mobileRes">')
+        end = data.find('<div id="playerFront">', start)
         data = data[start:end]
 
-        patron = '<form method="get" action="">\s*<input type="hidden" name="([^"]+)" value="([^"]+)"/>\s*<input type="hidden" name="([^"]+)" value="([^"]+)"/>\s*<input type="hidden" name="([^"]+)" value="(.*?)"/><input type="hidden" name="([^"]+)" value="([^"]+)"/> <input type="submit" class="[^"]*" name="([^"]+)" value="([^"]+)"/>\s*</form>'
+        patron_res = '<div class="row mobileRes">(.*?)</div>'
+        patron_mir = '<div class="row mobileMirrs">(.*?)</div>'
+        patron_media = r'<input type="hidden" name="urlEmbed" data-mirror="([^"]+)" id="urlEmbed" value="([^"]+)"/>'
 
-        html = []
-        for name1, val1, name2, val2, name3, val3, name4, val4, name5, val5 in re.compile(patron).findall(data):
-            if name3 == '' and val3 == '':
-                get_data = '%s=%s&%s=%s&%s=%s&%s=%s' % (name1, val1, name2, val2, name4, val4, name5, val5)
-            else:
-                get_data = '%s=%s&%s=%s&%s=%s&%s=%s&%s=%s' % (name1, val1, name2, val2, name3, val3, name4, val4, name5, val5)
-            tmp_data = scrapertools.cache_page('http://hdpass.xyz/film.php?' + get_data, headers=headers)
+        res = scrapertools.find_single_match(data, patron_res)
 
-            patron = r'; eval\(unescape\("(.*?)",(\[".*?;"\]),(\[".*?\])\)\);'
-            try:
-                [(par1, par2, par3)] = re.compile(patron, re.DOTALL).findall(tmp_data)
-            except:
-                patron = r'<input type="hidden" name="urlEmbed" data-mirror="([^"]+)" id="urlEmbed" value="([^"]+)"/>'
-                for media_label, media_url in re.compile(patron).findall(tmp_data):
-                    media_label=scrapertools.decodeHtmlentities(media_label.replace("hosting","hdload"))
+        for res_url, res_video in scrapertools.find_multiple_matches(res, '<option.*?value="([^"]+?)">([^<]+?)</option>'):
+
+            data = scrapertools.cache_page(urlparse.urljoin(url, res_url), headers=headers).replace('\n', '')
+
+            mir = scrapertools.find_single_match(data, patron_mir)
+
+            for mir_url in scrapertools.find_multiple_matches(mir, '<option.*?value="([^"]+?)">[^<]+?</value>'):
+
+                data = scrapertools.cache_page(urlparse.urljoin(url, mir_url), headers=headers).replace('\n', '')
+
+                for media_label, media_url in re.compile(patron_media).findall(data):
+                    media_label = scrapertools.decodeHtmlentities(media_label)
+
                     itemlist.append(
-                        Item(server=media_label,
+                        Item(channel=__channel__,
+                             server=media_label,
                              action="play",
-                             title=' - [Player]' if media_label == '' else ' - [Player @%s]' % media_label,
-                             url=media_url,
+                             title=item.title + ' - [%s @%s]' % (media_label, res_video),
+                             url=url_decode(media_url),
                              folder=False))
-                continue
 
-            par2 = eval(par2, {'__builtins__': None}, {})
-            par3 = eval(par3, {'__builtins__': None}, {})
-            tmp_data = unescape(par1, par2, par3)
-            html.append(tmp_data.replace(r'\/', '/'))
-        html = ''.join(html)
-    else:
-        html = url
+        return itemlist
 
-    itemlist.extend(servertools.find_video_items(data=html))
+def url_decode(url_enc):
+    lenght = len(url_enc)
+    if lenght % 2 == 0:
+        len2 = lenght / 2
+        first = url_enc[0:len2]
+        last = url_enc[len2:lenght]
+        url_enc = last + first
+        reverse = url_enc[::-1]
+        return base64.b64decode(reverse)
 
-    for videoitem in itemlist:
-        videoitem.title = "".join([item.title, videoitem.title])
-        videoitem.fulltitle = item.fulltitle
-        videoitem.thumbnail = item.thumbnail
-        videoitem.show = item.show
-        videoitem.channel = __channel__
+    last_car = url_enc[lenght - 1]
+    url_enc[lenght - 1] = ' '
+    url_enc = url_enc.strip()
+    len1 = len(url_enc)
+    len2 = len1 / 2
+    first = url_enc[0:len2]
+    last = url_enc[len2:len1]
+    url_enc = last + first
+    reverse = url_enc[::-1]
+    reverse = reverse + last_car
+    return base64.b64decode(reverse)
 
-    return itemlist
-
-
-def unescape(par1, par2, par3):
-    var1 = par1
-    for ii in xrange(0, len(par2)):
-        var1 = re.sub(par2[ii], par3[ii], var1)
-
-    var1 = re.sub("%26", "&", var1)
-    var1 = re.sub("%3B", ";", var1)
-    return var1.replace('<!--?--><?', '<!--?-->')
