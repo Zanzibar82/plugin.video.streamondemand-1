@@ -616,7 +616,8 @@ def infoSod(item, tipo="movie", ):
         year = scrapertools.find_single_match(item.fulltitle, '\((\d{4})\)')
 
         plot, fanart, poster = info(tmdbtitle, year, tipo)
-
+        item.poster = poster 
+        item.thumbnail=poster
         item.fanart = fanart if fanart != "" else poster
         if plot:
             if not plot['infoLabels']['plot']:
