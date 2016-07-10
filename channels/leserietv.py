@@ -247,7 +247,8 @@ def top50(item):
     scrapertools.printMatches(matches)
 
     for scrapedurl, scrapedtitle in matches:
-       logger.debug(scrapedurl + " " + scrapedtitle)
+        scrapedthumbnail = ""
+        logger.debug(scrapedurl + " " + scrapedtitle)
         itemlist.append(infoSod(
             Item(channel=__channel__,
                  action="episodi",
