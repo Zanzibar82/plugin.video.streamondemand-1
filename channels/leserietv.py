@@ -247,8 +247,7 @@ def top50(item):
     scrapertools.printMatches(matches)
 
     for scrapedurl, scrapedtitle in matches:
-        scrapedthumbnail = "http://www.leserie.tv/templates/LeserieTv/images/logo.png"
-        logger.debug(scrapedurl + " " + scrapedtitle)
+       logger.debug(scrapedurl + " " + scrapedtitle)
         itemlist.append(infoSod(
             Item(channel=__channel__,
                  action="episodi",
