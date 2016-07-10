@@ -22,8 +22,7 @@ __language__ = "IT"
 
 DEBUG = config.get_setting("debug")
 
-host = "http://torcache.net/torrent/"
-site = "http://ilcorsaronero.info"
+host = "http://ilcorsaronero.info"
 
 def isGeneric():
     return True
@@ -53,10 +52,10 @@ def peliculas(item):
     itemlist = []
 
     # Descarga la pagina
-    data = scrapertools.cache_page(item.url, timeout=10)
+    data = scrapertools.cache_page(item.url, timeout=5)
 
     # Extrae las entradas (carpetas)
-    patron = '<A class="tab" HREF="(.*?)"[^>]+>(.*?)</A>'
+    patron = '<A class="tab" HREF="(/tor/[0-9]+/)[^>]+>(.*?)</A>'
     matches = re.compile(patron,re.DOTALL).findall(data)
     scrapertools.printMatches(matches)
 
@@ -66,7 +65,7 @@ def peliculas(item):
         proctitle1 = scrapertools.decodeHtmlentities(scrapedtitle.replace("19","("))
         proctitle = scrapertools.decodeHtmlentities(proctitle1.replace("20","("))
         title = proctitle.split("(")[0]
-        url = site + scrapedurl
+        url = host + scrapedurl
         scrapedplot = ""
         scrapedthumbnail = ""
         if (DEBUG): logger.info("title=["+scrapedtitle+"], url=["+url+"], thumbnail=["+scrapedthumbnail+"]")
