@@ -129,7 +129,7 @@ def ultimi(item):
         '',
         scrapertools.anti_cloudflare(item.url, headers)
     )
-    # data = scrapertools.cache_page(item.url)
+ #   data = scrapertools.cache_page(item.url)
     patron = '<p>Nuove Puntate delle SERIE TV, Aggiunte OGGI:</p>(.*?)<div id="disclamer">'
     data = scrapertools.find_single_match(data, patron)
 
@@ -143,16 +143,15 @@ def ultimi(item):
         scrapedurl = urlparse.urljoin(host, scrapedurl)
         scrapedthumbnail = ""
 
-        itemlist.append(infoSod(
+        itemlist.append(
             Item(channel=__channel__,
                  action="episodios",
                  title=scrapedtitle,
                  fulltitle=fulltitle,
                  show=fulltitle,
-                 url=scrapedurl), tipo='tv'))
+                 url=scrapedurl))
 
     return itemlist
-
 
 def anime(item):
     logger.info("streamondemand.channels.guardaserie anime")
