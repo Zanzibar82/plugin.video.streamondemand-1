@@ -583,6 +583,7 @@ class Tmdb(object):
 # ===================================================================================================
 def info(title, year, tipo):
     logger.info("streamondemand.core.tmdb info")
+
     try:
         oTmdb = Tmdb(texto_buscado=title, year=year, tipo=tipo, include_adult="false", idioma_busqueda="it")
         if oTmdb.total_results > 0:
@@ -593,12 +594,16 @@ def info(title, year, tipo):
             poster = oTmdb.get_poster()
             infolabels['plot'] = oTmdb.get_sinopsis()
             plot = {"infoLabels": infolabels}
+
             return plot, fanart, poster
     except:
         plot = ""
         fanart = ""
         poster = ""
         return plot, fanart, poster
+
+
+
 
 
 # ----------------------------------------------------------------------------------------------------
@@ -616,9 +621,10 @@ def infoSod(item, tipo="movie", ):
         year = scrapertools.find_single_match(item.fulltitle, '\((\d{4})\)')
 
         plot, fanart, poster = info(tmdbtitle, year, tipo)
-        item.poster = poster 
-        item.thumbnail=poster
+        item.poster = poster if poster != "" else item.thumbnail
+        item.thumbnail=poster if poster != "" else item.thumbnail
         item.fanart = fanart if fanart != "" else poster
+
         if plot:
             if not plot['infoLabels']['plot']:
                 plot['infoLabels']['plot'] = item.plot
