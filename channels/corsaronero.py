@@ -24,6 +24,14 @@ DEBUG = config.get_setting("debug")
 
 host = "http://ilcorsaronero.info"
 
+headers = [
+    ['User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0'],
+    ['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'],
+    ['Accept-Encoding', 'gzip, deflate'],
+    ['Referer', 'http://ilcorsaronero.info/cat/1'],
+    ['Connection', 'keep-alive']
+]
+
 def isGeneric():
     return True
 
@@ -52,7 +60,20 @@ def peliculas(item):
     itemlist = []
 
     # Descarga la pagina
-    data = scrapertools.cache_page(item.url, timeout=5)
+    data = scrapertools.cache_page(item.url, timeout=5, headers=headers)
+
+    # ------------------------------------------------
+    cookies = ""
+    matches = re.compile('(.ilcorsaronero.info.*?)\n', re.DOTALL).findall(config.get_cookie_data())
+    for cookie in matches:
+        name = cookie.split('\t')[5]
+        value = cookie.split('\t')[6]
+        cookies += name + "=" + value + ";"
+    headers.append(['Cookie', cookies[:-1]])
+    import urllib
+    _headers = urllib.urlencode(dict(headers))
+    # ------------------------------------------------
+
 
     # Extrae las entradas (carpetas)
     patron = '<A class="tab" HREF="(/tor/[0-9]+/)[^>]+>(.*?)</A>'
@@ -66,12 +87,15 @@ def peliculas(item):
         proctitle = scrapertools.decodeHtmlentities(proctitle1.replace("20","("))
         title = proctitle.split("(")[0]
         url = host + scrapedurl
+        #import xbmc
+        #xbmc.log( "HHH url HHHHHHHHHHHHHHHHHHHHHHHHHHHH" )
+        #xbmc.log( "%s" % url )
         scrapedplot = ""
         scrapedthumbnail = ""
         if (DEBUG): logger.info("title=["+scrapedtitle+"], url=["+url+"], thumbnail=["+scrapedthumbnail+"]")
 
         itemlist.append(infoSod(Item(channel=__channel__,
-                                action="findvideos",
+                                action="play",
                                 title="[COLOR darkkhaki].torrent [/COLOR][COLOR azure]" + title + "[/COLOR]",
                                 fulltitle=title,
                                 url=url,
