@@ -255,13 +255,13 @@ def episodios(item):
 
     patron = '(.*?)<a href="([^"]+)" target="_blank">(.*?)</a>'
     matches = re.compile(patron).findall(data)
-    for title1, url, title2 in matches:
+    for title1, scrapedurl, title2 in matches:
         scrapedtitle = scrapertools.decodeHtmlentities(title1 + title2)
         scrapedtitle = re.sub(r'<[^>]*>', '', scrapedtitle).strip()
-        if 'adfoc.us' in url:
-            scrapedurl = importio_url + url
-        if 'adf.ly' in url:
-            scrapedurl = dec_fly + url
+        if 'adfoc.us' in scrapedurl:
+            scrapedurl = importio_url + scrapedurl
+        if 'adf.ly' in scrapedurl:
+            scrapedurl = dec_fly + scrapedurl
         itemlist.append(
             Item(channel=__channel__,
                  action='findvideos',
