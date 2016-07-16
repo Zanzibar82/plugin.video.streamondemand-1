@@ -30,7 +30,7 @@ def update_channels():
         # ----------------------------
         percentage = index * 100 / len(channel_files)
         # ----------------------------
-        channel_id = channel[:-4]
+        channel_id = os.path.basename(channel)[:-4]
         updater.updatechannel(channel_id)
         # ----------------------------
         progress.update(percentage, ' Update channel: ' + channel_id)
