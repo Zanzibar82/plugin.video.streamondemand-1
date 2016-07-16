@@ -75,12 +75,12 @@ if scrapertools.wait_for_internet(retry=10):
                 logger.info("streamondemand.library_service ruta =#" + ruta + "#")
                 if os.path.exists(ruta):
                     logger.info("streamondemand.library_service Actualizando " + serie[0])
-                    item = Item(url=serie[1], show=serie[0], extra=serie[3])
+                    item = Item(url=serie[1], show=serie[0], extra=serie[3].split('###')[1].strip() if '###' in serie[3] else '')
                     try:
                         itemlist = []
 
-                        pathchannels = os.path.join(config.get_runtime_path(), 'channels', serie[2].strip() + '.py')
-                        logger.info("streamondemand.library_service Cargando canal  " + pathchannels + " " + serie[2].strip())
+                        pathchannels = os.path.join(config.get_runtime_path(), 'channels', serie[2] + '.py')
+                        logger.info("streamondemand.library_service Cargando canal  " + pathchannels + " " + serie[2])
                         obj = imp.load_source(serie[2].strip(), pathchannels)
                         itemlist = obj.episodios(item)
 
