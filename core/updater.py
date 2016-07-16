@@ -7,6 +7,7 @@
 
 import urlparse,urllib2,urllib,re
 import os
+import os.path
 import sys
 import scrapertools
 import time
