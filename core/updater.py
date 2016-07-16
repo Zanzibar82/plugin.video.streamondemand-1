@@ -169,7 +169,8 @@ def checkforupdates(plugin_mode=True):
             
             # Añade al listado de XBMC
             import xbmcgui
-            thumbnail = IMAGES_PATH+"Crystal_Clear_action_info.png"
+            #thumbnail = IMAGES_PATH+"Crystal_Clear_action_info.png"
+            thumbnail = os.path.join(config.get_runtime_path() , "resources" , "images", "service_update.png")
             logger.info("thumbnail="+thumbnail)
             listitem = xbmcgui.ListItem( "Scarica la versione "+tag_publicada, thumbnailImage=thumbnail )
             itemurl = '%s?action=update&version=%s' % ( sys.argv[ 0 ] , tag_publicada )
