@@ -1,7 +1,7 @@
 {
     "channel": {
-        "id": "biblioteca",
-        "name": "Biblioteca",
+        "id": "libreria",
+        "name": "Libreria",
         "active": true,
         "adult": false,
         "category": [], 
@@ -9,7 +9,7 @@
         "thumbnail": "",
         "fanart": "",
         "bannermenu": "",
-        "update_url": "https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/biblioteca.xml",
+        "update_url": "https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/libreria.xml",
         "version": "3",
         "changes": "update",
         "date": "10/07/2016"
