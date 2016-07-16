@@ -366,8 +366,10 @@ def listaaz(item):
 
 
 def episodios(item):
+    itemlist = []
+
     if item.extra == 'serie':
-        itemlist = episodios_serie(item)
+        itemlist.extend(episodios_serie(item))
 
     if config.get_library_support() and len(itemlist) != 0:
         itemlist.append(
