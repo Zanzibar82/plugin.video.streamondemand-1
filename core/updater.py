@@ -20,11 +20,11 @@ if thumbnail_type=="":
     thumbnail_type="2"
 logger.info("thumbnail_type="+thumbnail_type)
 if thumbnail_type=="0":
-    IMAGES_PATH = 'http://media.tvalacarta.info/streamondemand/posters/'
+    IMAGES_PATH = 'http://media.tvalacarta.info/pelisalacarta/posters/'
 elif thumbnail_type=="1":
-    IMAGES_PATH = 'http://media.tvalacarta.info/streamondemand/banners/'
+    IMAGES_PATH = 'http://media.tvalacarta.info/pelisalacarta/banners/'
 elif thumbnail_type=="2":
-    IMAGES_PATH = 'http://media.tvalacarta.info/streamondemand/squares/'
+    IMAGES_PATH = 'http://media.tvalacarta.info/pelisalacarta/squares/'
 
 ROOT_DIR = config.get_runtime_path()
 
