@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <channel>
-	<id>biblioteca</id>
-	<name>Biblioteca</name>
+	<id>libreria</id>
+	<name>Libreria</name>
 
 	<active>false</active>
 	<adult>false</adult>

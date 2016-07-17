@@ -97,7 +97,6 @@ def peliculas(item):
         item.url = sito
 
     # Descarga la página
-    # data = scrapertools.cache_page(item.url)
     data = scrapertools.anti_cloudflare(item.url, headers)
 
     # Extrae las entradas (carpetas)
@@ -265,12 +264,12 @@ def search(item, texto):
 
     try:
 
-        if item.extra == "serie":
-            item.url = "http://www.cb01.co/serietv/?s=" + texto
-            return listserie(item)
         if item.extra == "film":
             item.url = "http://www.cb01.co/?s=" + texto
             return peliculas(item)
+        if item.extra == "serie":
+            item.url = "http://www.cb01.co/serietv/?s=" + texto
+            return listserie(item)
 
     # Se captura la excepción, para no interrumpir al buscador global si un canal falla
     except:
@@ -367,8 +366,10 @@ def listaaz(item):
 
 
 def episodios(item):
+    itemlist = []
+
     if item.extra == 'serie':
-        itemlist = episodios_serie(item)
+        itemlist.extend(episodios_serie(item))
 
     if config.get_library_support() and len(itemlist) != 0:
         itemlist.append(
@@ -386,6 +387,8 @@ def episodios(item):
                  extra="episodios" + "###" + item.extra,
                  show=item.show))
 
+    return itemlist
+
 
 def episodios_serie(item):
     def load_episodios(html, item, itemlist, lang_title):
@@ -399,7 +402,7 @@ def episodios_serie(item):
             if scrapedtitle == '':
                 patron = '<a\s*href="[^"]+"\s*target="_blank">([^<]+)</a>'
                 scrapedtitle = scrapertools.find_single_match(data, patron).strip()
-            title = scrapertools.find_single_match(scrapedtitle, '\d+[^\d]+\d+')
+            title = scrapertools.find_single_match(scrapedtitle, '\d+[^\d]+?\d+')
             if title == '':
                 title = scrapedtitle
             if title != '':
@@ -410,14 +413,14 @@ def episodios_serie(item):
                          url=data,
                          thumbnail=item.thumbnail,
                          extra=item.extra,
-                         fulltitle=item.fulltitle,
+                         fulltitle=item.show + ' | ' + title + " (" + lang_title + ")",
                          show=item.show))
 
     logger.info("[cineblog01.py] episodios")
 
     itemlist = []
 
-    ## Descarga la página
+    # Descarga la página
     data = scrapertools.anti_cloudflare(item.url, headers)
 
     start = data.find('<td bgcolor="#ECEAE1">')
@@ -465,29 +468,31 @@ def episodios_serie(item):
 
     return itemlist
 
+
 def findvideos(item):
     if item.extra == 'film':
         return findvid_film(item)
     if item.extra == 'serie':
         return findvid_serie(item)
 
+
 def findvid_film(item):
     logger.info("[cineblog01.py] findvideos")
 
     itemlist = []
 
-    ## Descarga la página
+    # Descarga la página
     data = scrapertools.anti_cloudflare(item.url, headers)
     data = scrapertools.decodeHtmlentities(data).replace('http://cineblog01.pw', 'http://k4pp4.pw')
 
-    ## Extract the quality format
+    # Extract the quality format
     patronvideos = '>([^<]+)</strong></div>'
     matches = re.compile(patronvideos, re.DOTALL).finditer(data)
     QualityStr = ""
     for match in matches:
         QualityStr = scrapertools.unescape(match.group(1))[6:]
 
-    ## Extrae las entradas
+    # Extrae las entradas
     streaming = scrapertools.find_single_match(data, '<strong>Streaming:</strong>(.*?)<table height="30">')
     patron = '<td><a href="([^"]+)" target="_blank">([^<]+)</a></td>'
     matches = re.compile(patron, re.DOTALL).findall(streaming)
@@ -601,6 +606,7 @@ def findvid_serie(item):
                  folder=False))
 
     return itemlist
+
 
 def play(item):
     logger.info("[cineblog01.py] play")

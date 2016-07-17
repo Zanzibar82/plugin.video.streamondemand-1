@@ -1,3 +1,7 @@
+v5.3.2
+- TMDB fix
+- many channels fix
+
 v5.3.1
 - Minor fix menu
 
