@@ -328,9 +328,9 @@
     <id>flashx</id>
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/flashx.py</update_url>
     <active>true</active>
-    <version>4</version>
-    <date>12/02/2016</date>
-    <changes>CmosGit version</changes>
+    <version>5</version>
+    <date>19/07/2016</date>
+    <changes>Nico & CmosGit version</changes>
 </server>
 
 <server>
