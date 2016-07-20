@@ -252,7 +252,7 @@ def findvideos(item):
     patron = r'<iframe width=".+?" height=".+?" src="([^"]+)" allowfullscreen frameborder="0">'
     url = scrapertools.find_single_match(data, patron).replace("?hdgratis", "")
 
-    if 'hdpass.net' in url:
+    if 'hdpass' in url:
         data = scrapertools.cache_page(url, headers=headers)
 
         start = data.find('<div class="row mobileRes">')

@@ -6,8 +6,6 @@
 # ------------------------------------------------------------
 import base64
 import re
-import time
-import urllib
 import urlparse
 
 from core import config
@@ -32,6 +30,7 @@ headers = [
     ['Referer', host],
     ['Cache-Control', 'max-age=0']
 ]
+
 
 def isGeneric():
     return True
@@ -101,11 +100,11 @@ def genere(item):
 
     for scrapedurl, scrapedtitle in matches:
         itemlist.append(
-                Item(channel=__channel__,
-                     action="fichas",
-                     title=scrapedtitle,
-                     url=scrapedurl,
-                     folder=True))
+            Item(channel=__channel__,
+                 action="fichas",
+                 title=scrapedtitle,
+                 url=scrapedurl,
+                 folder=True))
 
     return itemlist
 
@@ -125,11 +124,11 @@ def anno(item):
 
     for scrapedurl, scrapedtitle in matches:
         itemlist.append(
-                Item(channel=__channel__,
-                     action="fichas",
-                     title=scrapedtitle,
-                     url=scrapedurl,
-                     folder=True))
+            Item(channel=__channel__,
+                 action="fichas",
+                 title=scrapedtitle,
+                 url=scrapedurl,
+                 folder=True))
 
     return itemlist
 
@@ -143,15 +142,15 @@ def fichas(item):
     data = scrapertools.anti_cloudflare(item.url, headers)
     # fix - calidad
     data = re.sub(
-            r'<div class="wrapperImage"[^<]+<a',
-            '<div class="wrapperImage"><fix>SD</fix><a',
-            data
+        r'<div class="wrapperImage"[^<]+<a',
+        '<div class="wrapperImage"><fix>SD</fix><a',
+        data
     )
     # fix - IMDB
     data = re.sub(
-            r'<h5> </div>',
-            '<fix>IMDB: 0.0</fix>',
-            data
+        r'<h5> </div>',
+        '<fix>IMDB: 0.0</fix>',
+        data
     )
     # ------------------------------------------------
     cookies = ""
@@ -211,26 +210,25 @@ def fichas(item):
     next_page = scrapertools.find_single_match(data, '<a class="next page-numbers" href="([^"]+)">')
     if next_page != "":
         itemlist.append(
-                Item(channel=__channel__,
-                     action="fichas",
-                     title="[COLOR orange]Successivo >>[/COLOR]",
-                     url=next_page,
-                     thumbnail="http://2.bp.blogspot.com/-fE9tzwmjaeQ/UcM2apxDtjI/AAAAAAAAeeg/WKSGM2TADLM/s1600/pager+old.png"))
+            Item(channel=__channel__,
+                 action="fichas",
+                 title="[COLOR orange]Successivo >>[/COLOR]",
+                 url=next_page,
+                 thumbnail="http://2.bp.blogspot.com/-fE9tzwmjaeQ/UcM2apxDtjI/AAAAAAAAeeg/WKSGM2TADLM/s1600/pager+old.png"))
 
     return itemlist
 
+
 def findvideos(item):
     logger.info("[italiafilmvideohd.py] findvideos")
-
-    itemlist = []
 
     # Descarga la página
     data = scrapertools.anti_cloudflare(item.url, headers).replace('\n', '')
     patron = r'<iframe width=".+?" height=".+?" src="([^"]+)"></iframe>'
     url = scrapertools.find_single_match(data, patron).replace("?alta", "")
-    url = url.replace("&download=1","")
+    url = url.replace("&download=1", "")
 
-    if 'hdpass.net' in url:
+    if 'hdpass' in url:
         data = scrapertools.cache_page(url, headers=headers)
 
         start = data.find('<div class="row mobileRes">')
@@ -243,6 +241,7 @@ def findvideos(item):
 
         res = scrapertools.find_single_match(data, patron_res)
 
+        urls = []
         for res_url, res_video in scrapertools.find_multiple_matches(res, '<option.*?value="([^"]+?)">([^<]+?)</option>'):
 
             data = scrapertools.cache_page(urlparse.urljoin(url, res_url), headers=headers).replace('\n', '')
@@ -254,17 +253,19 @@ def findvideos(item):
                 data = scrapertools.cache_page(urlparse.urljoin(url, mir_url), headers=headers).replace('\n', '')
 
                 for media_label, media_url in re.compile(patron_media).findall(data):
-                    media_label = scrapertools.decodeHtmlentities(media_label)
+                    urls.append(url_decode(media_url))
 
-                    itemlist.append(
-                        Item(channel=__channel__,
-                             server=media_label,
-                             action="play",
-                             title=item.title + ' - [%s @%s]' % (media_label, res_video),
-                             url=url_decode(media_url),
-                             folder=False))
+        itemlist = servertools.find_video_items(data='\n'.join(urls))
+        for videoitem in itemlist:
+            videoitem.title = item.title + videoitem.title
+            videoitem.fulltitle = item.fulltitle
+            videoitem.thumbnail = item.thumbnail
+            videoitem.show = item.show
+            videoitem.plot = item.plot
+            videoitem.channel = __channel__
 
         return itemlist
+
 
 def url_decode(url_enc):
     lenght = len(url_enc)
@@ -287,4 +288,3 @@ def url_decode(url_enc):
     reverse = url_enc[::-1]
     reverse = reverse + last_car
     return base64.b64decode(reverse)
-
