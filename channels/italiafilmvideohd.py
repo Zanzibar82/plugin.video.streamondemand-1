@@ -48,7 +48,7 @@ def mainlist(item):
         Item(channel=__channel__,
              title="[COLOR azure]Ultimi Film Inseriti[/COLOR]",
              action="fichas",
-             url=host + "/nuove-uscite/",
+             url=host + "/film-hd/",
              thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png"),
         Item(channel=__channel__,
              title="[COLOR azure]Film per Genere[/COLOR]",
@@ -153,10 +153,14 @@ def fichas(item):
                  fulltitle=title,
                  show=scrapedtitle), tipo='movie'))
 
+    itemlist.append(
+        Item(channel=__channel__,
+             action="HomePage",
+             title="[COLOR yellow]Torna Home[/COLOR]",
+             folder=True)),
+
     # Paginación
-    next_page = re.compile('<a href="(.+?)" class="single_page" title=".+?">', re.DOTALL).findall(data)
-    for page in next_page:
-        next_page = page
+    next_page = scrapertools.find_single_match(data, '<a href="([^"]+)"\s*><span aria-hidden="true">&raquo;')
 
     if next_page != "":
         itemlist.append(
@@ -240,3 +244,8 @@ def url_decode(url_enc):
     reverse = url_enc[::-1]
     reverse = reverse + last_car
     return base64.b64decode(reverse)
+
+
+def HomePage(item):
+    import xbmc
+    xbmc.executebuiltin("ReplaceWindow(10024,plugin://plugin.video.streamondemand)")
