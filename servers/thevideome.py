@@ -31,19 +31,18 @@ def find_videos(data):
     encontrados = set()
     devuelve = []
 
-    patronvideos = ['thevideo.me/embed-([a-z0-9A-Z]+)',
-                    'thevideo.me/([a-z0-9A-Z]+)']
-    for patron in patronvideos:
-        logger.info("streamondemand.servers.thevideome find_videos #" + patron + "#")
-        matches = re.compile(patron, re.DOTALL).findall(data)
+    patronvideos = 'thevideo.me/(?:embed-)?([a-z0-9A-Z]+)'
 
-        for match in matches:
-            titulo = "[thevideo.me]"
-            url = "http://thevideo.me/embed-" + match + ".html"
-            if url not in encontrados:
-                logger.info("  url=" + url)
-                devuelve.append([titulo, url, 'thevideome'])
-                encontrados.add(url)
-            else:
-                logger.info("  url duplicada=" + url)
+    logger.info("streamondemand.servers.thevideome find_videos #" + patronvideos + "#")
+    matches = re.compile(patronvideos, re.DOTALL).findall(data)
+
+    for match in matches:
+        titulo = "[thevideo.me]"
+        url = "http://thevideo.me/embed-" + match + ".html"
+        if url not in encontrados:
+            logger.info("  url=" + url)
+            devuelve.append([titulo, url, 'thevideome'])
+            encontrados.add(url)
+        else:
+            logger.info("  url duplicada=" + url)
     return devuelve
