@@ -7,8 +7,6 @@
 # ------------------------------------------------------------
 import base64
 import re
-import time
-import urllib
 import urlparse
 
 from core import config
@@ -33,6 +31,7 @@ headers = [
     ['Referer', host],
     ['Cache-Control', 'max-age=0']
 ]
+
 
 def isGeneric():
     return True
@@ -152,13 +151,11 @@ def searchfilm(item):
                  show=scrapedtitle), tipo='movie'))
 
     # Paginación
-    next_page = re.compile('<link rel="next" href="(.+?)"/>', re.DOTALL).findall(data)
-    for page in next_page:
-        next_page = page
+    next_page = scrapertools.find_single_match(data, "href='([^']+)'>Seguente &rsaquo;")
     if next_page != "":
         itemlist.append(
             Item(channel=__channel__,
-                 action="fichas",
+                 action="searchfilm",
                  title="[COLOR orange]Successivo >>[/COLOR]",
                  url=next_page,
                  thumbnail="http://2.bp.blogspot.com/-fE9tzwmjaeQ/UcM2apxDtjI/AAAAAAAAeeg/WKSGM2TADLM/s1600/pager+old.png"))
@@ -299,9 +296,7 @@ def fichas(item):
                  show=scrapedtitle), tipo='movie'))
 
     # Paginación
-    next_page = re.compile('<link rel="next" href="(.+?)"/>', re.DOTALL).findall(data)
-    for page in next_page:
-        next_page = page
+    next_page = scrapertools.find_single_match(data, "href='([^']+)'>Seguente &rsaquo;")
     if next_page != "":
         itemlist.append(
             Item(channel=__channel__,
@@ -324,7 +319,7 @@ def findvideos(item):
     patron = r'<iframe width=".+?" height=".+?" src="([^"]+)" allowfullscreen frameborder="0">'
     url = scrapertools.find_single_match(data, patron).replace("?ita", "")
 
-    if 'hdpass.net' in url:
+    if 'hdpass' in url:
         data = scrapertools.cache_page(url, headers=headers)
 
         start = data.find('<div class="row mobileRes">')
@@ -337,6 +332,7 @@ def findvideos(item):
 
         res = scrapertools.find_single_match(data, patron_res)
 
+        urls = []
         for res_url, res_video in scrapertools.find_multiple_matches(res, '<option.*?value="([^"]+?)">([^<]+?)</option>'):
 
             data = scrapertools.cache_page(urlparse.urljoin(url, res_url), headers=headers).replace('\n', '')
@@ -348,17 +344,19 @@ def findvideos(item):
                 data = scrapertools.cache_page(urlparse.urljoin(url, mir_url), headers=headers).replace('\n', '')
 
                 for media_label, media_url in re.compile(patron_media).findall(data):
-                    media_label = scrapertools.decodeHtmlentities(media_label)
+                    urls.append(url_decode(media_url))
 
-                    itemlist.append(
-                        Item(channel=__channel__,
-                             server=media_label,
-                             action="play",
-                             title=item.title + ' - [%s @%s]' % (media_label, res_video),
-                             url=url_decode(media_url),
-                             folder=False))
+        itemlist = servertools.find_video_items(data='\n'.join(urls))
+        for videoitem in itemlist:
+            videoitem.title = item.title + videoitem.title
+            videoitem.fulltitle = item.fulltitle
+            videoitem.thumbnail = item.thumbnail
+            videoitem.show = item.show
+            videoitem.plot = item.plot
+            videoitem.channel = __channel__
 
         return itemlist
+
 
 def url_decode(url_enc):
     lenght = len(url_enc)
@@ -381,4 +379,3 @@ def url_decode(url_enc):
     reverse = url_enc[::-1]
     reverse = reverse + last_car
     return base64.b64decode(reverse)
-

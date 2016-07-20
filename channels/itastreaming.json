@@ -12,7 +12,7 @@
         "fanart": "",
         "bannermenu": "https://raw.githubusercontent.com/Zanzibar82/images/master/posters/itastreaming.png",
         "update_url": "https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/itastreaming.xml",
-        "version": "3",
+        "version": "4",
         "changes": "update",
         "date": "26/06/2016"
    },
