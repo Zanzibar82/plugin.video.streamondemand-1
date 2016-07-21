@@ -1,16 +1,15 @@
 # -*- coding: iso-8859-1 -*-
 #------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Convierte una lista de vídeos en xml a una playlist PLS
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
-import re, os
-import urlparse, urllib, urllib2
+import os
+import re
 
-from core import scrapertools
-from core import logger
 from core import config
-from core import downloadtools
+from core import logger
+from core import scrapertools
 
 DEBUG = True
 CHANNELNAME = "xmltoplaylist"

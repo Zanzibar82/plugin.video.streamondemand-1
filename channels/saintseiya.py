@@ -2,7 +2,7 @@
 # ------------------------------------------------------------
 # streamondemand.- XBMC Plugin
 # Canale per I Cavalieri Dello Zodiaco
-# http://blog.tvalacarta.info/plugin-xbmc/streamondemand.
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import re
 

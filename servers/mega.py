@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 #------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Conector para mega.co.nz
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 
-import urlparse,urllib2,urllib,re
-import os
+import re
 
-from core import scrapertools
 from core import logger
-from core import config
+
 
 def test_video_exists( page_url ):
     logger.info("[mega.py] test_video_exists(page_url='%s')" % page_url)
@@ -32,9 +30,9 @@ def get_video_url( page_url , premium = False , user="" , password="", video_pas
         if not url_service1.startswith("https://"):
             url_service1 = "https://mega.co.nz/" + url_service1
 
-        title_for_mega = "Pelisalacarta%20video"
+        title_for_mega = "streamondemand%20video"
         
-        url = "plugin://plugin.video.mega/?url="+page_url+"&action=stream_pelisalacarta"
+        url = "plugin://plugin.video.mega/?url="+page_url+"&action=stream_streamondemand"
         
         video_urls.append(["[mega add-on]",url])
 

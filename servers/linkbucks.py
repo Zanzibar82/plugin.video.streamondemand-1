@@ -1,16 +1,15 @@
 # -*- coding: iso-8859-1 -*-
 #------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Conector para linkbucks
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 
-import re, sys
-import urlparse, urllib, urllib2
+import urllib
 
-from core import scrapertools
 from core import logger
-from core import config
+from core import scrapertools
+
 
 # Obtiene la URL que hay detrás de un enlace a linkbucks
 def get_long_url(short_url):

@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 #------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Conector para vimple.ru
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 # Some code from youtube-dl project
 #------------------------------------------------------------
 
-import urlparse,urllib2,urllib,re
-import os
 import base64
+import re
 import xml.etree.ElementTree
 import zlib
 
-from core import scrapertools
-from core import logger
 from core import config
+from core import logger
+from core import scrapertools
 
 _VALID_URL = r'https?://(player.vimple.ru/iframe|vimple.ru)/(?P<id>[a-f0-9]{10,})'
 

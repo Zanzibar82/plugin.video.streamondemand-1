@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 #----------------------------------------------------------------------
 # streamondemand.- XBMC Plugin
-# ayuda - Videos de ayuda y tutoriales para pelisalacarta
-# http://blog.tvalacarta.info/plugin-xbmc/streamondemand.
+# ayuda - Videos de ayuda y tutoriales para streamondemand
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 # contribuci?n de jurrabi
 #----------------------------------------------------------------------
 import re
-from core import scrapertools
+
 from core import config
 from core import logger
+from core import scrapertools
 from core.item import Item
-
 
 CHANNELNAME = "ayuda"
 
@@ -46,7 +46,7 @@ def tutoriales(item):
 
 def force_creation_advancedsettings(item):
     logger.info("streamondemand.channels.ayuda force_creation_advancedsettings")
-    import xbmc, xbmcgui, os
+    import xbmc, xbmcgui
 
     # ======================================
     # Impostazioni
@@ -105,8 +105,6 @@ def force_creation_advancedsettings(item):
     return []
 
 def updatebiblio(item):
-    import library_service
-    
     itemlist = []
     itemlist.append( Item(channel=CHANNELNAME, action="" , title="Aggiornamenti in corso..."))
     

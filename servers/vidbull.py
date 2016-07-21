@@ -1,18 +1,16 @@
 # -*- coding: iso-8859-1 -*-
 #------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Conector para vidbull
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 
-import urlparse,urllib2,urllib,re
-import os
+import re
 
-from core import scrapertools
-from core import logger
-from core import config
 from core import jsunpack
-import time
+from core import logger
+from core import scrapertools
+
 
 def test_video_exists( page_url ):
     logger.info("[vidbull.py] test_video_exists(page_url='%s')" % page_url)

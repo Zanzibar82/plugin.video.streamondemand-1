@@ -2,7 +2,7 @@
 # ------------------------------------------------------------
 # streamondemand.- XBMC Plugin
 # Canale per solo-streaming.com
-# http://blog.tvalacarta.info/plugin-xbmc/streamondemand.
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import json
 import urllib

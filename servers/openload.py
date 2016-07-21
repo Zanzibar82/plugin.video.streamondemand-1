@@ -2,7 +2,7 @@
 # ------------------------------------------------------------
 # streamondemand - XBMC Plugin
 # Conector for openload.co
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 
 import re

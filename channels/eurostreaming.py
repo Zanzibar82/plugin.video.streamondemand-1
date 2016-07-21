@@ -2,7 +2,7 @@
 # ------------------------------------------------------------
 # streamondemand.- XBMC Plugin
 # Canale per eurostreaming.tv
-# http://blog.tvalacarta.info/plugin-xbmc/streamondemand.
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import re
 import urlparse

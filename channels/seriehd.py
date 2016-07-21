@@ -2,12 +2,10 @@
 # ------------------------------------------------------------
 # streamondemand.- XBMC Plugin
 # Canal para seriehd - based on guardaserie channel
-# http://blog.tvalacarta.info/plugin-xbmc/streamondemand.
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import base64
 import re
-import time
-import urllib
 import urlparse
 
 from core import config

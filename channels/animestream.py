@@ -2,7 +2,7 @@
 # ------------------------------------------------------------
 # streamondemand.- XBMC Plugin
 # Canal para animestream.it
-# http://blog.tvalacarta.info/plugin-xbmc/streamondemand.
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #  By Costaplus
 # ------------------------------------------------------------
 import re

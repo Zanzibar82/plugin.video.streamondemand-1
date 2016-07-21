@@ -2,10 +2,9 @@
 # ------------------------------------------------------------
 # streamondemand.- XBMC Plugin
 # Canal para portalehd
-# http://blog.tvalacarta.info/plugin-xbmc/streamondemand.
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import re
-import time
 import urllib
 import urlparse
 

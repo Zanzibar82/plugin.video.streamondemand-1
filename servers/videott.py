@@ -1,17 +1,16 @@
 # -*- coding: iso-8859-1 -*-
 #------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Conector para videott
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 
-import urlparse,urllib2,urllib,re
-import os
 import random
+import re
 
-from core import scrapertools
 from core import logger
-from core import config
+from core import scrapertools
+
 
 def get_video_url( page_url , premium = False , user="" , password="", video_password="" ):
     logger.info("[videott.py] url="+page_url)

@@ -3,15 +3,13 @@
 # streamondemand.- XBMC Plugin
 # Canal para youtube
 # Buscador simple para visonar o descargar desde YouTube
-# http://blog.tvalacarta.info/plugin-xbmc/streamondemand.
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
-import re, sys
 
+from core import jsontools
 from core import logger
 from core import scrapertools
-from core import jsontools
 from core.item import Item
-
 from platformcode import library
 
 __channel__ = "youtube"

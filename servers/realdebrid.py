@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 #------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Conector para Real_Debrid
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 
-import urllib2,urllib,re
+import re
+import urllib
+import urllib2
 
-from core import scrapertools
 from core import logger
-from core import config
+from core import scrapertools
+
 
 # Returns an array of possible video url's from the page_url
 def get_video_url( page_url , premium = False , user="" , password="", video_password="" ):
-    logger.info("pelisalacarta.servers.realdebrid get_video_url( page_url='%s' , user='%s' , password='%s', video_password=%s)" % (page_url , user , "**************************"[0:len(password)] , video_password) )
+    logger.info("streamondemand.servers.realdebrid get_video_url( page_url='%s' , user='%s' , password='%s', video_password=%s)" % (page_url , user , "**************************"[0:len(password)] , video_password) )
     page_url = correct_url(page_url)
     # Hace el login y consigue la cookie
     post = urllib.urlencode({'user' : user, 'pass' : password})

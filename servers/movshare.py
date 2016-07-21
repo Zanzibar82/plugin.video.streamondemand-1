@@ -1,19 +1,17 @@
 # -*- coding: iso-8859-1 -*-
 #------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Conector para Movshare
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 # Credits:
 # https://github.com/Eldorados/script.module.urlresolver/blob/master/lib/urlresolver/plugins/movshare.py
 
-import urlparse,urllib2,urllib,re
-import os
+import re
 
-from core import scrapertools
 from core import logger
-from core import config
-from core import unwise
+from core import scrapertools
+
 
 def test_video_exists( page_url ):
     logger.info("[movshare.py] test_video_exists(page_url='%s')" % page_url)

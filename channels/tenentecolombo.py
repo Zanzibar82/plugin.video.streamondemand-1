@@ -2,15 +2,13 @@
 # ------------------------------------------------------------
 # streamondemand.- XBMC Plugin
 # Canal para tenentecolombo
-# http://blog.tvalacarta.info/plugin-xbmc/streamondemand.
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
-import urlparse
 import re
-import sys
 
-from core import scrapertools
-from core import logger
 from core import config
+from core import logger
+from core import scrapertools
 from core.item import Item
 from servers import servertools
 

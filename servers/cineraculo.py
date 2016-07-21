@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Conector para cineraculo (genera vinculos desde videos de megaupload)
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 
-import urlparse,urllib2,urllib,re
-import sys,os,traceback
+import re
+import sys
+import traceback
+import urllib
 
-from core import scrapertools
 from core import logger
-from core import config
+from core import scrapertools
+
 
 def get_video_url( page_url , premium = False , user="" , password="", video_password="" ):
     try :

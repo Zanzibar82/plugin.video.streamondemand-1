@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
 #------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Conector para filenium
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 
-import urlparse,urllib2,urllib,re,time
-import os
-import base64
 #import json
 
-from core import scrapertools
-from core import logger
-from core import config
 from urllib import urlencode
+
+from core import logger
+from core import scrapertools
 
 TIMEOUT=50
 

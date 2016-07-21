@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
 # streamondemand - XBMC Plugin
-# http://blog.tvalacarta.info/plugin-xbmc/streamondemand/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import glob
 import os

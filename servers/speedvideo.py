@@ -1,17 +1,18 @@
 # -*- coding: iso-8859-1 -*-
 #------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Conector para speedvideo
 # by be4t5
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 
-import urlparse,urllib2,urllib,re
-import os
+import re
+import urllib
+import urllib2
 
-from core import scrapertools
 from core import logger
-from core import config
+from core import scrapertools
+
 
 def test_video_exists( page_url ):
     logger.info("[speedvideo.py] test_video_exists(page_url='%s')" % page_url)
@@ -23,7 +24,6 @@ def test_video_exists( page_url ):
 def get_video_url( page_url , premium = False , user="" , password="", video_password="" ):
     logger.info("[speedvideo.py] url="+page_url)
     video_urls = []
-    import time
     opener = urllib2.build_opener()
     req = urllib2.Request(page_url, None, {'User-agent' : 'Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5'})
     page = urllib2.urlopen(req)

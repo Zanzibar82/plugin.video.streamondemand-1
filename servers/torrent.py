@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 #:-----------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Conector para enlaces a torrent y magnet
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
-from core import logger, config
 import urllib
+
 import xbmc
+
+from core import logger
+
 
 # Returns an array of possible video url's from the page_url
 def get_video_url( page_url , premium = False , user="" , password="" , video_password="" ):

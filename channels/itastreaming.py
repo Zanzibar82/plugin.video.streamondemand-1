@@ -3,7 +3,7 @@
 # streamondemand.- XBMC Plugin
 # Canal para itastreaming.click 
 # by SchisM
-# http://blog.tvalacarta.info/plugin-xbmc/streamondemand.
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import base64
 import re

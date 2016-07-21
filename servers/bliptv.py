@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 #------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Conector para bliptv
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 import re
 import urllib
 
-from core import scrapertools
 from core import logger
+from core import scrapertools
+
 
 # Returns an array of possible video url's from the page_url
 def get_video_url( page_url , premium = False , user="" , password="" , video_password="" ):

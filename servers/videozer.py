@@ -1,16 +1,15 @@
 ﻿# -*- coding: utf-8 -*-
 #------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Conector para videozer
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 
-import os,re
 import base64
+import re
 
-from core import scrapertools
 from core import logger
-from core import config
+from core import scrapertools
 
 HOSTER_KEY="MjE1Njc4"
 

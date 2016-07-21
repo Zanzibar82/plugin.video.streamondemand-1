@@ -7,10 +7,9 @@
 #     from aadecode import decode as aadecode
 #     text_decode = aadecode(text_encode)
 # @robalo & @Cmos
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 
-import re
 from core.scrapertools import *
 
 def decode(text):

@@ -2,17 +2,19 @@
 #------------------------------------------------------------
 # streamondemand - XBMC Plugin
 # Lista de vídeos descargados
-# http://blog.tvalacarta.info/plugin-xbmc/streamondemand/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 # Herramientas responsables de adaptar los diferentes 
 # cuadros de dialogo a una plataforma en concreto,
 # en este caso Kodi.
 # version 1.3
 # ------------------------------------------------------------
-import xbmcgui
-import xbmc
 import os
 from math import ceil
+
+import xbmc
+import xbmcgui
+
 from core import config
 
 

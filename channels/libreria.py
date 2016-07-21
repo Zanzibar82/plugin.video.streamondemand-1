@@ -2,19 +2,15 @@
 #------------------------------------------------------------
 # stramondemand - XBMC Plugin
 # Canal para Libreria XBMC
-# http://blog.tvalacarta.info/plugin-xbmc/stramondemand/
+# http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
-import urlparse,urllib2,urllib,re
-import os, sys
-
+import os
 import os.path
-import fnmatch
-from core import DecryptYonkis as Yonkis
 import sqlite3
+import urllib
 
-from core import scrapertools
-from core import logger
 from core import config
+from core import logger
 from core.item import Item
 
 CHANNELNAME = "LibreriaXBMC"
