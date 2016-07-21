@@ -191,7 +191,7 @@ def updatechannel(channel_name):
     if os.path.exists( local_version_path ):
         infile = open( local_version_path )
         data = infile.read()
-        infile.close();
+        infile.close()
         logger.info("streamondemand.core.updater local_data="+data)
 
         if "<tag>" in data:
