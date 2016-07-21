@@ -36,14 +36,18 @@ PLUGIN_NAME = "streamondemand"
 __settings__ = xbmcaddon.Addon(id="plugin.video." + PLUGIN_NAME)
 __language__ = __settings__.getLocalizedString
 
+
 def get_platform():
     return PLATFORM_NAME
+
 
 def is_xbmc():
     return True
 
+
 def get_library_support():
     return True
+
 
 def get_system_platform():
     """ fonction: pour recuperer la platform que xbmc tourne """
@@ -58,6 +62,7 @@ def get_system_platform():
     elif xbmc.getCondVisibility("system.platform.osx"):
         platform = "osx"
     return platform
+
 
 def open_settings():
     __settings__.openSettings()
@@ -91,7 +96,7 @@ def get_setting(name, channel=""):
     return __settings__.getSetting(name)
 
 
-def set_setting(name,value, channel=""):
+def set_setting(name, value, channel=""):
     """Fija el valor de configuracion del parametro indicado.
 
     Establece 'value' como el valor del parametro 'name' en la configuracion global o en la configuracion propia del canal 'channel'.
@@ -124,6 +129,7 @@ def set_setting(name,value, channel=""):
 
         return value
 
+
 def get_localized_string(code):
     dev = __language__(code)
 
@@ -131,11 +137,11 @@ def get_localized_string(code):
         dev = dev.encode("utf-8")
     except:
         pass
-    
+
     return dev
 
-def get_library_path():
 
+def get_library_path():
     if get_system_platform() == "xbox":
         default = xbmc.translatePath(os.path.join(get_runtime_path(), "library"))
     else:
@@ -148,20 +154,24 @@ def get_library_path():
 
     return value
 
+
 def get_temp_file(filename):
     return xbmc.translatePath(os.path.join("special://temp/", filename))
+
 
 def get_runtime_path():
     return xbmc.translatePath(__settings__.getAddonInfo('Path'))
 
+
 def get_data_path():
     dev = xbmc.translatePath(__settings__.getAddonInfo('Profile'))
-    
+
     # Parche para XBMC4XBOX
     if not os.path.exists(dev):
         os.makedirs(dev)
-    
+
     return dev
+
 
 def get_cookie_data():
     import os
@@ -172,6 +182,7 @@ def get_cookie_data():
     cookiedatafile.close()
 
     return cookiedata
+
 
 # Test if all the required directories are created
 def verify_directories_created():
@@ -271,7 +282,7 @@ def verify_directories_created():
         logger.info("No es una plataforma XBMC")
     # Create download_path if not exists
     if not download_path.lower().startswith("smb") and not os.path.exists(download_path):
-            logger.debug("Creating download_path " + download_path)
+        logger.debug("Creating download_path " + download_path)
         try:
             os.mkdir(download_path)
         except:
@@ -279,7 +290,7 @@ def verify_directories_created():
 
     # Create download_list_path if not exists
     if not download_list_path.lower().startswith("smb") and not os.path.exists(download_list_path):
-            logger.debug("Creating download_list_path " + download_list_path)
+        logger.debug("Creating download_list_path " + download_list_path)
         try:
             os.mkdir(download_list_path)
         except:
@@ -287,7 +298,7 @@ def verify_directories_created():
 
     # Create bookmark_path if not exists
     if not bookmark_path.lower().startswith("smb") and not os.path.exists(bookmark_path):
-            logger.debug("Creating bookmark_path " + bookmark_path)
+        logger.debug("Creating bookmark_path " + bookmark_path)
         try:
             os.mkdir(bookmark_path)
         except:

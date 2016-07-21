@@ -23,7 +23,7 @@
 # along with streamondemand 5.  If not, see <http://www.gnu.org/licenses/>.
 # ------------------------------------------------------------
 # XBMC entry point
-#------------------------------------------------------------
+# ------------------------------------------------------------
 
 import os
 import sys
@@ -33,8 +33,8 @@ from core import logger
 
 logger.info("streamondemand.default init...")
 
-librerias = xbmc.translatePath( os.path.join( config.get_runtime_path(), 'lib' ) )
-sys.path.append (librerias)
+librerias = xbmc.translatePath(os.path.join(config.get_runtime_path(), 'lib'))
+sys.path.append(librerias)
 
 from platformcode import launcher
 
