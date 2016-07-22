@@ -60,9 +60,3 @@ def find_videos(data):
         else:
             logger.info("  url duplicada="+url)
     return devuelve
-
-def test():
-
-    video_urls = get_video_url("http://realvid.net/embed-m4snvxoc2tsn.html")
-
-    return len(video_urls)>0

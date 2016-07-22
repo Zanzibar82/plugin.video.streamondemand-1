@@ -7,6 +7,7 @@
 
 import re
 
+from core import config
 from core import logger
 from core import scrapertools
 
@@ -57,7 +58,10 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
 
         videourl = scrapertools.find_single_match(text_decode, "(http.*?true)").replace("https://","http://")
         extension = "." + scrapertools.find_single_match(text_decode, "video/(\w+)")
-        video_urls.append([extension + " [Openload] ", videourl+header_down+extension, 0, subtitle])
+        if config.get_platform() != "plex":
+            video_urls.append([extension + " [Openload] ", videourl+header_down+extension, 0, subtitle])
+        else:
+            video_urls.append([extension + " [Openload] ", videourl, 0, subtitle])
 
     for video_url in video_urls:
         logger.info("stramondemand.servers.openload %s - %s" % (video_url[0],video_url[1]))
@@ -86,4 +90,3 @@ def find_videos(text):
             logger.info("  url duplicada=" + url)
 
     return devuelve
-

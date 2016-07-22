@@ -75,8 +75,3 @@ def find_videos(data):
             logger.info("  url duplicada="+url)
             
     return devuelve
-
-def test():
-    #video_urls = get_video_url("http://www.facebook.com/v/194008590634623")
-
-    return len(video_urls)>0

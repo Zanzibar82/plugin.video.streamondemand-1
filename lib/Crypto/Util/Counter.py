@@ -57,7 +57,7 @@ if sys.version_info[0] == 2 and sys.version_info[1] == 1:
 from Crypto.Util.py3compat import *
 
 from Crypto.Util import _counter
-
+import struct
 
 # Factory function
 def new(nbits, prefix=b(""), suffix=b(""), initial_value=1, overflow=0, little_endian=False, allow_wraparound=False, disable_shortcut=False):

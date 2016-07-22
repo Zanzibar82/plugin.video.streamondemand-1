@@ -16,10 +16,3 @@ def get_long_url( short_url ):
     logger.info("location="+location)
 
     return location
-
-def test():
-    
-    location = get_long_url("https://safelinking.net/d/b038a2ed6e")
-    ok = ("http://played.to" in location)
-
-    return ok

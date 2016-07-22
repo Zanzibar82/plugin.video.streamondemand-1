@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #------------------------------------------------------------
-# streamondemand.- XBMC Plugin
+# streamondemand - XBMC Plugin
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 

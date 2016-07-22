@@ -8,6 +8,7 @@ import urllib2
 from urllib import (unquote, addinfourl, splitport, splitattr, splituser, splitpasswd)
 
 from nmb.NetBIOS import NetBIOS
+
 from smb.SMBConnection import SMBConnection
 
 try:

@@ -14,7 +14,7 @@ from core import scrapertools
 def get_video_url( page_url , premium = False , user="" , password="" , video_password="" ):
     logger.info("[adnstream.py] get_video_url(page_url='%s')" % page_url)
 
-    # Saca el c�digo del v�deo
+    # Saca el código del vídeo
     if page_url.startswith("http://"):
         try:
             code = scrapertools.get_match(page_url,"http\://www.adnstream.com/video/([a-zA-Z]+)/")
@@ -36,7 +36,7 @@ def get_video_url( page_url , premium = False , user="" , password="" , video_pa
 
     return video_urls
 
-# Encuentra v�deos del servidor en el texto pasado
+# Encuentra vídeos del servidor en el texto pasado
 def find_videos(data):
     logger.info("[adnstream.py] find_videos")
 
@@ -61,9 +61,3 @@ def find_videos(data):
             logger.info("  url duplicada="+url)
 
     return devuelve
-
-def test():
-
-    video_urls = get_video_url("http://www.adnstream.com/video/jvaRziGkoP/")
-
-    return len(video_urls)>0

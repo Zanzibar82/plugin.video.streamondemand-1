@@ -46,9 +46,3 @@ def get_long_url(short_url):
                 break
 
     return location
-
-def test():
-    
-    location = get_long_url("http://f2975ef2.linkbucks.com/")
-
-    return "adf.ly" in location

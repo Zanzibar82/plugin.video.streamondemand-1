@@ -1,10 +1,10 @@
 import BaseHTTPServer
+import urlparse
+import time
+import urllib
+import types
 import os
 import re
-import time
-import types
-import urllib
-import urlparse
 
 
 class Handler(BaseHTTPServer.BaseHTTPRequestHandler):

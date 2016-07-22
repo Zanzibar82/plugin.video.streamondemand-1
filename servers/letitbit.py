@@ -62,9 +62,3 @@ def find_videos(data):
             logger.info("  url duplicada="+url)
 
     return devuelve
-
-def test():
-
-    video_urls = get_video_url("http://letitbit.net/download/83307.84ab4737dc0fd6d7ee90d0458d0c/legion.avi.html")
-
-    return len(video_urls)>0

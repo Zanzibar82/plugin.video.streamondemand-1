@@ -45,9 +45,3 @@ def find_videos(data):
             logger.info("  url duplicada="+url)
 
     return devuelve
-
-def test():
-
-    video_urls = get_video_url("http://www.cloudzilla.to/embed/WALD15OE30ZEXS2M0D5DRXPQZ/")
-
-    return len(video_urls)>0

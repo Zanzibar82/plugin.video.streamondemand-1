@@ -1,8 +1,5 @@
-import libtorrent as lt
-
 from monitor import Monitor
-
-
+import libtorrent as lt
 class Dispatcher(Monitor):
     def __init__(self, client):
         super(Dispatcher,self).__init__(client)

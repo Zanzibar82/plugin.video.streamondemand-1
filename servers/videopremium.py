@@ -135,8 +135,3 @@ def find_videos(data):
             logger.info("  url duplicada="+url)
 
     return devuelve
-
-def test():
-    video_urls = get_video_url("http://videopremium.net/8x0mq9hanl3a")
-    return len(video_urls)>0
-

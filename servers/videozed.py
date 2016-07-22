@@ -85,8 +85,3 @@ def find_videos(text):
             logger.info("  url duplicada="+url)
 
     return devuelve
-
-def test():
-    video_urls = get_video_url("http://videozed.net/t9pxgc69j56f")
-
-    return len(video_urls)>0

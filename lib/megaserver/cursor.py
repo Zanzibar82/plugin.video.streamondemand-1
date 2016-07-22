@@ -1,8 +1,6 @@
 import urllib2
-
 from Crypto.Cipher import AES
 from Crypto.Util import Counter
-
 
 class Cursor(object):
     def __init__(self, file):

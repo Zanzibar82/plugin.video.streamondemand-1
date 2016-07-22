@@ -27,6 +27,7 @@
 # Este archivo utiliza el Script XBMC SUBTITLES y el modulo "regex_tvshow()"
 # cuyos autores son: amet,mr_blobby
 #------------------------------------------------------------
+
 import os
 import re
 import string

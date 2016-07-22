@@ -66,8 +66,3 @@ def find_videos(data):
             logger.info("  url duplicada="+url)
 
     return devuelve
-
-def test():
-    video_urls = get_video_url("http://documentary.es/2321-mundos-invisibles-1x02-mas-alla-de-nuestra-vision-720p?embed")
-
-    return len(video_urls)>0

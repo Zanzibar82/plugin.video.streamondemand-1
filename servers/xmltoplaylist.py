@@ -11,7 +11,7 @@ from core import config
 from core import logger
 from core import scrapertools
 
-DEBUG = True
+DEBUG = config.get_setting("debug")
 CHANNELNAME = "xmltoplaylist"
 PLAYLIST_XML_FILENAME_TEMP = "video_playlist.xml.temp.pls"
 FULL_FILENAME_PATH_XML = os.path.join( config.get_setting("downloadpath"), PLAYLIST_XML_FILENAME_TEMP )
@@ -32,7 +32,7 @@ def MakePlaylistFromXML(xmlurl,title="default"):
         nombrefichero = FULL_FILENAME_PATH_XML
     else:
         nombrefichero = os.path.join( config.get_setting("downloadpath"),title + ".pls")
-    xmldata = scrapertools.cache_page(xmlurl)
+    xmldata = scrapertools.cachePage(xmlurl)
     patron = '<title>([^<]+)</title>.*?<location>([^<]+)</location>'
     matches = re.compile(patron,re.DOTALL).findall(xmldata)
     if len(matches)>0:

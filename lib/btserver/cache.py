@@ -1,9 +1,7 @@
-import base64
 import os.path
-import re
-
 import libtorrent as lt
-
+import re
+import base64
 
 class Cache(object):
     CACHE_DIR='.cache'

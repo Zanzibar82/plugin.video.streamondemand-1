@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
 # streamondemand 5
-# Copyright 2015 streamondemand@gmail.com
+# Copyright 2015 tvalacarta@gmail.com
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 #
 # Distributed under the terms of GNU General Public License v3 (GPLv3)
@@ -22,48 +22,32 @@
 # You should have received a copy of the GNU General Public License
 # along with streamondemand 5.  If not, see <http://www.gnu.org/licenses/>.
 # ------------------------------------------------------------
-# Configuracion
-# ------------------------------------------------------------
+# Configuración
+#------------------------------------------------------------
 
 from core import config
-from core import logger
 from core.item import Item
+from core import logger
 
 DEBUG = True
 CHANNELNAME = "configuracion"
 
-
 def mainlist(item):
-    logger.info("streamondemand.channels.configuracion mainlist")
+	logger.info("tvalacarta.channels.configuracion mainlist")
 
-    itemlist = []
-    itemlist.append(Item(channel=CHANNELNAME, title="Preferencias", action="settings", folder=False))
-    itemlist.append(Item(channel=CHANNELNAME, title="", action="", folder=False))
-    itemlist.append(Item(channel="novedades", title="Ajustes de la sección 'Novedades'", action="menu_opciones", folder=True))
-    itemlist.append(Item(channel="buscador", title="Ajustes del buscador global", action="opciones", folder=True))
-    itemlist.append(Item(channel=CHANNELNAME, title="", action="", folder=False))
-    if config.is_xbmc():
-        itemlist.append(Item(channel=item.channel, action="updatebiblio",
-                             title="Buscar nuevos episodios y actualizar biblioteca", folder=False))
-        itemlist.append(Item(channel=item.channel, action="", title="", folder=False))
-    itemlist.append(Item(channel=CHANNELNAME, title="Comprobar actualizaciones", action="check_for_updates", folder=False))
+	itemlist = []
+	itemlist.append( Item(channel=CHANNELNAME, title="Preferencias", action="settings", folder=False) )
+	itemlist.append( Item(channel=CHANNELNAME, title="", action="", folder=False) )
+	itemlist.append( Item(channel="novedades", title="Ajustes de la sección 'Novedades'", action="menu_opciones", folder=True) )
+	itemlist.append( Item(channel="buscador", title="Ajustes del buscador global", action="opciones", folder=True) )
+	itemlist.append( Item(channel=CHANNELNAME, title="", action="", folder=False) )
+	itemlist.append( Item(channel=CHANNELNAME, title="Comprobar actualizaciones", action="check_for_updates", folder=False) )
 
-    return itemlist
-
+	return itemlist
 
 def check_for_updates(item):
-    from core import updater
-    updater.checkforupdates(plugin_mode=False)
-
+	from core import updater
+	updater.checkforupdates(plugin_mode=False)
 
 def settings(item):
-    config.open_settings()
-
-
-def updatebiblio(item):
-    logger.info("streamondemand.channels.ayuda updatebiblio")
-
-    import library_service
-    library_service.update_from_conf()
-
-
+    config.open_settings( )

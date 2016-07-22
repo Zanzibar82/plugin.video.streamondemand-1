@@ -1,7 +1,5 @@
 import os
-
 from cursor import Cursor
-
 
 class File(object):
     def __init__(self, path, base, index, size, fmap, piece_size, client):

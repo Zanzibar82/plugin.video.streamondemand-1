@@ -57,8 +57,3 @@ def find_videos(data):
             logger.info("  url duplicada="+url)
 
     return devuelve
-
-def test():
-    video_urls = get_video_url("http://www.fileflyer.com/view/Pi1BSCJ")
-
-    return len(video_urls)>0

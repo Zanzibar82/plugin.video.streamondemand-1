@@ -44,9 +44,3 @@ def find_videos(data):
             logger.info("  url duplicada="+url)
 
     return devuelve
-
-def test():
-
-    video_urls = get_video_url("http://es.cumlouder.com/embed/5933/")
-
-    return len(video_urls)>0

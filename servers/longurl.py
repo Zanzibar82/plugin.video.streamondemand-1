@@ -48,11 +48,3 @@ def get_long_urls(data):
           long_url=""
         if (long_url<> ""):data=data.replace(short_url,long_url)
     return data
-
-def test():
-    
-    location = get_long_urls("http://sh.st/saBL8")
-    ok = ("meuvideos.com" in location)
-    print "Funciona:",ok
-
-    return ok

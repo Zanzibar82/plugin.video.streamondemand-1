@@ -28,7 +28,7 @@ def get_video_url( page_url , premium = False , user="" , password="", video_pas
     # Descarga el json con los detalles del vídeo
     #http://www.userporn.com/player_control/settings.php?v=dvthddkC7l4J&em=TRUE&fv=v1.1.45
     controluri = "http://userporn.com/player_control/settings.php?v=" + code + "&em=TRUE&fv=v1.1.45"
-    datajson = scrapertools.cache_page(controluri)
+    datajson = scrapertools.cachePage(controluri)
     #logger.info("response="+datajson);
 
     # Convierte el json en un diccionario

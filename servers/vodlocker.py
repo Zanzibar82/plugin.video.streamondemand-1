@@ -61,9 +61,3 @@ def find_videos(data):
         else:
             logger.info("  url duplicada="+url)
     return devuelve
-
-def test():
-
-    video_urls = get_video_url("http://vodlocker.com/embed-qmzpoktqra0e.html")
-
-    return len(video_urls)>0

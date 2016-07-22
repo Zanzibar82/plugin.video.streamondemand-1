@@ -6,7 +6,6 @@ import config
 import logger
 import scrapertools
 
-
 def login(username,password):
     logger.info("pyload_client.login")
 

@@ -10,6 +10,7 @@
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 
+import re
 from core.scrapertools import *
 
 def decode(text):
@@ -69,4 +70,3 @@ def toString(number,base):
         return string[number]
     else:
         return toString(number//base,base) + string[number%base]
-

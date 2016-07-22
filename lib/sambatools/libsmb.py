@@ -12,10 +12,10 @@ from core import logger
 
 try:
     import xbmc
-    librerias = xbmc.translatePath(os.path.join(config.get_runtime_path(), 'lib', 'sambatools'))
+    librerias = xbmc.translatePath(os.path.join(config.get_runtime_path(), 'lib', 'samba'))
 except ImportError:
     xbmc = None
-    librerias = os.path.join(config.get_runtime_path(), 'lib', 'sambatools')
+    librerias = os.path.join(config.get_runtime_path(), 'lib', 'samba')
 
 if librerias not in sys.path:
     sys.path.append(librerias)
@@ -30,7 +30,7 @@ def parse_url(url):
         url += "/"
 
     import re
-    patron = 'smb\:\/\/([^\:]+)\:([^\@]+)@([^\/]+)\/([^\/]+)\/(.*\/)?'
+    patron = 'smb\:\/\/([^\:]+)\:([^\@]+)@([^\/]+)\/([^\/]+)/(.*/)?'
     matches = re.compile(patron, re.DOTALL).findall(url)
 
     if len(matches) > 0:
