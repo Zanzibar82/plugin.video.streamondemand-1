@@ -5,15 +5,12 @@
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import re
-import time
-import urllib2
-import urlparse
 
 from core import config
 from core import logger
 from core import scrapertools
+from core import servertools
 from core.item import Item
-from servers import servertools
 
 __channel__ = "cb01anime"
 __category__ = "A"
@@ -78,7 +75,7 @@ def novita(item):
     logger.info("[cb01anime.py] mainlist")
     itemlist = []
 
-    # Descarga la página
+    # Descarga la pï¿½gina
     data = scrapertools.anti_cloudflare(item.url, headers)
 
     ## ------------------------------------------------
@@ -114,7 +111,7 @@ def novita(item):
         scrapedthumbnail += "|" + _headers
         ## ------------------------------------------------				
 
-        # Añade al listado de XBMC
+        # Aï¿½ade al listado de XBMC
         itemlist.append(
             Item(channel=__channel__,
                  action="listacompleta" if scrapedtitle == "Lista Alfabetica Completa Anime/Cartoon" else "episodi",
@@ -261,7 +258,7 @@ def episodi(item):
 
     itemlist = []
 
-    # Descarga la página
+    # Descarga la pï¿½gina
     data = scrapertools.anti_cloudflare(item.url, headers)
     data = scrapertools.decodeHtmlentities(data).replace('http://cineblog01.pw', 'http://k4pp4.pw')
 

@@ -9,10 +9,10 @@ import urlparse
 
 from core import logger
 from core import scrapertools
+from core import servertools
 from core.item import Item
 from core.tmdb import infoSod
 from servers import adfly
-from servers import servertools
 
 __channel__ = "asiansubita"
 __category__ = "F,A"
