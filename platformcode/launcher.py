@@ -98,7 +98,7 @@ def run():
                 except:
                     import xbmcgui
                     advertencia = xbmcgui.Dialog()
-                    advertencia.ok("No se puede conectar","No ha sido posible comprobar","si hay actualizaciones")
+                    advertencia.ok("Impossibile connettersi","Non è stato possibile verificare","aggiornamenti")
                     logger.info("cstreamondemand.platformcode.launcher Fallo al verificar la actualización")
 
             else:
@@ -340,14 +340,14 @@ def run():
         
         if canal:
             xbmcgui.Dialog().ok(
-                "Error inesperado en el canal " + canal,
-                "Esto suele pasar cuando hay un fallo de conexión, cuando la web del canal "
-                "ha cambiado su estructura, o simplemente "
-                "porque hay algo mal en streamondemand.\nPara saber más detalles, consulta el log.")
+                "Errore inaspettato in " + canal,
+                "Protrebbe essere un errore di connessione. Il canale web "
+                "potrebbe aver modificato la sua struttura oppure si è "
+                "verificato un errore in streamondemand.\nPer dettagli consulta il log.")
         else:
             xbmcgui.Dialog().ok(
-                "Se ha producido un error en streamondemand",
-                "Comprueba el log para ver mas detalles del error." )
+                "Si è verificato un errore su streamondemand",
+                "Per dettagli consulta il log." )
 
 def set_server_list():
     logger.info("streamondemand.platformcode.launcher.set_server_list")
