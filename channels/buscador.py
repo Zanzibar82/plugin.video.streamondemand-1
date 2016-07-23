@@ -25,10 +25,10 @@ def mainlist(item,preferred_thumbnail="squares"):
     logger.info("streamondemand.channels.buscador mainlist")
 
     itemlist = list()
-    itemlist.append(Item(channel=item.channel, action="search", title="Busqueda generica..."))
+    itemlist.append(Item(channel=item.channel, action="search", title="Ricerca generica..."))
 
 
-    itemlist.append(Item(channel=item.channel, action="search", title="Busqueda por categorias...", extra="categorias"))
+    itemlist.append(Item(channel=item.channel, action="search", title="Ricerca per categoria...", extra="categorias"))
     #itemlist.append(Item(channel=item.channel, action="opciones", title="Opciones"))
 
     saved_searches_list = get_saved_searches()
@@ -41,9 +41,9 @@ def mainlist(item,preferred_thumbnail="squares"):
     
 def opciones(item):
     itemlist = []
-    itemlist.append(Item(channel=item.channel, action="settingCanal", title="Elegir canales incluidos en la búsqueda"))
-    itemlist.append(Item(channel=item.channel, action="clear_saved_searches", title="Borrar búsquedas guardadas"))
-    itemlist.append(Item(channel=item.channel, action="settings", title="Otros ajustes"))
+    itemlist.append(Item(channel=item.channel, action="settingCanal", title="Scegli canali inclusi nella ricerca"))
+    itemlist.append(Item(channel=item.channel, action="clear_saved_searches", title="Cancella ricerche salvate"))
+    itemlist.append(Item(channel=item.channel, action="settings", title="Altre impostazioni"))
     return itemlist
         
 def settings(item):
@@ -128,7 +128,7 @@ def searchbycat(item):
                       'visible': True}    
     list_controls.append(control)
                 
-    return platformtools.show_channel_settings(list_controls=list_controls, caption= "Elegir categorías", callback="search_cb", item=item)
+    return platformtools.show_channel_settings(list_controls=list_controls, caption= "Scegliere le categorie", callback="search_cb", item=item)
 
 def search_cb(item,values=""):
     cat = []
@@ -216,7 +216,7 @@ def do_search(item, categories=[]):
     #Para Kodi es necesario esperar antes de cargar el progreso, de lo contrario
     #el cuadro de progreso queda "detras" del cuadro "cargando..." y no se le puede dar a cancelar
     time.sleep(0.5)
-    progreso = platformtools.dialog_progress("Buscando " + tecleado,"")
+    progreso = platformtools.dialog_progress("Cercando " + tecleado,"")
     channel_files = glob.glob(channels_path)
     number_of_channels = len(channel_files)
     
@@ -225,7 +225,7 @@ def do_search(item, categories=[]):
     start_time = time.time()
     
     if multithread:
-      progreso.update(0, "Buscando %s..." % (tecleado))
+      progreso.update(0, "Cercando %s..." % (tecleado))
       
     for index, infile in enumerate(channel_files):
         percentage = index*100/number_of_channels
@@ -273,7 +273,7 @@ def do_search(item, categories=[]):
         else:
           logger.info("streamondemand.channels.buscador Intentado busqueda en " + basename_without_extension + " de " + tecleado)
 
-          progreso.update(percentage, "Buscando %s en %s..." % (tecleado, channel_parameters["title"]))
+          progreso.update(percentage, "Cercando %s en %s..." % (tecleado, channel_parameters["title"]))
           channel_search(search_results, channel_parameters, tecleado)
     
 
@@ -283,7 +283,7 @@ def do_search(item, categories=[]):
       while pendent:
         pendent =  len([a for a in searches if a.is_alive()])
         percentage =  (len(searches) - pendent) * 100 / len(searches)
-        progreso.update(percentage, "Buscando %s en %d canales..." % (tecleado, len(searches)))
+        progreso.update(percentage, "Cercando %s in %d canali..." % (tecleado, len(searches)))
         if progreso.iscanceled(): break
         time.sleep(0.5)
           
@@ -308,7 +308,7 @@ def do_search(item, categories=[]):
   
   
   
-    title="Buscando: '%s' | Encontrado: %d vídeos | Tiempo: %2.f segundos" % (tecleado,total, time.time()-start_time)
+    title="Cercando: '%s' | Localizzato: %d vídeos | Tempo: %2.f secondi" % (tecleado,total, time.time()-start_time)
     itemlist.insert(0,Item(title=title, color='yellow'))
 
     progreso.close()
@@ -332,7 +332,7 @@ def save_search(text):
 def clear_saved_searches(item):
     
     config.set_setting("saved_searches_list", list(), "buscador")
-    platformtools.dialog_ok("Buscador","Búsquedas borradas correctamente")
+    platformtools.dialog_ok("Ricerca","Ricerche cancellate correttamente")
 
 
 def get_saved_searches():
