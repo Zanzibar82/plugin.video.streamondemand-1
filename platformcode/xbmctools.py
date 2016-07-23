@@ -86,19 +86,19 @@ def add_new_folder(item, totalItems=0):
         filter_serie_command = "XBMC.RunPlugin(%s?%s)" % \
                                (sys.argv[0], item.clone(channel="filtertools", action="config_filter",
                                                         from_channel=item.channel).tourl())
-        contextCommands.append(("Menu Filtro", filter_serie_command))
+        contextCommands.append(("Menu filtro", filter_serie_command))
 
     if "guardar filtro" in item.context:
         filter_serie_command = "XBMC.RunPlugin(%s%s)" % \
                                (sys.argv[0], item.clone(channel="filtertools", action="save_filter",
                                                         from_channel=item.channel).tourl())
-        contextCommands.append(("guardar filtro serie", filter_serie_command))
+        contextCommands.append(("Salva filtro", filter_serie_command))
 
     if "borrar filtro" in item.context:
         filter_serie_command = "XBMC.Container.Update(%s%s)" % \
                                (sys.argv[0], item.clone(channel="filtertools", action="del_filter",
                                                         from_channel=item.channel).tourl())
-        contextCommands.append(("Eliminar Filtro", filter_serie_command))
+        contextCommands.append(("Elimina filtro", filter_serie_command))
 
     if "1" in item.context and accion != "por_teclado":
         DeleteCommand = "XBMC.RunPlugin(%s?%s)" % ( sys.argv[ 0 ] , item.clone(channel="buscador", action="borrar_busqueda").tourl())
