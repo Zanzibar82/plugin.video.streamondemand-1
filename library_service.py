@@ -70,7 +70,7 @@ def main():
 
                 data = library.read_file(nombre_fichero_config_canal)
                 dict_data = jsontools.load_json(data)
-                heading = 'Actualizando biblioteca....'
+                heading = 'Aggiornamento biblioteca....'
                 p_dialog = platformtools.dialog_progress_bg('streamondemand', heading)
                 p_dialog.update(0, '')
                 i = 0

@@ -556,7 +556,7 @@ def downloadfile(url,nombrefichero,headers=[],silent=False,continuar=False):
     
         # Crea el diálogo de progreso
         if not silent:
-            progreso = platformtools.dialog_progress( "plugin" , "Descargando..." , url , nombrefichero )
+            progreso = platformtools.dialog_progress( "plugin" , "Download..." , url , nombrefichero )
 
         # Si la plataforma no devuelve un cuadro de diálogo válido, asume modo silencio
         if progreso is None:
@@ -656,7 +656,7 @@ def downloadfile(url,nombrefichero,headers=[],silent=False,continuar=False):
                             #logger.info(sec_to_hms(tiempofalta))
                             if not silent:
                                 #progreso.update( percent , "Descargando %.2fMB de %.2fMB (%d%%)" % ( descargadosmb , totalmb , percent),"Falta %s - Velocidad %.2f Kb/s" % ( sec_to_hms(tiempofalta) , velocidad/1024 ), os.path.basename(nombrefichero) )
-                                progreso.update( percent , "%.2fMB/%.2fMB (%d%%) %.2f Kb/s %s falta " % ( descargadosmb , totalmb , percent , velocidad/1024 , sec_to_hms(tiempofalta)))
+                                progreso.update( percent , "%.2fMB/%.2fMB (%d%%) %.2f Kb/s %s manca " % ( descargadosmb , totalmb , percent , velocidad/1024 , sec_to_hms(tiempofalta)))
                         break
                     except:
                         reintentos = reintentos + 1
@@ -698,7 +698,7 @@ def downloadfile(url,nombrefichero,headers=[],silent=False,continuar=False):
     except:
         if url.startswith("rtmp") and not silent:
             from platformcode import platformtools
-            advertencia = platformtools.dialog_ok( "No puedes descargar ese vídeo","Las descargas en RTMP aún no","están soportadas")
+            advertencia = platformtools.dialog_ok( "Download non consentito","Il formato RTMP non","è supportato")
         else:
             import traceback,sys
             from pprint import pprint
@@ -753,7 +753,7 @@ def downloadfileGzipped(url,pathfichero):
 
     # Crea el diálogo de progreso
     from platformcode import platformtools
-    progreso = platformtools.dialog_progress( "addon" , "Descargando..." , url.split("|")[0] , nombrefichero )
+    progreso = platformtools.dialog_progress( "addon" , "Download..." , url.split("|")[0] , nombrefichero )
 
     # Timeout del socket a 60 segundos
     socket.setdefaulttimeout(10)
