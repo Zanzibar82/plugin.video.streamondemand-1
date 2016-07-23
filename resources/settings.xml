@@ -135,7 +135,7 @@
         <setting id="librarypath" type="text" label="30067" default=""/>
     </category>
 
-    <category label="Otros"><!--30503 -->
+    <category label="Altro"><!--30503 -->
         <!--<setting type="sep" />-->
         <setting label="Biblioteca" type="lsep"/>
         <setting id="updatelibrary" type="bool" label="30201" default="false"/>

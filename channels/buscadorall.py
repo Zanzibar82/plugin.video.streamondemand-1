@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
 # streamondemand - XBMC Plugin
-# Ricerca "Biblioteca"
+# Ricerca "buscadorall"
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 
@@ -31,10 +31,10 @@ from core import config
 from core import logger
 from core.item import Item
 
-__channel__ = "biblioteca"
+__channel__ = "buscadorall"
 __category__ = "F"
 __type__ = "generic"
-__title__ = "biblioteca"
+__title__ = "buscadorall"
 __language__ = "IT"
 
 host = "http://www.ibs.it"
@@ -50,7 +50,7 @@ TMDB_KEY = 'f7f51775877e0bb6703520952b3c7840'
 #    api_key_match = re.search('\?api_key=([\da-fA-F]+)\&amp;', tmdbxml)
 #    if api_key_match:
 #        TMDB_KEY = api_key_match.group(1)
-#        logger.info('streamondemand.biblioteca use metadata.themoviedb.org api_key')
+#        logger.info('streamondemand.buscadorall use metadata.themoviedb.org api_key')
 #except Exception, e:
 #    pass
 
@@ -98,7 +98,7 @@ def isGeneric():
 
 
 def mainlist(item):
-    logger.info("streamondemand.biblioteca mainlist")
+    logger.info("streamondemand.buscadorall mainlist")
     itemlist = [Item(channel="buscador",
                      title="[COLOR lightgreen]Cerca nei Canali...[/COLOR]",
                      action="mainlist",
@@ -571,7 +571,7 @@ def get_json_response(url=""):
 
 
 def do_channels_search(item):
-    logger.info("streamondemand.channels.biblioteca do_channels_search")
+    logger.info("streamondemand.channels.buscadorall do_channels_search")
 
     try:
         title_year = int(item.extra[0:4])
