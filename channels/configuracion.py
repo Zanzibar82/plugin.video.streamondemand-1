@@ -36,12 +36,12 @@ def mainlist(item):
 	logger.info("tvalacarta.channels.configuracion mainlist")
 
 	itemlist = []
-	itemlist.append( Item(channel=CHANNELNAME, title="Preferencias", action="settings", folder=False) )
+	itemlist.append( Item(channel=CHANNELNAME, title="Preferenze", action="settings", folder=False) )
 	itemlist.append( Item(channel=CHANNELNAME, title="", action="", folder=False) )
-	itemlist.append( Item(channel="novedades", title="Ajustes de la sección 'Novedades'", action="menu_opciones", folder=True) )
-	itemlist.append( Item(channel="buscador", title="Ajustes del buscador global", action="opciones", folder=True) )
+	itemlist.append( Item(channel="novedades", title="Impostazioni 'Novedades'", action="menu_opciones", folder=True) )
+	itemlist.append( Item(channel="buscador", title="Impostazioni della ricerca globale", action="opciones", folder=True) )
 	itemlist.append( Item(channel=CHANNELNAME, title="", action="", folder=False) )
-	itemlist.append( Item(channel=CHANNELNAME, title="Comprobar actualizaciones", action="check_for_updates", folder=False) )
+	itemlist.append( Item(channel=CHANNELNAME, title="Avvia aggiornamenti", action="check_for_updates", folder=False) )
 
 	return itemlist
 
