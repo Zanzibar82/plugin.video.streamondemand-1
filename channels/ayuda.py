@@ -18,16 +18,16 @@ def mainlist(item):
     cuantos = 0
     if config.is_xbmc():
         itemlist.append(Item(channel=item.channel, action="force_creation_advancedsettings",
-                             title="Crear fichero advancedsettings.xml optimizado"))
+                             title="Crea advancedsettings.xml ottimizzato"))
         cuantos += cuantos
         
     if config.is_xbmc():
         itemlist.append(Item(channel=item.channel, action="updatebiblio",
-                             title="Buscar nuevos episodios y actualizar biblioteca"))
+                             title="Cerca nuovi episodi e aggiorna la biblioteca"))
         cuantos += cuantos
 
     if cuantos > 0:
-        itemlist.append(Item(channel=item.channel, action="tutoriales", title="Ver guías y tutoriales en vídeo"))
+        itemlist.append(Item(channel=item.channel, action="tutoriales", title="Consulta i video tutorial"))
     else:
         itemlist.extend(tutoriales(item))
 
@@ -40,7 +40,7 @@ def tutoriales(item):
     itemlist = []
 
     for playlist in playlists:
-        if playlist.title == "Tutoriales de streamondemand":
+        if playlist.title == "Tutorial di streamondemand":
             itemlist = youtube_channel.videos(playlist)
 
     return itemlist
@@ -62,7 +62,7 @@ def force_creation_advancedsettings(item):
     fichero.write(texto)
     fichero.close()
                 
-    platformtools.dialog_ok("plugin", "Se ha creado un fichero advancedsettings.xml","con la configuración óptima para el streaming.")
+    platformtools.dialog_ok("plugin", "Si è creato advancedsettings.xml","con le impostazioni ottimizzate per lo streaming")
 
     return []
 

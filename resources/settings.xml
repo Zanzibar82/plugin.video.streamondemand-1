@@ -10,11 +10,11 @@
         <setting id="forceview" type="bool" label="30043" default="false"/>
         <setting id="debug" type="bool" label="30003" default="false"/>
         <setting type="sep"/>
-        <setting label="Canales para adultos" type="lsep"/>
+        <setting label="Canali per adulti" type="lsep"/>
         <setting id="adult_mode" type="bool" label="30002" default="false"/>
-        <setting id="adult_pin" type="text" label="PIN para abrir canal de adultos" option="hidden" default=""/>
+        <setting id="adult_pin" type="text" label="PIN per canali per adulti" option="hidden" default=""/>
         <setting type="sep"/>
-        <setting label="Actualizaciones" type="lsep"/>
+        <setting label="Aggiornamenti" type="lsep"/>
         <setting id="updatecheck2" type="bool" label="30001" default="true"/>
         <setting id="updatechannels" type="bool" label="30004" default="true"/>
     </category>
@@ -23,7 +23,7 @@
     <category label="30500">
 
         <setting type="sep"/>
-        <setting id="hidepremium" type="bool" label="Ocultar servidores de pago sin cuenta" default="false"/>
+        <setting id="hidepremium" type="bool" label="Nascondi i server pagamento senza credito" default="false"/>
 
         <setting type="sep"/>
         <setting id="realdebridpremium" type="bool" label="Real-Debrid" default="false"/>
@@ -139,17 +139,17 @@
         <!--<setting type="sep" />-->
         <setting label="Biblioteca" type="lsep"/>
         <setting id="updatelibrary" type="bool" label="30201" default="false"/>
-        <setting id="library_mode" type="enum" values="Servidor|Cliente" label="Modo" default="0"/>
-        <setting id="xbmc_host" type="text" label="Nombre Servidor" enable="eq(-1,1)" default=""/>
-        <setting id="xbmc_port" type="number" label="Puerto Servidor" enable="eq(-2,1)" default="0"/>
-        <setting id="mark_as_watched" type="bool" label="Marcar automáticamente como visto" default="false"/>
-        <setting id="watched_setting" type="enum" values="5 Min|30%|50%|80%" label="Tiempo necesario del video"
+        <setting id="library_mode" type="enum" values="Server|Client" label="Modo" default="0"/>
+        <setting id="xbmc_host" type="text" label="Nome server" enable="eq(-1,1)" default=""/>
+        <setting id="xbmc_port" type="number" label="Porta server" enable="eq(-2,1)" default="0"/>
+        <setting id="mark_as_watched" type="bool" label="Segna automaticamente come visto" default="false"/>
+        <setting id="watched_setting" type="enum" values="5 Min|30%|50%|80%" label="Tempo di visualizzazione video"
                  default="3" enable="eq(-1,true)"/>
-        <setting id="show_all_seasons" type="bool" label="Mostrar la opción &quot;Todos las temporadas&quot;"
+        <setting id="show_all_seasons" type="bool" label="Opzione visualizza &quot;Tutte le stagioni&quot;"
                  default="true"/>
-        <setting id="no_pile_on_seasons" type="select" label="No apilar temporadas de series"
-                 values="Nunca|Sólo si hay una temporada|Siempre" default="Sólo si hay una temporada"/>
-        <setting id="scrap_ask_name" type="bool" label="Confirmar nombre de la pelicula/serie al añadir a la biblioteca"
+        <setting id="no_pile_on_seasons" type="select" label="Non accodare le stagioni"
+                 values="Mai|Solo se presente una stagione|Sempre" default="Solo se presente una stagione"/>
+        <setting id="scrap_ask_name" type="bool" label="Confermare il nome del film / serie da aggiungere alla libreria"
                  default="true"/>
         <setting type="sep"/>
         <setting label="Filtros" type="lsep"/>
