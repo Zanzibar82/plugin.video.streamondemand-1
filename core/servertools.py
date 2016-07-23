@@ -51,7 +51,7 @@ def find_video_items(item=None, data=None, channel=""):
 
     itemlist = []
     for video in listavideos:
-        scrapedtitle = "Enlace encontrado en "+video[2]
+        scrapedtitle = " Link su "+video[2]
         scrapedurl = video[1]
         server = video[2]
         if get_server_parameters(server)["thumbnail"]:
@@ -100,11 +100,11 @@ def findvideosbyserver(data, serverid):
         exec "from servers import "+serverid
         exec "devuelve.extend("+serverid+".find_videos(data))"
     except ImportError:
-        logger.info("No existe conector para #"+serverid+"#")
+        logger.info("Non esiste il connettore per #"+serverid+"#")
         #import traceback
         #logger.info(traceback.format_exc())
     except:
-        logger.info("Error en el conector #"+serverid+"#")
+        logger.info("Errore del connettore #"+serverid+"#")
         import traceback
         logger.info(traceback.format_exc())
 
@@ -268,13 +268,13 @@ def resolve_video_urls_for_playing(server,url,video_password="",muestra_dialogo=
                 for premium in server_parameters["premium"]:
                   listapremium.append(get_server_parameters(premium)["name"])
 
-                return video_urls,False,"Para ver un vídeo en "+server+" necesitas<br/>una cuenta en "+" o ".join(listapremium)
+                return video_urls,False,"Per il video su "+server+" è necessario<br/>un account "+" o ".join(listapremium)
 
         except:
             if muestra_dialogo: progreso.close()
             import traceback
             logger.info(traceback.format_exc())
-            return video_urls,False,"Se ha producido un error en<br/>el conector con "+server
+            return video_urls,False,"Si è verificato un errore<br/>con il connettore "+server
 
     return video_urls,True,""
 
@@ -328,9 +328,9 @@ def xml2dict(file = None, xmldata = None):
   import re, sys, os
   parse = globals().get(sys._getframe().f_code.co_name)
 
-  if xmldata == None and file == None:  raise Exception("No hay nada que convertir!")
+  if xmldata == None and file == None:  raise Exception("Non è possibile convertirlo!")
   if xmldata == None:
-    if not os.path.exists(file): raise Exception("El archivo no existe!")
+    if not os.path.exists(file): raise Exception("Il file non esiste!")
     xmldata = open(file, "rb").read()
 
   matches = re.compile("<(?P<tag>[^>]+)>[\n]*[\s]*[\t]*(?P<value>.*?)[\n]*[\s]*[\t]*<\/(?P=tag)\s*>",re.DOTALL).findall(xmldata)
