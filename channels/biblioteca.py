@@ -23,9 +23,9 @@ def mainlist(item):
     logger.info("streamondemand.channels.biblioteca mainlist")
 
     itemlist = list()
-    itemlist.append(Item(channel=item.channel, action="peliculas", title="Películas"))
-    itemlist.append(Item(channel=item.channel, action="series", title="Series"))
-    itemlist.append(Item(channel=item.channel, action="fichero_series", title="Fichero de series"))
+    itemlist.append(Item(channel=item.channel, action="peliculas", title="Film"))
+    itemlist.append(Item(channel=item.channel, action="series", title="Serie"))
+    itemlist.append(Item(channel=item.channel, action="fichero_series", title="Serie di file"))
 
     return itemlist
 
@@ -143,15 +143,15 @@ def get_temporadas(item):
 
         #logger.info("apilar {}".format(config.get_setting("no_pile_on_seasons")))
 
-        if config.get_setting("no_pile_on_seasons") == "Siempre":
+        if config.get_setting("no_pile_on_seasons") == "Sempre":
             return get_capitulos(item)
 
         for i in ficheros:
             if i.endswith('.strm'):
                 season = i.split('x')[0]
-                dict_temp[season] = "Temporada " + str(season)
+                dict_temp[season] = "Temporanea " + str(season)
 
-        if config.get_setting("no_pile_on_seasons") == "Sólo si hay una temporada" and len(dict_temp) == 1:
+        if config.get_setting("no_pile_on_seasons") == "Solo se presente una stagione" and len(dict_temp) == 1:
             return get_capitulos(item)
         else:
             # Creamos un item por cada temporada
@@ -165,7 +165,7 @@ def get_temporadas(item):
                 itemlist = sorted(itemlist, key=lambda it: int(it.contentSeason))
 
                 if config.get_setting("show_all_seasons") == "true":
-                        new_item = item.clone(action='get_capitulos', title="*Todas las temporadas")
+                        new_item = item.clone(action='get_capitulos', title="*Tutte le stagioni")
                         itemlist.insert(0, new_item)
 
     return itemlist
@@ -242,7 +242,7 @@ def fichero_series(item):
         return []
 
     itemlist.append(Item(channel=item.channel, action="limpiar_fichero",
-                         title="[COLOR yellow]Eliminar entradas de series huerfanas[/COLOR]", dict_fichero=dict_data))
+                         title="[COLOR yellow]Rumuovere voci assenti[/COLOR]", dict_fichero=dict_data))
 
     for tvshow_id in dict_data.keys():
         show = dict_data[tvshow_id]["name"]
