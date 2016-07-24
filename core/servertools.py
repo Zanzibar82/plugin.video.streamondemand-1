@@ -190,7 +190,7 @@ def resolve_video_urls_for_playing(server,url,video_password="",muestra_dialogo=
             # Muestra un diágo de progreso
             if muestra_dialogo:
                 from platformcode import platformtools
-                progreso = platformtools.dialog_progress( "streamondemand" , "Conectando con "+server)
+                progreso = platformtools.dialog_progress( "streamondemand" , "Connessione con "+server)
             server_parameters = get_server_parameters(server)
 
             #Cuenta las opciones disponibles, para calcular el porcentaje
@@ -223,7 +223,7 @@ def resolve_video_urls_for_playing(server,url,video_password="",muestra_dialogo=
             # Obtiene enlaces free
             if server_parameters["free"]=="true":
                 if muestra_dialogo:
-                  progreso.update((100 / len(opciones)) * opciones.index("free")  , "Conectando con "+server)
+                  progreso.update((100 / len(opciones)) * opciones.index("free")  , "Connessione con "+server)
 
                 logger.info("streamondemand.core.servertools invocando a "+server+".get_video_url")
                 video_urls = server_connector.get_video_url( page_url=url , video_password=video_password )
@@ -231,13 +231,13 @@ def resolve_video_urls_for_playing(server,url,video_password="",muestra_dialogo=
                 # Si no se encuentran vídeos en modo free, es porque el vídeo no existe
                 if len(video_urls)==0:
                     if muestra_dialogo: progreso.close()
-                    return video_urls,False,"No se puede encontrar el vídeo en "+server
+                    return video_urls,False,"Non trovo il video su "+server
 
             # Obtiene enlaces para las diferentes opciones premium
             for premium in server_parameters["premium"]:
               if config.get_setting(premium+"premium")=="true":
                 if muestra_dialogo:
-                  progreso.update((100 / len(opciones)) * opciones.index(premium)  , "Conectando con "+premium)
+                  progreso.update((100 / len(opciones)) * opciones.index(premium)  , "Connessione con "+premium)
                 exec "from servers import "+premium+" as premium_conector"
                 if premium == "realdebrid":
                     if config.is_xbmc() or config.get_platform() == "mediaserver":
@@ -251,7 +251,7 @@ def resolve_video_urls_for_playing(server,url,video_password="",muestra_dialogo=
                     video_urls.extend(premium_conector.get_video_url( page_url=url , premium=True , user=config.get_setting(premium+"user") , password=config.get_setting(premium+"password"), video_password=video_password ))
 
             if muestra_dialogo:
-                progreso.update( 100 , "Proceso finalizado")
+                progreso.update( 100 , "Processo terminato")
 
             # Cierra el diálogo de progreso
             if muestra_dialogo: progreso.close()
