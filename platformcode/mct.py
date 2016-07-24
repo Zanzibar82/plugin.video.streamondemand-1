@@ -415,7 +415,7 @@ def play(url, xlistitem, is_view=None, subtitle=""):
             if info.num_files() == 1:
                 # -- Diálogo continuar o terminar ---------------
                 d = xbmcgui.Dialog()
-                ok = d.yesno('streamondemand-MCT', 'XBMC-Kodi Cerró el vídeo.', '¿Continuar con la sesión?')
+                ok = d.yesno('streamondemand-MCT', 'Kodi ha chiuso il video.', 'Continuare con la sessione?')
             else: ok = False
             # -- SI ---------------------------------------------
             if ok:
@@ -613,7 +613,7 @@ def remove_files( download, torrent_file, video_file, ses, h ):
 
     if dialog_view:
         d = xbmcgui.Dialog()
-        ok = d.yesno('streamondemand-MCT', 'Borrar las descargas del video', video_file)
+        ok = d.yesno('streamondemand-MCT', 'Annullare il download', video_file)
 
         # -- SI -------------------------------------------------
         if ok:
