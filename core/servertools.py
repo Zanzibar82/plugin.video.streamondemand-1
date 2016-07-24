@@ -54,10 +54,13 @@ def find_video_items(item=None, data=None, channel=""):
         scrapedtitle = " Link su "+video[2]
         scrapedurl = video[1]
         server = video[2]
-        if get_server_parameters(server)["thumbnail"]:
-            thumbnail = get_server_parameters(server)["thumbnail"]
-        else:
-            thumbnail = "http://media.tvalacarta.info/servers/server_"+server+".png"
+        # DrZ3r0
+        thumbnail = item.thumbnail
+        if not thumbnail:
+            if get_server_parameters(server)["thumbnail"]:
+                thumbnail = get_server_parameters(server)["thumbnail"]
+            else:
+                thumbnail = "http://media.tvalacarta.info/servers/server_"+server+".png"
         
         itemlist.append( Item(channel=item.channel, title=scrapedtitle , action="play" , server=server, url=scrapedurl, thumbnail=thumbnail, show=item.show , plot=item.plot , parentContent=item, folder=False) )
 
