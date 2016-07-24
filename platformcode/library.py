@@ -97,14 +97,14 @@ def make_dir(path):
             os.mkdir(path)
         except OSError:
             logger.info("streamondemand.platformcode.library make_dir: Error al crear la ruta")
-            platformtools.dialog_notification("Error al crear la ruta", path)
+            platformtools.dialog_notification("Errore nella creazione del percorso", path)
     else:
         try:
             path_samba, folder_samba = path.rsplit('/', 1)
             samba.create_directory(folder_samba, path_samba)
         except gaierror:
             logger.info("streamondemand.platformcode.library make_dir: Error al crear la ruta")
-            platformtools.dialog_notification("Error al crear la ruta", path)
+            platformtools.dialog_notification("Errore nella creazione del percorso", path)
 
 
 def join_path(path, *name):
@@ -259,7 +259,7 @@ def save_library_movie(item):
         return 0, 0, -1  # Salimos sin guardar
 
     # progress dialog
-    p_dialog = platformtools.dialog_progress('streamondemand', 'Añadiendo película...')
+    p_dialog = platformtools.dialog_progress('streamondemand', 'Aggiunta film...')
     filename = title_to_filename("{0} [{1}].strm".format(item.fulltitle.strip().lower(),
                                                          item.channel))
     logger.debug(filename)
@@ -356,7 +356,7 @@ def get_video_id_from_scraper(serie, ask=False, video_type="tv"):
     otmdb = tmdb.Tmdb(texto_buscado=serie.infoLabels['title'], tipo=video_type, year=serie.infoLabels.get('year', ''))
     if ask:
         select = platformtools.show_video_info(otmdb.get_list_resultados(),
-                                               caption="[{0}]: Selecciona la serie correcta".
+                                               caption="[{0}]: Seleziona la serie corretta".
                                                format(serie.infoLabels['title']), callback='cb_select_from_tmdb')
         if select:
             serie.infoLabels.update(select)
@@ -398,8 +398,8 @@ def save_library_episodes(path, episodelist):
     fallidos = 0
 
     # progress dialog
-    p_dialog = platformtools.dialog_progress('streamondemand', 'Añadiendo episodios...')
-    p_dialog.update(0, 'Añadiendo episodio...')
+    p_dialog = platformtools.dialog_progress('streamondemand', 'Aggiunta episodi...')
+    p_dialog.update(0, 'Aggiunta episodio...')
     # fix float porque la division se hace mal en python 2.x
     t = float(100) / len(episodelist)
 
@@ -408,7 +408,7 @@ def save_library_episodes(path, episodelist):
         addon_name = "plugin://plugin.video.streamondemand/"
 
     for i, e in enumerate(episodelist):
-        p_dialog.update(int(math.ceil(i * t)), 'Añadiendo episodio...', e.title)
+        p_dialog.update(int(math.ceil(i * t)), 'Aggiunta episodio...', e.title)
         # Añade todos menos el que dice "Añadir esta serie..." o "Descargar esta serie..."
         if e.action == "add_serie_to_library" or e.action == "download_all_episodes":
             continue
@@ -923,9 +923,9 @@ def check_tvshow_xml():
 
 def convert_xml_to_json():
     logger.info("streamondemand.platformcode.library convert_xml_to_json")
-    platformtools.dialog_ok("Biblioteca: Se va a actualizar al nuevo formato",
-                            "Seleccione el nombre correcto de cada serie, si no está seguro pulse 'Cancelar'.",
-                            "Hay nuevas opciones en 'Biblioteca' y en la 'configuración' del addon.")
+    platformtools.dialog_ok("Biblioteca: Si aggiornerà al nuovo formato",
+                            "Selezionare il nome corretto di ogni serie, se non siete sicuri di fare clic su 'Cancella'.",
+                            "Ci sono nuove opzioni in 'Library' e 'configurazione'.")
 
     # TODO soporte samba
     os.rename(TVSHOWS_PATH, os.path.join(config.get_library_path(), "SERIES_OLD"))
@@ -1052,9 +1052,9 @@ def add_pelicula_to_library(item):
     itemlist = []
 
     if fallidos == 0:
-        itemlist.append(Item(title="La pelicula se ha añadido a la biblioteca", channel=item.channel))
+        itemlist.append(Item(title="Il film è stato aggiunto alla libreria", channel=item.channel))
     else:
-        itemlist.append(Item(title="ERROR, la pelicula NO se ha añadido a la biblioteca",  channel=item.channel))
+        itemlist.append(Item(title="ERRORE, il film non è stato aggiunto alla libreria",  channel=item.channel))
 
     from platformcode import xbmctools
     xbmctools.renderItems(itemlist, item)
@@ -1082,17 +1082,17 @@ def add_serie_to_library(item, channel):
 
     itemlist = []
     if fallidos == -1:
-        itemlist.append(Item(title="ERROR, la serie NO se ha añadido a la biblioteca",channel=item.channel))
+        itemlist.append(Item(title="ERRORE, la serie non è stata aggiunta alla libreria",channel=item.channel))
         logger.error("streamondemand.platformcode.library La serie {0} no se ha podido añadir a la biblioteca".format(item.show))
         from platformcode import xbmctools
         xbmctools.renderItems(itemlist, item)
         return -1
     elif fallidos > 0:
-        itemlist.append(Item(title="ERROR, la serie NO se ha añadido completa a la biblioteca",
+        itemlist.append(Item(title="ERRORE, la serie non è stata aggiunta completamente alla libreria",
                              channel=item.channel))
         logger.error("streamondemand.platformcode.library No se han podido añadir {0} episodios de la serie {1} a la biblioteca".format(fallidos,item.show))
     else:
-        itemlist.append(Item(title="La serie se ha añadido a la biblioteca", channel=item.channel))
+        itemlist.append(Item(title="La serie è stata aggiunta alla libreria", channel=item.channel))
         logger.info("streamondemand.platformcode.library  Se han añadido {0} episodios de la serie {1} a la biblioteca".format(insertados,item.show))
 
     from platformcode import xbmctools
