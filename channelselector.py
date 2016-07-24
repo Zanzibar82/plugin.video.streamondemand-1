@@ -47,7 +47,7 @@ def getmainlist(preferred_thumb=""):
     itemlist.append( Item(title="Ricerca Globale" , channel="buscadorall" , action="mainlist" , thumbnail = os.path.join(config.get_runtime_path() , "resources" , "images", "main_menu_search.png"),viewmode="movie") )
     itemlist.append( Item(title="Oggi in TV" , channel="filmontv" , action="mainlist" , thumbnail = os.path.join(config.get_runtime_path() , "resources" , "images", "main_menu_filmontv.png"),viewmode="movie") )
     itemlist.append( Item(title=config.get_localized_string(30102) , channel="favoritos" , action="mainlist" , thumbnail = os.path.join(config.get_runtime_path() , "resources" , "images", "main_menu_fav.png"),viewmode="movie") )
-    #itemlist.append( Item(title=config.get_localized_string(30131) , channel="libreria" , action="mainlist", thumbnail = urlparse.urljoin(get_thumbnail_path(preferred_thumb),"thumb_biblioteca.png"),viewmode="movie") )
+    itemlist.append( Item(title=config.get_localized_string(30131) , channel="libreria" , action="mainlist", thumbnail = os.path.join(config.get_runtime_path() , "resources" , "images", "main_menu_library.png"),viewmode="movie") )
     itemlist.append( Item(title=config.get_localized_string(30101) , channel="descargas" , action="mainlist", thumbnail = os.path.join(config.get_runtime_path() , "resources" , "images", "main_menu_download.png"),viewmode="movie") )
 
     if "xbmceden" in config.get_platform():
