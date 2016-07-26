@@ -31,7 +31,7 @@ def mainlist(item, preferred_thumbnail="squares"):
     itemlist.append(Item(channel=item.channel, action="search", title="Ricerca generica..."))
 
     itemlist.append(Item(channel=item.channel, action="search", title="Ricerca per categoria...", extra="categorias"))
-    # itemlist.append(Item(channel=item.channel, action="opciones", title="Opciones"))
+    itemlist.append(Item(channel=item.channel, action="opciones", title="Opzioni"))
 
     saved_searches_list = get_saved_searches()
 

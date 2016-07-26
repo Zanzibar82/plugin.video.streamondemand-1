@@ -24,7 +24,7 @@
 	<settings>
 		<id>multithread</id>
 		<type>bool</type>
-		<label>Buscador MultiThread</label>
+		<label>Ricerca MultiThread</label>
 		<default>true</default>
 		<enabled>true</enabled>
 		<visible>true</visible>
@@ -32,17 +32,17 @@
 	<settings>
 		<id>result_mode</id>
 		<type>list</type>
-		<label>Mostrar resultados:</label>
+		<label>Mostra risultati:</label>
     	<default>0</default>
 		<enabled>true</enabled>
 		<visible>true</visible>
-		<lvalues>Por canales</lvalues>
-		<lvalues>Todo junto</lvalues>
+		<lvalues>Per canale</lvalues>
+		<lvalues>Tutti insieme</lvalues>
 	</settings>
 	<settings>
 		<id>saved_searches_limit</id>
 		<type>list</type>
-		<label>Busquedas guardadas:</label>
+		<label>Numero ricerce salvate:</label>
     	<default>0</default>
 		<enabled>true</enabled>
 		<visible>true</visible>
