@@ -50,6 +50,7 @@ def mainlist(item):
                      action="search",
                      title="[COLOR orange]Cerca...[/COLOR]",
                      url="http://www.leserie.tv/index.php?do=search",
+                     extra="anime",
                      thumbnail=CercaThumbnail,
                      fanart=CercaFanart)]
 

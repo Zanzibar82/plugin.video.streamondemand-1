@@ -146,7 +146,7 @@ def do_search(item):
             # http://docs.python.org/library/imp.html?highlight=imp#module-imp
             obj = imp.load_source(basename_without_extension, infile[:-4]+".py")
             logger.info("streamondemand.channels.buscador cargado " + basename_without_extension + " de " + infile)
-            channel_result_itemlist.extend(obj.search(Item(extra='film'), tecleado))
+            channel_result_itemlist.extend(obj.search(Item(extra="movie"), tecleado))
             for item in channel_result_itemlist:
                 item.title = " [COLOR azure] " + item.title + " [/COLOR] [COLOR orange]su[/COLOR] [COLOR green]" + basename_without_extension + "[/COLOR]"
                 item.viewmode = "list"

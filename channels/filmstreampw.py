@@ -54,6 +54,7 @@ def mainlist(item):
                 Item(channel=__channel__,
                      title="[COLOR yellow]Cerca...[/COLOR]",
                      action="search",
+                     extra="movie",
                      thumbnail="http://dc467.4shared.com/img/fEbJqOum/s7/13feaf0c8c0/Search"),
                 Item(channel=__channel__,
                      title="[COLOR azure]Serie TV[/COLOR]",
@@ -136,9 +137,9 @@ def search(item, texto):
     item.url = host + "index.php?do=search&subaction=search&story=" + texto
 
     try:
-        if item.extra == "serie":
+        if item.extra == "movie":
             return peliculasx_tv(item)
-        else:
+        if item.extra == "serie":
             return peliculasx(item)
 
     # Se captura la excepción, para no interrumpir al buscador global si un canal falla

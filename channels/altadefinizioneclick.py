@@ -59,11 +59,11 @@ def mainlist(item):
              title="[COLOR azure]Film Sub-Ita[/COLOR]",
              action="fichas",
              url=host + "/sub-ita/",
-             extra="sub",
              thumbnail="http://i.imgur.com/qUENzxl.png"),
         Item(channel=__channel__,
              title="[COLOR orange]Cerca...[/COLOR]",
              action="search",
+             extra="movie",
              thumbnail="http://dc467.4shared.com/img/fEbJqOum/s7/13feaf0c8c0/Search")]
 
     return itemlist

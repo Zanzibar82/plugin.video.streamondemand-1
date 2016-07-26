@@ -59,6 +59,7 @@ def mainlist(item):
                 Item(channel=__channel__,
                      title="[COLOR yellow]Cerca...[/COLOR]",
                      action="search",
+                     extra="movie",
                      thumbnail="http://dc467.4shared.com/img/fEbJqOum/s7/13feaf0c8c0/Search"),
                 Item(channel=__channel__,
                      title="[COLOR azure]Serie TV[/COLOR]",
@@ -108,12 +109,11 @@ def search(item, texto):
     logger.info("[italiafilm.py] search " + texto)
 
     try:
-        if item.extra == "serie":
-            item.url = host + "/?s=" + texto
-            return peliculas_tv(item)
-        else:
-            item.url = host + "/?s=" + texto
+        item.url = host + "/?s=" + texto
+        if item.extra == "movie":
             return peliculas(item)
+        if item.extra == "serie":
+            return peliculas_tv(item)
     # Se captura la excepcion, para no interrumpir al buscador global si un canal falla
     except:
         import sys
