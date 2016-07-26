@@ -739,7 +739,7 @@ class SettingsWindow(xbmcgui.WindowXMLDialog):
 
     def check_default(self):
         if self.custom_button is not None and not self.custom_button:
-            def_values = dict([[c["id"], c["default"]] for c in self.controls])
+            def_values = dict([(c["id"], c["default"]) for c in self.controls])
 
             if def_values == self.values:
                 self.getControl(10006).setEnabled(False)
