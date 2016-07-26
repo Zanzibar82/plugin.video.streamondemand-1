@@ -46,6 +46,7 @@ def mainlist(item):
                      thumbnail="http://i37.photobucket.com/albums/e88/xzener/NewIcons.png"),
                 Item(channel=__channel__,
                      action="search",
+                     extra="serie",
                      title="[COLOR yellow]Cerca...[/COLOR]",
                      thumbnail="http://dc467.4shared.com/img/fEbJqOum/s7/13feaf0c8c0/Search")]
 

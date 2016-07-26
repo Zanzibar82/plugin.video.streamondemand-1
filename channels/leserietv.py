@@ -40,38 +40,35 @@ def isGeneric():
 # -----------------------------------------------------------------
 def mainlist(item):
     logger.info("[leserietv.py] mainlist")
-    itemlist = []
-    itemlist.append(Item(channel=__channel__,
-                         action="novita",
-                         title="[COLOR yellow]Novità[/COLOR]",
-                         url=("%s/streaming/" % host),
-                         thumbnail="http://www.ilmioprofessionista.it/wp-content/uploads/2015/04/TVSeries3.png",
-                         fanart="http://www.macroidee.it/wp-content/uploads/2015/06/migliori-serie-da-vedere.jpg"))
-    itemlist.append(Item(channel=__channel__,
-                         action="lista_serie",
-                         title="[COLOR azure]Tutte le serie[/COLOR]",
-                         url=("%s/streaming/" % host),
-                         thumbnail="http://www.ilmioprofessionista.it/wp-content/uploads/2015/04/TVSeries3.png",
-                         fanart="http://www.macroidee.it/wp-content/uploads/2015/06/migliori-serie-da-vedere.jpg"))
-
-    itemlist.append(Item(channel=__channel__,
-                         title="[COLOR azure]Categorie[/COLOR]",
-                         action="categorias",
-                         url=host,
-                         thumbnail="http://xbmc-repo-ackbarr.googlecode.com/svn/trunk/dev/skin.cirrus%20extended%20v2/extras/moviegenres/All%20Movies%20by%20Genre.png"))
-
-    itemlist.append(Item(channel=__channel__,
-                         action="top50",
-                         title="[COLOR azure]Top 50[/COLOR]",
-                         url=("%s/top50.html" % host),
-                         thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png",
-                         fanart="http://www.macroidee.it/wp-content/uploads/2015/06/migliori-serie-da-vedere.jpg"))
-
-    itemlist.append(Item(channel=__channel__,
-                         action="search",
-                         title="[COLOR orange]Cerca...[/COLOR][I](minimo 3 caratteri)[/I]",
-                         thumbnail="http://dc467.4shared.com/img/fEbJqOum/s7/13feaf0c8c0/Search",
-                         fanart="http://www.kaushik.net/avinash/wp-content/uploads/2010/02/search_engine.png"))
+    itemlist = [Item(channel=__channel__,
+                     action="novita",
+                     title="[COLOR yellow]Novità[/COLOR]",
+                     url=("%s/streaming/" % host),
+                     thumbnail="http://www.ilmioprofessionista.it/wp-content/uploads/2015/04/TVSeries3.png",
+                     fanart="http://www.macroidee.it/wp-content/uploads/2015/06/migliori-serie-da-vedere.jpg"),
+                Item(channel=__channel__,
+                     action="lista_serie",
+                     title="[COLOR azure]Tutte le serie[/COLOR]",
+                     url=("%s/streaming/" % host),
+                     thumbnail="http://www.ilmioprofessionista.it/wp-content/uploads/2015/04/TVSeries3.png",
+                     fanart="http://www.macroidee.it/wp-content/uploads/2015/06/migliori-serie-da-vedere.jpg"),
+                Item(channel=__channel__,
+                     title="[COLOR azure]Categorie[/COLOR]",
+                     action="categorias",
+                     url=host,
+                     thumbnail="http://xbmc-repo-ackbarr.googlecode.com/svn/trunk/dev/skin.cirrus%20extended%20v2/extras/moviegenres/All%20Movies%20by%20Genre.png"),
+                Item(channel=__channel__,
+                     action="top50",
+                     title="[COLOR azure]Top 50[/COLOR]",
+                     url=("%s/top50.html" % host),
+                     thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png",
+                     fanart="http://www.macroidee.it/wp-content/uploads/2015/06/migliori-serie-da-vedere.jpg"),
+                Item(channel=__channel__,
+                     action="search",
+                     extra="serie",
+                     title="[COLOR orange]Cerca...[/COLOR][I](minimo 3 caratteri)[/I]",
+                     thumbnail="http://dc467.4shared.com/img/fEbJqOum/s7/13feaf0c8c0/Search",
+                     fanart="http://www.kaushik.net/avinash/wp-content/uploads/2010/02/search_engine.png")]
 
     return itemlist
 

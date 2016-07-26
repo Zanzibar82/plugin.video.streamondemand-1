@@ -59,8 +59,7 @@ def mainlist(item):
                 Item(channel=__channel__,
                      title="[B][COLOR springgreen][ANIME][/COLOR][/B] [B][COLOR deepskyblue]ULTIMI EPISODI AGGIORNATI[/COLOR][/B]",
                      action="updateserietv",
-                     url="%s/sod/api.php?get=anime&type=elenco&order=multi&days=30&start=0&end=%d" % (
-                         host, result_per_page),
+                     url="%s/sod/api.php?get=anime&type=elenco&order=multi&days=30&start=0&end=%d" % (host, result_per_page),
                      extra="anime",
                      thumbnail="http://solo-streaming.com/images/sod/anime1_225x330.jpg"),
                 Item(channel=__channel__,
