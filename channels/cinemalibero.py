@@ -104,10 +104,10 @@ def search(item, texto):
     logger.info("[cinemalibero.py] " + item.url + " search " + texto)
     item.url = host + "/?s=" + texto
     try:
+        if item.extra == "movie":
+            return peliculas(item)
         if item.extra == "serie":
             return peliculas_tv(item)
-        else:
-            return peliculas(item)
     # Se captura la excepción, para no interrumpir al buscador global si un canal falla
     except:
         import sys

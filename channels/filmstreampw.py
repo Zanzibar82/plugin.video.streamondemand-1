@@ -138,9 +138,9 @@ def search(item, texto):
 
     try:
         if item.extra == "movie":
-            return peliculasx_tv(item)
-        if item.extra == "serie":
             return peliculasx(item)
+        if item.extra == "serie":
+            return peliculasx_tv(item)
 
     # Se captura la excepción, para no interrumpir al buscador global si un canal falla
     except:

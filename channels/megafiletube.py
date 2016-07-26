@@ -34,7 +34,7 @@ def mainlist(item):
     log("mainlist","mainlist")
     itemlist =[]
     itemlist.append(Item(channel=__channel__,action="elenco_film",title="[COLOR azure]Novità Film[/COLOR]"    ,url=film    ,thumbnail=thumbnovita,fanart=fanart))
-    itemlist.append(Item(channel=__channel__, title="[COLOR yellow]Cerca...[/COLOR]", action="search",thumbnail=thumbcerca,fanart=fanart))
+    itemlist.append(Item(channel=__channel__, title="[COLOR yellow]Cerca...[/COLOR]", action="search", extra="torrent", thumbnail=thumbcerca,fanart=fanart))
 
     return itemlist
 #=================================================================
