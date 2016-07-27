@@ -198,7 +198,7 @@ def channel_result(item):
         title = re.sub(r'\[.*\]', '', title)  # Anything within []
 
         # Check if the found title fuzzy matches the searched one
-        if fuzz.token_sort_ratio(tecleado, title) > 85: itemlist.append(item)
+        if fuzz.WRatio(tecleado, title) > 85: itemlist.append(item)
     return itemlist
 
 
@@ -232,7 +232,7 @@ def channel_search(queue, channel_parameters, categories, tecleado):
                 title = re.sub(r'\[.*\]', '', title)  # Anything within []
 
                 # Check if the found title fuzzy matches the searched one
-                if fuzz.token_sort_ratio(tecleado, title) > 85: result.append(res_item)
+                if fuzz.WRatio(tecleado, title) > 85: result.append(res_item)
 
             if len(result):
                 if not channel_parameters["title"] in search_results:
