@@ -382,21 +382,21 @@ class Client(object):
                         s.timeout = int(self.timeout - (time.time() - self.last_connect -1))
                         if self.file and self.file.cursor:
                              s.timeout = self.timeout
-                        if s.timeout < 0: s.timeout = "Cerrando"
+                        if s.timeout < 0: s.timeout = "Chiusura"
                     else:
                         s.timeout = "---"
                 else:
                     if self.start_time and self.wait_time:
                         s.timeout = int(self.wait_time - (time.time() - self.start_time -1))
-                        if s.timeout < 0: s.timeout = "Cerrando"
+                        if s.timeout < 0: s.timeout = "Chiusura"
                     else:
                         s.timeout = "---"
 
             else:
                 s.timeout = "Off"
 
-            STATE_STR = ['En cola', 'Comprobando', 'Descargando metadata', \
-                    'Descargando', 'Finalizado', 'Seeding', 'Allocating', 'Comprobando fastresume']
+            STATE_STR = ['Coda', 'Test', 'Download metadata', \
+                    'Download', 'Fatto', 'Seeding', 'Assegnazione', 'Controllo fastresume']
 
             s.str_state = STATE_STR[s.state]
 

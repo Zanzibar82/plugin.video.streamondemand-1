@@ -645,7 +645,7 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
                     logger.info(traceback.format_exc())
                     break
 
-            progreso.update(100,"Terminando y eliminando datos"," "," ")
+            progreso.update(100,"Terminato, elimina dati"," "," ")
 
             #Detenemos el cliente
             if not c.closed:
