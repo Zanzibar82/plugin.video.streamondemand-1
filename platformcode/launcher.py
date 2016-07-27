@@ -161,6 +161,7 @@ def run():
             channel_file = os.path.join(config.get_runtime_path(), 'channels', item.channel+".py")
             logger.info("streamondemand.platformcode.launcher channel_file=%s" % channel_file)
 
+            channel = None
             if item.channel in ["personal","personal2","personal3","personal4","personal5"]:
                 import channels.personal as channel
 
