@@ -13,7 +13,7 @@
         "bannermenu": "http://i.imgur.com/bHoUMo2.png",
         "update_url": "https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/cineblog01.xml",
         "version": "4",
-        "changes": "fix host",
+        "changes": "fix url",
         "date": "30/07/2016"
    },
    "settings": {
