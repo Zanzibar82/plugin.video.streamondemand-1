@@ -100,7 +100,7 @@ class Item(object):
             if name == "contentSerieName": self.__dict__["infoLabels"]["tvshowtitle"] = value
             if name == "contentType": self.__dict__["infoLabels"]["mediatype"] = value
             if name == "contentSeason": self.__dict__["infoLabels"]["season"] = value
-            if name == "contentEpisodeNumber": self.__dict__["infoLabels"]["'episode'"] = value
+            if name == "contentEpisodeNumber": self.__dict__["infoLabels"]["episode"] = value
 
     def __getattr__(self, name):
         '''

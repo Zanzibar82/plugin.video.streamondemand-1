@@ -8,12 +8,13 @@
 import os
 import re
 
+from sambatools import libsmb as samba
+
 from core import config
 from core import jsontools
 from core import logger
 from core import scrapertools
 from core.item import Item
-from sambatools import libsmb as samba
 from platformcode import library
 
 DEBUG = config.get_setting("debug")
@@ -149,7 +150,7 @@ def get_temporadas(item):
         for i in ficheros:
             if i.endswith('.strm'):
                 season = i.split('x')[0]
-                dict_temp[season] = "Temporanea " + str(season)
+                dict_temp[season] = "Stagione " + str(season)
 
         if config.get_setting("no_pile_on_seasons") == "Solo se presente una stagione" and len(dict_temp) == 1:
             return get_capitulos(item)
@@ -196,7 +197,7 @@ def get_capitulos(item):
             strm_item = Item().fromurl(library.read_file(path))
             new_item = item.clone(channel=strm_item.channel, action="findvideos", title=i, path=path,
                                   extra=strm_item.extra, url=strm_item.url, viewmode=strm_item.viewmode,
-                                  contentEpisodeNumber=episode)
+                                  contentSeason=season, contentEpisodeNumber=episode)
             '''else:
                 new_item = item.clone(channel=item.channel, action="play_strm", title=i, path=path,
                                       contentEpisodeNumber=episode)'''
