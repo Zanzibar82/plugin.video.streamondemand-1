@@ -214,7 +214,7 @@ def findvideos(item):
         ]
 
         data = scrapertools.cache_page(keeplinks + id, headers=_headers)
-        #data = str(scrapertools.find_multiple_matches(data, '</lable><a href="([^"]+)" target="_blank"'))
+        data = str(scrapertools.find_multiple_matches(data, '</lable><a href="([^"]+)" target="_blank"'))
 
     ### robalo fix obfuscator - end ####
 
