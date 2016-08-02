@@ -23,31 +23,35 @@
 # along with streamondemand 5.  If not, see <http://www.gnu.org/licenses/>.
 # ------------------------------------------------------------
 # Configuración
-#------------------------------------------------------------
+# ------------------------------------------------------------
 
 from core import config
-from core.item import Item
 from core import logger
+from core.item import Item
 
 DEBUG = True
 CHANNELNAME = "configuracion"
 
+
 def mainlist(item):
-	logger.info("tvalacarta.channels.configuracion mainlist")
+    logger.info("tvalacarta.channels.configuracion mainlist")
 
-	itemlist = []
-	itemlist.append( Item(channel=CHANNELNAME, title="Preferenze", action="settings", folder=False) )
-	itemlist.append( Item(channel=CHANNELNAME, title="", action="", folder=False) )
-	itemlist.append( Item(channel="novedades", title="Impostazioni 'Novedades'", action="menu_opciones", folder=True) )
-	itemlist.append( Item(channel="buscador", title="Impostazioni della ricerca globale", action="opciones", folder=True) )
-	itemlist.append( Item(channel=CHANNELNAME, title="", action="", folder=False) )
-	itemlist.append( Item(channel=CHANNELNAME, title="Avvia aggiornamenti", action="check_for_updates", folder=False) )
+    itemlist = []
+    itemlist.append(Item(channel=CHANNELNAME, title="Preferenze", action="settings", folder=False))
+    itemlist.append(Item(channel=CHANNELNAME, title="", action="", folder=False))
+    itemlist.append(Item(channel="novedades", title="Impostazioni 'Novedades'", action="menu_opciones", folder=True))
+    itemlist.append(
+        Item(channel="buscador", title="Impostazioni della ricerca globale", action="opciones", folder=True))
+    itemlist.append(Item(channel=CHANNELNAME, title="", action="", folder=False))
+    itemlist.append(Item(channel=CHANNELNAME, title="Avvia aggiornamenti", action="check_for_updates", folder=False))
 
-	return itemlist
+    return itemlist
+
 
 def check_for_updates(item):
-	from core import updater
-	updater.checkforupdates(plugin_mode=False)
+    from core import updater
+    updater.checkforupdates()
+
 
 def settings(item):
-    config.open_settings( )
+    config.open_settings()
