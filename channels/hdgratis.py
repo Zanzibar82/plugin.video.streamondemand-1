@@ -21,7 +21,7 @@ __type__ = "generic"
 __title__ = "HDGratis"
 __language__ = "IT"
 
-host = "http://hdgratis.org"
+host = "http://hdgratis.site"
 
 headers = [
     ['User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0'],
@@ -129,7 +129,7 @@ def getsearch(item):
 
     # ------------------------------------------------
     cookies = ""
-    matches = re.compile('(.hdgratis.org.*?)\n', re.DOTALL).findall(config.get_cookie_data())
+    matches = re.compile('(.hdgratis.site.*?)\n', re.DOTALL).findall(config.get_cookie_data())
     for cookie in matches:
         name = cookie.split('\t')[5]
         value = cookie.split('\t')[6]
@@ -191,7 +191,7 @@ def fichas(item):
 
     # ------------------------------------------------
     cookies = ""
-    matches = re.compile('(.hdgratis.org.*?)\n', re.DOTALL).findall(config.get_cookie_data())
+    matches = re.compile('(.hdgratis.site.*?)\n', re.DOTALL).findall(config.get_cookie_data())
     for cookie in matches:
         name = cookie.split('\t')[5]
         value = cookie.split('\t')[6]
