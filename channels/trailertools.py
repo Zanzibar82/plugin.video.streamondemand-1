@@ -36,7 +36,6 @@ from core import scrapertools
 from core import servertools
 from platformcode import platformtools
 
-
 DEBUG = config.get_setting("debug")
 # Para habilitar o no la opción de búsqueda manual
 if config.is_xbmc() or config.get_platform() == "mediaserver":
@@ -159,7 +158,7 @@ def tmdb_trailers(item, type="movie"):
     itemlist = []
     tmdb_search = None
     if "tmdb_id" in item.infoLabels and item.infoLabels['tmdb_id'] != "":
-        tmdb_search = Tmdb(id_Tmdb=item.infoLabels['tmdb_id'], tipo=type, idioma_busqueda='es')
+        tmdb_search = Tmdb(id_Tmdb=item.infoLabels['tmdb_id'], tipo=type, idioma_busqueda='it')
     elif "year" in item.infoLabels and item.infoLabels['year'] != "":
         tmdb_search = Tmdb(texto_buscado=item.contentTitle, tipo=type, year=item.infoLabels['year'])
 

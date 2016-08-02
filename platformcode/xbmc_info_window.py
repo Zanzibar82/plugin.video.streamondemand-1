@@ -151,7 +151,7 @@ class InfoWindow(xbmcgui.WindowXMLDialog):
     def get_tmdb_movie_data(self, text):
         # Buscamos la pelicula si no lo esta ya
         if not self.otmdb:
-            self.otmdb = Tmdb(texto_buscado=text, idioma_busqueda="es", tipo="movie")
+            self.otmdb = Tmdb(texto_buscado=text, idioma_busqueda="it", tipo="movie")
 
         # Si no hay resultados salimos
         if not self.otmdb.get_id():
@@ -179,7 +179,7 @@ class InfoWindow(xbmcgui.WindowXMLDialog):
 
         # Buscamos la serie si no esta cargada
         if not self.otmdb:
-            self.otmdb = Tmdb(texto_buscado=text, idioma_busqueda="es", tipo="tv")
+            self.otmdb = Tmdb(texto_buscado=text, idioma_busqueda="it", tipo="tv")
 
         _id = self.otmdb.get_id()
 
@@ -201,7 +201,7 @@ class InfoWindow(xbmcgui.WindowXMLDialog):
         # Si tenemos informacion de temporada y episodio
         if season and episode:
             if "seasons" not in self.result or self.result["seasons"] == "":
-                self.otmdb = Tmdb(id_Tmdb=id, idioma_busqueda="es", tipo="tv")
+                self.otmdb = Tmdb(id_Tmdb=id, idioma_busqueda="it", tipo="tv")
                 self.result["seasons"] = str(self.otmdb.result.get("number_of_seasons", 0))
 
             if season > self.result["seasons"]:

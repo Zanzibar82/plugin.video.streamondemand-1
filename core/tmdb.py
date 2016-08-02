@@ -84,7 +84,7 @@ from core import scrapertools
 otmdb_global = None
 
 
-def set_infoLabels_item(item, seekTmdb=False, idioma_busqueda='es', lock=None):
+def set_infoLabels_item(item, seekTmdb=False, idioma_busqueda='it', lock=None):
     # -----------------------------------------------------------------------------------------------------------
     # Obtiene y fija (item.infoLabels) los datos extras de una serie, capitulo o pelicula.
     #
@@ -283,7 +283,7 @@ def set_infoLabels_item(item, seekTmdb=False, idioma_busqueda='es', lock=None):
         return obtener_datos_item()
 
 
-def set_infoLabels_itemlist(item_list, seekTmdb=False, idioma_busqueda='es'):
+def set_infoLabels_itemlist(item_list, seekTmdb=False, idioma_busqueda='it'):
     """
     De manera concurrente y respetando los limites de la API, obtiene los datos de los items incluidos en la lista
     item_list.
@@ -338,7 +338,7 @@ def set_infoLabels_itemlist(item_list, seekTmdb=False, idioma_busqueda='es'):
     return [ii[2] for ii in r_list]
 
 
-def set_infoLabels(source, seekTmdb=False, idioma_busqueda='es'):
+def set_infoLabels(source, seekTmdb=False, idioma_busqueda='it'):
     """
     Dependiendo del tipo de dato de source obtiene y fija (item.infoLabels) los datos extras de una o varias series,
     capitulos o peliculas.
