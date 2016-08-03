@@ -1,3 +1,8 @@
+v5.3.3
+- openload fix
+- new channel added
+- favorites and download -=NOT WORKING=-
+
 v5.3.2
 - TMDB fix
 - many channels fix
