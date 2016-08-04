@@ -877,7 +877,7 @@
     <id>servertools</id>
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/servertools.py</update_url>
     <active>true</active>
-    <version>7</version>
+    <version>8</version>
     <date>29/09/2015</date>
     <changes>Prima versione di Pelisalacarta 4</changes>
 </server>
