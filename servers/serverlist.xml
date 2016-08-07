@@ -805,7 +805,7 @@
     <id>rapidvideocom</id>
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/rapidvideocom.py</update_url>
     <active>true</active>
-    <version>1</version>
+    <version>2</version>
     <date>11/02/2016</date>
     <changes>Prima versione di Pelisalacarta 4</changes>
 </server>

@@ -33,16 +33,17 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
 
     html = scrapertools.cache_page(post_url, post=urllib.urlencode(data), headers=headers)
 
-    match = re.search('(....??.*?);</script>', html, re.DOTALL)
+    match = re.search('(....ωﾟ.*?);</script>', html, re.DOTALL)
     if match:
-        dtext = aadecode(match.group(1))
-        match = re.search('"?sources"?\s*:\s*\[(.*?)\]', dtext, re.DOTALL)
-        if match:
-            for match in re.finditer('''['"]?file['"]?\s*:\s*['"]([^'"]+)['"][^}]*['"]?label['"]?\s*:\s*['"]([^'"]*)''', match.group(1), re.DOTALL):
-                media_url, _label = match.groups()
-                media_url = media_url.replace('\/', '/')
+        html = aadecode(match.group(1))
 
-                video_urls.append([_label + " [rapidvideocom]", media_url + '|' + urllib.urlencode(dict(headers))])
+    match = re.search('"?sources"?\s*:\s*\[(.*?)\]', html, re.DOTALL)
+    if match:
+        for match in re.finditer('''['"]?file['"]?\s*:\s*['"]([^'"]+)['"][^}]*['"]?label['"]?\s*:\s*['"]([^'"]*)''', match.group(1), re.DOTALL):
+            media_url, _label = match.groups()
+            media_url = media_url.replace('\/', '/')
+
+            video_urls.append([_label + " [rapidvideocom]", media_url + '|' + urllib.urlencode(dict(headers))])
 
     return video_urls
 
