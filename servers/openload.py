@@ -103,7 +103,7 @@ def decode_openload(data):
             j += 1
         image_tabs[i][j].append(image_str[idx])
 
-    data = scrapertools.downloadpageWithoutCookies('https://openload.co/assets/js/obfuscator/numbers.js')
+    data = scrapertools.downloadpageWithoutCookies('https://openload.co/assets/js/obfuscator/n.js')
     sign_str = scrapertools.find_single_match(data, '''['"]([^"^']+?)['"]''')
 
     # split signature data
