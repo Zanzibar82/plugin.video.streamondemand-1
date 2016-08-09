@@ -2,7 +2,7 @@
 # ------------------------------------------------------------
 # streamondemand.- XBMC Plugin
 # Canal para mondolunatico
-# http://www.mimediacenter.info/foro/viewforum.php?f=36
+# http://blog.tvalacarta.info/plugin-xbmc/streamondemand.
 # ------------------------------------------------------------
 import os
 import re
@@ -12,9 +12,9 @@ import urlparse
 from core import config
 from core import logger
 from core import scrapertools
-from core import servertools
 from core.item import Item
 from core.tmdb import infoSod
+from servers import servertools
 
 __channel__ = "mondolunatico"
 __category__ = "F"
@@ -27,9 +27,10 @@ host = "http://mondolunatico.org"
 captcha_url = '%s/pass/CaptchaSecurityImages.php?width=100&height=40&characters=5' % host
 
 headers = [
-    ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0'],
-    ['Accept-Encoding', 'gzip, deflate'],
-    ['Connection', 'keep-alive']
+    ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0'],
+    ['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'],
+    ['Accept-Language', 'en-US,en;q=0.5'],
+    ['Accept-Encoding', 'gzip, deflate']
 ]
 
 DEBUG = config.get_setting("debug")
@@ -54,7 +55,6 @@ def mainlist(item):
                 Item(channel=__channel__,
                      title="[COLOR yellow]Cerca...[/COLOR]",
                      action="search",
-                     extra="movie",
                      thumbnail="http://dc467.4shared.com/img/fEbJqOum/s7/13feaf0c8c0/Search")]
 
     return itemlist
@@ -64,7 +64,7 @@ def categorias(item):
     logger.info("streamondemand.mondolunatico categorias")
     itemlist = []
 
-    data = scrapertools.cache_page(item.url)
+    data = scrapertools.cache_page(item.url, headers=headers)
 
     # Narrow search by selecting only the combo
     bloque = scrapertools.get_match(data, '<option class="level-0" value="7">(.*?)<option class="level-0" value="8">')
@@ -199,20 +199,13 @@ def findvideos(item):
     if 'keeplinks.eu' in data:
         import time
 
-        keeplinks = "http://www.keeplinks.eu/p92/"
-        id = scrapertools.get_match(data, 'href="' + keeplinks + '([^"]+)"')
+        patron = 'href="(https?://www\.keeplinks\.eu/p92/([^"]+))"'
+        keeplinks, id = scrapertools.get_match(data, patron)
 
-        _headers = [
-            ['Host', 'www.keeplinks.eu'],
-            ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0'],
-            ['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'],
-            ['Accept-Language', 'es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3'],
-            ['Cookie', 'flag[' + id + ']=1; noadvtday=0; nopopatall=' + str(time.time())],
-            ['Accept-Encoding', 'gzip, deflate'],
-            ['Connection', 'keep-alive']
-        ]
+        headers.append(['Cookie', 'flag[' + id + ']=1; defaults=1; nopopatall=' + str(int(time.time()))])
+        headers.append(['Referer', keeplinks])
 
-        data = scrapertools.cache_page(keeplinks + id, headers=_headers)
+        data = scrapertools.cache_page(keeplinks, headers=headers)
         data = str(scrapertools.find_multiple_matches(data, '</lable><a href="([^"]+)" target="_blank"'))
 
     ### robalo fix obfuscator - end ####
