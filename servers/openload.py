@@ -3,7 +3,7 @@
 # pelisalacarta - XBMC Plugin
 # Conector for openload.co
 # http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
-# fixed by cmos
+# coded by Cmos
 # ------------------------------------------------------------
 
 import re
@@ -54,6 +54,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
                     videourl = decode_hidden(hiddenurl)
                 else:
                     videourl = decodeopenload(data)
+            videourl = scrapertools.getLocationHeaderFromResponse(videourl)
         else:
             text_encode = scrapertools.find_multiple_matches(data, '(ﾟωﾟ.*?\(\'\_\'\));')
             try:
@@ -223,12 +224,15 @@ def decodeopenload(data):
 
 def decode_hidden(text):
     text = scrapertools.decodeHtmlentities(text)
+    text = text.replace("&gt9", ">").replace("&quot9", '"').replace("&lt9", '<').replace("&amp9", '&')
     s = []
     for char in text:
         j = ord(char)
         s.append(chr(33 + ((j+14) % 94)))
 
-    videourl = "https://openload.co/stream/{0}?mime=true".format("".join(s))
+    temp = "".join(s)
+    text_decode = temp[:len(temp)-1] + chr(ord(temp[-1]) + 2)
+    videourl = "https://openload.co/stream/{0}?mime=true".format(text_decode)
 
     return videourl
 
