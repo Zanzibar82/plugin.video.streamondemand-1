@@ -6,14 +6,13 @@
         "adult": false,
         "category": [
                      "movie",
-                     "top channels"
                     ],
         "language": "it",
         "thumbnail": "https://raw.githubusercontent.com/Zanzibar82/images/master/posters/portalehd.png",
         "fanart": "",
         "bannermenu": "https://raw.githubusercontent.com/Zanzibar82/images/master/posters/portalehd.png",
         "update_url": "https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/portalehd.xml",
-        "version": "1",
+        "version": "2",
         "changes": "update",
         "date": "26/06/2016"
    },
