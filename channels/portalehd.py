@@ -26,6 +26,8 @@ DEBUG = config.get_setting("debug")
 
 host = "http://www.24hd.online"
 
+# site is down 
+
 headers = [
     ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0'],
     ['Accept-Encoding', 'gzip, deflate'],
