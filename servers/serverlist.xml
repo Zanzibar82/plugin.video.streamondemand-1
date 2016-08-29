@@ -715,8 +715,8 @@
     <id>openload</id>
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/openload.py</update_url>
     <active>true</active>
-    <version>15</version>
-    <date>26/06/2016</date>
+    <version>17</version>
+    <date>27/08/2016</date>
     <changes>Fixed by cmos</changes>
 </server>
 
@@ -985,7 +985,7 @@
     <id>thevideome</id>
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/thevideome.py</update_url>
     <active>true</active>
-    <version>6</version>
+    <version>7</version>
     <date>12/09/2015</date>
     <changes>Prima versione di Pelisalacarta 4</changes>
 </server>

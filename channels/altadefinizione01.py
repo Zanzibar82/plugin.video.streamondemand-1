@@ -20,7 +20,7 @@ __type__ = "generic"
 __title__ = "AltaDefinizione01"
 __language__ = "IT"
 
-host = "http://www.altadefinizione01.click"
+host = "http://www.altadefinizione01.co"
 
 headers = [
     ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0'],
@@ -72,7 +72,7 @@ def peliculas(item):
 
     ## ------------------------------------------------
     cookies = ""
-    matches = re.compile('(.altadefinizione01.click.*?)\n', re.DOTALL).findall(config.get_cookie_data())
+    matches = re.compile('(.altadefinizione01.co.*?)\n', re.DOTALL).findall(config.get_cookie_data())
     for cookie in matches:
         name = cookie.split('\t')[5]
         value = cookie.split('\t')[6]
@@ -141,7 +141,7 @@ def categorias(item):
     bloque = scrapertools.get_match(data, '<ul class="kategori_list">(.*?)</ul>')
 
     # The categories are the options for the combo  
-    patron = '<li><a href="([^"]+)">([^<]+)</a></li>'
+    patron = '<li><a href=\'([^\']+)\'>([^<]+)</a></li>'
     matches = re.compile(patron, re.DOTALL).findall(bloque)
 
     for url, titulo in matches:
