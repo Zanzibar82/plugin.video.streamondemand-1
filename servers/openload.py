@@ -8,6 +8,7 @@ import re
 
 from core import logger
 from core import scrapertools
+from lib import aadecode
 
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0'}
 
@@ -72,13 +73,17 @@ def find_videos(text):
 def decode_openload(data):
     hiddenurl = scrapertools.unescape(re.search('hiddenurl">(.+?)</span>', data, re.IGNORECASE).group(1))
 
+    aastring = re.compile("<script[^>]+>(ﾟωﾟﾉ[^\n]+)\n", re.DOTALL | re.IGNORECASE).findall(data)[0]
+    aastring = aadecode.decode(aastring)
+    magicnumber = re.compile(r"charCodeAt\(\d+?\)\s*?\+\s*?(\d+?)\)", re.DOTALL | re.IGNORECASE).findall(aastring)[0]
+
     s = []
     for idx, i in enumerate(hiddenurl):
         j = ord(i)
         if 33 <= j <= 126:
             j = 33 + ((j + 14) % 94)
         if idx == len(hiddenurl) - 1:
-            j += 1
+            j += int(magicnumber)
         s.append(chr(j))
     res = ''.join(s)
 
