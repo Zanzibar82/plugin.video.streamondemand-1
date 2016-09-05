@@ -1,3 +1,7 @@
+v5.3.4
+- openload big fix
+- transictional release
+
 v5.3.3
 - openload fix
 - new channel added
