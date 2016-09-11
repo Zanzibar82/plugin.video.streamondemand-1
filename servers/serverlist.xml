@@ -553,9 +553,9 @@
     <id>megadrive</id>
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/megadrive.py</update_url>
     <active>true</active>
-    <version>3</version>
-    <date>20/09/2015</date>
-    <changes>Prima versione di Pelisalacarta 4</changes>
+    <version>4</version>
+    <date>11/09/2016</date>
+    <changes>Fixed server</changes>
 </server>
 
 <server>
