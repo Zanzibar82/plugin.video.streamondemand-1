@@ -21,7 +21,7 @@ __type__ = "generic"
 __title__ = "HDGratis"
 __language__ = "IT"
 
-host = "http://hdgratis.site"
+host = "http://altadefinizione.black"
 
 headers = [
     ['User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0'],
@@ -41,27 +41,27 @@ def mainlist(item):
 
     itemlist = [
         Item(channel=__channel__,
-             title="[COLOR azure]Al Cinema[/COLOR]",
+             title="[COLOR azure]Ultimi Film Inseriti[/COLOR]",
              action="fichas",
-             url=host + "/category/in-sala/",
+             url=host + "/nuove-uscite/",
              thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png"),
 
         Item(channel=__channel__,
-             title="[COLOR azure]Ultimi Film Inseriti[/COLOR]",
+             title="[COLOR azure]Al Cinema[/COLOR]",
              action="fichas",
-             url=host + "/category/nuove-uscite/",
+             url=host + "/al-cinema/",
              thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png"),
 
         Item(channel=__channel__,
              title="[COLOR azure]Film per Genere[/COLOR]",
              action="genere",
              url=host,
-             thumbnail="http://xbmc-repo-ackbarr.googlecode.com/svn/trunk/dev/skin.cirrus%20extended%20v2/extras/moviegenres/All%20Movies%20by%20Genre.png"),
+             thumbnail=""),
 
         Item(channel=__channel__,
              title="[COLOR azure]Film Sub-Ita[/COLOR]",
              action="fichas",
-             url=host + "/category/sub-ita/",
+             url=host + "/sub-ita/",
              thumbnail="http://i.imgur.com/qUENzxl.png"),
 
         Item(channel=__channel__,
@@ -78,7 +78,7 @@ def search(item, texto):
     item.url = host + "/?s=" + texto
 
     try:
-        return getsearch(item)
+        return fichas(item)
 
     # Se captura la excepción, para no interrumpir al buscador global si un canal falla
     except:
@@ -94,20 +94,14 @@ def genere(item):
 
     data = scrapertools.anti_cloudflare(item.url, headers)
 
-    patron = '<ul>(.+?)</ul>'
-    # patron = '<li class="cat-item cat-item.*?"><a href="([^"]+)">([^"]+)</a>.*?</li>'
-
+    patron = '<ul class="listSubCat" id="Film">(.*?)</ul>'
     data = scrapertools.find_single_match(data, patron)
 
-    patron = '<li class=".*?'
-    patron += 'href="([^"]+)".*?'
-    patron += '>([^"]+)</a>'
-
+    patron = '<li><a href="(.*?)">(.*?)</a></li>'
     matches = re.compile(patron, re.DOTALL).findall(data)
     scrapertools.printMatches(matches)
 
     for scrapedurl, scrapedtitle in matches:
-        # scrapedtitle = scrapedtitle.replace('&amp;','-')
         itemlist.append(
             Item(channel=__channel__,
                  action="fichas",
@@ -116,69 +110,6 @@ def genere(item):
                  folder=True))
 
     return itemlist
-
-
-def getsearch(item):
-    logger.info("[hdgratis.py] fichas")
-
-    itemlist = []
-
-    # Descarga la pagina
-    data = scrapertools.anti_cloudflare(item.url, headers)
-    # fix - calidad
-
-    # ------------------------------------------------
-    cookies = ""
-    matches = re.compile('(.hdgratis.site.*?)\n', re.DOTALL).findall(config.get_cookie_data())
-    for cookie in matches:
-        name = cookie.split('\t')[5]
-        value = cookie.split('\t')[6]
-        cookies += name + "=" + value + ";"
-    headers.append(['Cookie', cookies[:-1]])
-    import urllib
-    _headers = urllib.urlencode(dict(headers))
-    # ------------------------------------------------
-
-    patron = '<div class="col-xs-2">.*?'
-    patron += 'href="([^"]+)".*?'
-    patron += 'title="([^"]+)".*?'
-    patron += '<img src="([^"]+)".*?'
-
-    matches = re.compile(patron, re.DOTALL).findall(data)
-
-    for scraped_2, scrapedtitle, scrapedthumbnail in matches:
-        scrapedurl = scraped_2
-
-        title = scrapertools.decodeHtmlentities(scrapedtitle)
-        # title += " (" + scrapedcalidad + ")
-
-        # ------------------------------------------------
-        scrapedthumbnail += "|" + _headers
-        # ------------------------------------------------
-
-        itemlist.append(infoSod(
-            Item(channel=__channel__,
-                 action="findvideos",
-                 title=title,
-                 url=scrapedurl,
-                 thumbnail=scrapedthumbnail,
-                 fulltitle=title,
-                 show=scrapedtitle), tipo='movie'))
-
-    # Paginación
-    next_page = re.compile('<link rel="next" href="(.+?)"/>', re.DOTALL).findall(data)
-    for page in next_page:
-        next_page = page
-    if next_page != "":
-        itemlist.append(
-            Item(channel=__channel__,
-                 action="fichas",
-                 title="[COLOR orange]Successivo >>[/COLOR]",
-                 url=next_page,
-                 thumbnail="http://2.bp.blogspot.com/-fE9tzwmjaeQ/UcM2apxDtjI/AAAAAAAAeeg/WKSGM2TADLM/s1600/pager+old.png"))
-
-    return itemlist
-
 
 def fichas(item):
     logger.info("[hdgratis.py] fichas")
@@ -191,7 +122,7 @@ def fichas(item):
 
     # ------------------------------------------------
     cookies = ""
-    matches = re.compile('(.hdgratis.site.*?)\n', re.DOTALL).findall(config.get_cookie_data())
+    matches = re.compile('(.altadefinizione.black.*?)\n', re.DOTALL).findall(config.get_cookie_data())
     for cookie in matches:
         name = cookie.split('\t')[5]
         value = cookie.split('\t')[6]
@@ -201,18 +132,17 @@ def fichas(item):
     _headers = urllib.urlencode(dict(headers))
     # ------------------------------------------------
 
-    patron = '<div class="col-mt-5 postsh">.*?'
-    patron += 'href="([^"]+)".*?'
-    patron += 'title="([^"]+)".*?'
-    patron += '<img src="([^"]+)".*?'
+    if "/?s=" in item.url:
+        patron = '<div class="col-lg-3 col-md-3 col-xs-3">\s*<a href="([^"]+")>\s*<div class="wrapperImage">[^i]+i[^s]+src="([^"]+)"[^>]+> <div class="info">\s*<h5[^>]+>(.*?)<'
+    else:
+        patron = '<span class="hd">HD</span>\s*<a href="([^"]+)"><img[^s]+src="([^"]+)"[^>]+></a> <div class="info">\s*<[^>]+>[^>]+>(.*?)</a>'
+
 
     matches = re.compile(patron, re.DOTALL).findall(data)
 
-    for scraped_2, scrapedtitle, scrapedthumbnail in matches:
-        scrapedurl = scraped_2
+    for scrapedurl, scrapedthumbnail, scrapedtitle  in matches:
 
         title = scrapertools.decodeHtmlentities(scrapedtitle)
-        # title += " (" + scrapedcalidad + ")
 
         # ------------------------------------------------
         scrapedthumbnail += "|" + _headers
@@ -248,9 +178,9 @@ def findvideos(item):
 
     # Descarga la página
     data = scrapertools.anti_cloudflare(item.url, headers).replace('\n', '')
-
-    patron = r'<iframe width=".+?" height=".+?" src="([^"]+)" allowfullscreen frameborder="0">'
-    url = scrapertools.find_single_match(data, patron).replace("?hdgratis", "")
+    patron = r'<iframe width=".+?" height=".+?" src="([^"]+)"></iframe>'
+    url = scrapertools.find_single_match(data, patron).replace("?alta", "")
+    url = url.replace("&download=1", "")
 
     if 'hdpass' in url:
         data = scrapertools.cache_page(url, headers=headers)

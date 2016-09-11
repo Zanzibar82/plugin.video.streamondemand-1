@@ -13,9 +13,9 @@
         "fanart": "",
         "bannermenu": "http://i.imgur.com/4mt0Df1.png",
         "update_url": "https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/hdgratis.xml",
-        "version": "5",
+        "version": "6",
         "changes": "fix host",
-        "date": "02/08/2016"
+        "date": "11/09/2016"
    },
    "settings": {
         "include_in_global_search": true
