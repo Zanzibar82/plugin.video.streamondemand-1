@@ -4,13 +4,11 @@
 # Conector for openload.co
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
-import base64
-import math
 import re
 
 from core import logger
 from core import scrapertools
-from lib import png
+from lib.jjdecode import JJDecoder
 
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0'}
 
@@ -73,73 +71,21 @@ def find_videos(text):
 
 
 def decode_openload(data):
-    # If you want to use the code for openload please at least put the info from were you take it:
-    # for example: "Code take from plugin IPTVPlayer: "https://gitlab.com/iptvplayer-for-e2/iptvplayer-for-e2/"
-    # It will be very nice if you send also email to me samsamsam@o2.pl and inform were this code will be used
+    hiddenurl = scrapertools.unescape(re.search('hiddenurl">(.+?)</span>', data, re.IGNORECASE).group(1))
 
-    image_data = scrapertools.find_single_match(data, '''<img[^>]*?id="linkimg"[^>]*?src="([^"]+?)"''')
-    image_data = base64.b64decode(image_data.split('base64,')[-1])
-    _, _, pixel, _ = png.Reader(bytes=image_data).read()
+    jjstring = re.compile("<script[^>]+>(j=~[^\n]+)\n", re.DOTALL | re.IGNORECASE).findall(data)[0]
+    jjstring = JJDecoder(jjstring).decode()
+    magicnumber = re.compile(r"charCodeAt\(\d+?\)\s*?\+\s*?(\d+?)\)", re.DOTALL | re.IGNORECASE).findall(jjstring)[0]
 
-    image_str = ''
-    try:
-        for item in pixel:
-            for p in item:
-                image_str += chr(p)
-    except:
-        pass
+    s = []
+    for idx, i in enumerate(hiddenurl):
+        j = ord(i)
+        if 33 <= j <= 126:
+            j = 33 + ((j + 14) % 94)
+        if idx == len(hiddenurl) - 1:
+            j += int(magicnumber)
+        s.append(chr(j))
+    res = ''.join(s)
 
-    image_tabs = []
-    i = -1
-    for idx in range(len(image_str)):
-        if image_str[idx] == '\0':
-            break
-        if 0 == (idx % (12 * 20)):
-            image_tabs.append([])
-            i += 1
-            j = -1
-        if 0 == (idx % 20):
-            image_tabs[i].append([])
-            j += 1
-        image_tabs[i][j].append(image_str[idx])
-
-    data = scrapertools.downloadpageWithoutCookies('https://openload.co/assets/js/obfuscator/n.js')
-    sign_str = scrapertools.find_single_match(data, '''['"]([^"^']+?)['"]''')
-
-    # split signature data
-    sign_tabs = []
-    i = -1
-    for idx in range(len(sign_str)):
-        if sign_str[idx] == '\0':
-            break
-        if 0 == (idx % (11 * 26)):
-            sign_tabs.append([])
-            i += 1
-            j = -1
-        if 0 == (idx % 26):
-            sign_tabs[i].append([])
-            j += 1
-        sign_tabs[i][j].append(sign_str[idx])
-
-    # get link data
-    link_data = {}
-    for i in [2, 3, 5, 7]:
-        link_data[i] = []
-        tmp = ord('c')
-        for j in range(len(sign_tabs[i])):
-            for k in range(len(sign_tabs[i][j])):
-                if tmp > 122:
-                    tmp = ord('b')
-                if sign_tabs[i][j][k] == chr(int(math.floor(tmp))):
-                    if len(link_data[i]) > j:
-                        continue
-                    tmp += 2.5
-                    if k < len(image_tabs[i][j]):
-                        link_data[i].append(image_tabs[i][j][k])
-    res = []
-    for idx in link_data:
-        res.append(''.join(link_data[idx]).replace(',', ''))
-
-    res = res[3] + '~' + res[1] + '~' + res[2] + '~' + res[0]
     videourl = 'https://openload.co/stream/{0}?mime=true'.format(res)
     return videourl
