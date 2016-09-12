@@ -65,8 +65,20 @@ def mainlist(item):
                      title="[COLOR azure]Serie TV[/COLOR]",
                      action="peliculas_tv",
                      extra="serie",
-                     url="%s/category/telefilm/" % host,
+                     url="%s/category/serie-tv/" % host,
                      thumbnail="http://xbmc-repo-ackbarr.googlecode.com/svn/trunk/dev/skin.cirrus%20extended%20v2/extras/moviegenres/New%20TV%20Shows.png"),
+                 Item(channel=__channel__,
+                      title="[COLOR azure]Ultime serie TV[/COLOR]",
+                      action="pel_tv",
+                      extra="serie",
+                      url="%s/ultimi-telefilm-streaming/" % host,
+                      thumbnail="http://xbmc-repo-ackbarr.googlecode.com/svn/trunk/dev/skin.cirrus%20extended%20v2/extras/moviegenres/All%20Movies%20by%20Genre.png"),
+                      Item(channel=__channel__,
+                      title="[COLOR azure]Ultimi anime inseriti[/COLOR]",
+                      action="anime",
+                      extra="serie",
+                      url="%s/ultimi-telefilm-streaming/" % host,
+                      thumbnail="http://xbmc-repo-ackbarr.googlecode.com/svn/trunk/dev/skin.cirrus%20extended%20v2/extras/moviegenres/All%20Movies%20by%20Genre.png"),   
                 Item(channel=__channel__,
                      title="[COLOR yellow]Cerca Serie TV...[/COLOR]",
                      action="search",
@@ -225,6 +237,113 @@ def peliculas_tv(item):
 
     return itemlist
 
+def pel_tv(item):
+    logger.info("[italiafilm.py] pel_tv")
+    itemlist = []
+
+    data = scrapertools.cache_page(item.url)
+    patron = '<li class="cat_7(.*?)</li>'
+    matches = re.compile(patron, re.DOTALL).findall(data)
+
+    for match in matches:
+        title = scrapertools.find_single_match(match, '<span class="tvseries_name">(.*?)</span>')
+        t = scrapertools.find_single_match(match, '</i>(.*?)</a>')
+        t = scrapertools.decodeHtmlentities(t).strip()
+        title = title.replace("Streaming", "")
+        title = scrapertools.decodeHtmlentities(title).strip()
+        title = title + " - " + t
+        url = scrapertools.find_single_match(match, '<a href="([^"]+)"')
+        plot = ""
+        thumbnail = scrapertools.find_single_match(match, 'data-echo="([^"]+)"')
+
+        if (DEBUG): logger.info("title=[" + title + "], url=[" + url + "], thumbnail=[" + thumbnail + "]")
+
+        itemlist.append(infoSod(
+            Item(channel=__channel__,
+                 action='episodios' if item.extra == 'serie' else 'findvideos',
+                 fulltitle=title,
+                 show=title,
+                 title="[COLOR azure]" + title + "[/COLOR]",
+                 url=url,
+                 thumbnail=thumbnail,
+                 plot=plot,
+                 viewmode="movie_with_plot",
+                 folder=True), tipo='tv'))
+
+    # Siguiente
+    try:
+        pagina_siguiente = scrapertools.get_match(data, '<a class="next page-numbers" href="([^"]+)"')
+        itemlist.append(
+            Item(channel=__channel__,
+                 action="HomePage",
+                 title="[COLOR yellow]Torna Home[/COLOR]",
+                 folder=True)),
+        itemlist.append(
+            Item(channel=__channel__,
+                 action="pel_tv",
+                 extra=item.extra,
+                 title="[COLOR orange]Successivo >> [/COLOR]",
+                 url=pagina_siguiente,
+                 thumbnail="http://2.bp.blogspot.com/-fE9tzwmjaeQ/UcM2apxDtjI/AAAAAAAAeeg/WKSGM2TADLM/s1600/pager+old.png",
+                 folder=True))
+    except:
+        pass
+
+    return itemlist
+
+def anime(item):
+    logger.info("[italiafilm.py] anime")
+    itemlist = []
+
+    data = scrapertools.cache_page(item.url)
+    patron = '<li class="cat_19(.*?)</li>'
+    matches = re.compile(patron, re.DOTALL).findall(data)
+
+    for match in matches:
+        title = scrapertools.find_single_match(match, '<span class="tvseries_name">(.*?)</span>')
+        t = scrapertools.find_single_match(match, '</i>(.*?)</a>')
+        t = scrapertools.decodeHtmlentities(t).strip()
+        title = title.replace("Streaming", "")
+        title = scrapertools.decodeHtmlentities(title).strip()
+        title = title + " - " + t
+        url = scrapertools.find_single_match(match, '<a href="([^"]+)"')
+        plot = ""
+        thumbnail = scrapertools.find_single_match(match, 'data-echo="([^"]+)"')
+
+        if (DEBUG): logger.info("title=[" + title + "], url=[" + url + "], thumbnail=[" + thumbnail + "]")
+
+        itemlist.append(infoSod(
+            Item(channel=__channel__,
+                 action='episodios' if item.extra == 'serie' else 'findvideos',
+                 fulltitle=title,
+                 show=title,
+                 title="[COLOR azure]" + title + "[/COLOR]",
+                 url=url,
+                 thumbnail=thumbnail,
+                 plot=plot,
+                 viewmode="movie_with_plot",
+                 folder=True), tipo='tv'))
+
+    # Siguiente
+    try:
+        pagina_siguiente = scrapertools.get_match(data, '<a class="next page-numbers" href="([^"]+)"')
+        itemlist.append(
+            Item(channel=__channel__,
+                 action="HomePage",
+                 title="[COLOR yellow]Torna Home[/COLOR]",
+                 folder=True)),
+        itemlist.append(
+            Item(channel=__channel__,
+                 action="anime",
+                 extra=item.extra,
+                 title="[COLOR orange]Successivo >> [/COLOR]",
+                 url=pagina_siguiente,
+                 thumbnail="http://2.bp.blogspot.com/-fE9tzwmjaeQ/UcM2apxDtjI/AAAAAAAAeeg/WKSGM2TADLM/s1600/pager+old.png",
+                 folder=True))
+    except:
+        pass
+
+    return itemlist
 
 def HomePage(item):
     import xbmc

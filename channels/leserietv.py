@@ -267,15 +267,16 @@ def episodi(item):
 
     data = scrapertools.cache_page(item.url)
 
-    patron = '="megadrive-(.*?)".*?data-link="([^"]+)">Megadrive'
+    #xbmc.log("qua"+data)
+    patron = '<li id[^<]+<[^<]+<.*?class="serie-title">(.*?)</span>[^>]+>[^<]+<.*?megadrive-(.*?)".*?data-link="([^"]+)">Megadrive</a>'
     matches = re.compile(patron, re.DOTALL).findall(data)
     scrapertools.printMatches(matches)
 
-    for scrapedtitle, scrapedurl in matches:
+    for scrapedlongtitle,scrapedtitle, scrapedurl in matches:
         scrapedtitle = scrapedtitle.replace('_', "x")
-        xbmc.log(scrapedurl)
+        scrapedtitle = scrapedtitle + " [COLOR orange]" + scrapedlongtitle + "[/COLOR]"
         itemlist.append(Item(channel=__channel__,
-                             action="findvideos",
+                             action="play",
                              title=scrapedtitle,
                              url=scrapedurl,
                              thumbnail=item.thumbnail,
@@ -302,6 +303,25 @@ def episodi(item):
     return itemlist
 
 
+# =================================================================
+
+
+#------------------------------------------------------------------
+def play(item):
+    itemlist=[]
+    data = scrapertools.cache_page(item.url)
+
+    elemento = scrapertools.find_single_match(data, 'config:{file:\'(.*?)\'')
+
+    itemlist.append(Item(channel=__channel__,
+                         action="play",
+                         title=item.title,
+                         url=elemento,
+                         thumbnail=item.thumbnail,
+                         fanart=item.fanart,
+                         fulltitle=item.fulltitle,
+                         show=item.fulltitle))
+    return itemlist
 # =================================================================
 
 

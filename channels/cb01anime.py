@@ -75,7 +75,7 @@ def novita(item):
     logger.info("[cb01anime.py] mainlist")
     itemlist = []
 
-    # Descarga la p�gina
+    # Descarga la página
     data = scrapertools.anti_cloudflare(item.url, headers)
 
     ## ------------------------------------------------
@@ -111,7 +111,7 @@ def novita(item):
         scrapedthumbnail += "|" + _headers
         ## ------------------------------------------------				
 
-        # A�ade al listado de XBMC
+        # Añade al listado de XBMC
         itemlist.append(
             Item(channel=__channel__,
                  action="listacompleta" if scrapedtitle == "Lista Alfabetica Completa Anime/Cartoon" else "episodi",
@@ -258,7 +258,7 @@ def episodi(item):
 
     itemlist = []
 
-    # Descarga la p�gina
+    # Descarga la página
     data = scrapertools.anti_cloudflare(item.url, headers)
     data = scrapertools.decodeHtmlentities(data).replace('http://cineblog01.pw', 'http://k4pp4.pw')
 
