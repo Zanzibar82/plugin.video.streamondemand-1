@@ -14,6 +14,7 @@ import xbmcgui
 from core import config
 from core import logger
 from core import scrapertools
+from core import downloadtools
 from core.item import Item
 from core.tmdb import infoSod
 
@@ -32,6 +33,8 @@ header = [
     ['Accept-Encoding', 'gzip, deflate'],
     ['Referer', ('%s/streaming/' % host)]
 ]
+
+
 
 def isGeneric():
     return True
@@ -77,7 +80,7 @@ def mainlist(item):
 
     itemlist.append(Item(channel=__channel__,
                          action="info",
-                             title="[COLOR lime][I]Info canale[/I][/COLOR]",
+                             title="[COLOR lime][I]Info canale[/I][/COLOR] [COLOR yellow]13/09/2016[/COLOR]",
                          thumbnail="http://www.mimediacenter.info/wp-content/uploads/2016/01/newlogo-final.png"))
     return itemlist
 
@@ -98,8 +101,7 @@ def novita(item):
 
     for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
         scrapedthumbnail = host + scrapedthumbnail
-        if (DEBUG): logger.info(
-            "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
+        logger.info("title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(infoSod(
             Item(channel=__channel__,
                  action="episodi",
@@ -107,7 +109,7 @@ def novita(item):
                  url=scrapedurl,
                  thumbnail=scrapedthumbnail,
                  fulltitle=scrapedtitle,
-                 show=scrapedtitle), tipo='tv'))
+                 show=scrapedtitle,viewmode="movie"), tipo='tv'))
 
     # Paginazione
     # ===========================================================
@@ -125,7 +127,7 @@ def novita(item):
                  thumbnail="http://2.bp.blogspot.com/-fE9tzwmjaeQ/UcM2apxDtjI/AAAAAAAAeeg/WKSGM2TADLM/s1600/pager+old.png",
                  folder=True))
         itemlist.append(
-            Item(channel=__channel__, action="HomePage", title="[COLOR yellow]Torna Home[/COLOR]", folder=True))
+            Item(channel=__channel__, action="HomePage", title="[COLOR yellow]Torna Home[/COLOR]",thumbnail=ThumbnailHome, folder=True))
     return itemlist
 # =================================================================
 
@@ -152,7 +154,7 @@ def lista_serie(item):
                  url=scrapedurl,
                  thumbnail=scrapedthumbnail,
                  fulltitle=scrapedtitle,
-                 show=scrapedtitle), tipo='tv'))
+                 show=scrapedtitle,viewmode="movie"), tipo='tv'))
 
     # Paginazione
     # ===========================================================
@@ -170,7 +172,7 @@ def lista_serie(item):
                  thumbnail="http://2.bp.blogspot.com/-fE9tzwmjaeQ/UcM2apxDtjI/AAAAAAAAeeg/WKSGM2TADLM/s1600/pager+old.png",
                  folder=True))
         itemlist.append(
-            Item(channel=__channel__, action="HomePage", title="[COLOR yellow]Torna Home[/COLOR]", folder=True))
+            Item(channel=__channel__, action="HomePage", title="[COLOR yellow]Torna Home[/COLOR]",thumbnail=ThumbnailHome, folder=True))
     return itemlist
 # =================================================================
 
@@ -254,7 +256,7 @@ def top50(item):
                  url=scrapedurl,
                  thumbnail=scrapedthumbnail,
                  fulltitle=scrapedtitle,
-                 show=scrapedtitle), tipo='tv'))
+                 show=scrapedtitle,viewmode="movie"), tipo='tv'))
 
     return itemlist
 # =================================================================
@@ -263,7 +265,7 @@ def top50(item):
 def episodi(item):
     logger.info("[leserietv.py] episodi")
     itemlist = []
-
+    elenco = []
     data = scrapertools.cache_page(item.url)
     #xbmc.log("qua"+data)
     patron = '<li id[^<]+<[^<]+<.*?class="serie-title">(.*?)</span>[^>]+>[^<]+<.*?megadrive-(.*?)".*?data-link="([^"]+)">Megadrive</a>'
@@ -272,6 +274,8 @@ def episodi(item):
 
     for scrapedlongtitle,scrapedtitle, scrapedurl in matches:
         scrapedtitle = scrapedtitle.replace('_', "x")
+        #xbmc.log(scrapedlongtitle + " " + scrapedtitle + " " + scrapedurl)
+        elenco.append([scrapedtitle,scrapedlongtitle,scrapedurl])
 
         scrapedtitle = scrapedtitle + " [COLOR orange]" + scrapedlongtitle + "[/COLOR]"
         itemlist.append(Item(channel=__channel__,
@@ -282,6 +286,16 @@ def episodi(item):
                              fanart=item.fanart if item.fanart != "" else item.scrapedthumbnail,
                              fulltitle=item.fulltitle,
                              show=item.fulltitle))
+    itemlist.append(Item(channel=__channel__,
+                         action="test",
+                         title="Scarica tutta la serie [COLOR yellow]"+ item.fulltitle + "[/COLOR]",
+                         url=scrapedurl,
+                         extra=elenco,
+                         thumbnail=item.thumbnail,
+                         fanart=item.fanart if item.fanart != "" else item.scrapedthumbnail,
+                         fulltitle=item.fulltitle,
+                         show=item.fulltitle))
+
     return itemlist
 # =================================================================
 
@@ -308,9 +322,9 @@ def info(item):
     itemlist = []
 
     dialog = xbmcgui.Dialog()
-    linea1='[COLOR yellow]Sono stati eliminati:[/COLOR]'
-    linea2='Aggiunta preferiti e Scarica tutti gli episodi'
-    linea3='Saranno ripristinati il più presto possibile.\n[COLOR orange]www.mimediacenter.info[/COLOR] - [I]pelisalacarta (For Italian users)[/I]'
+    linea1='[COLOR yellow]Servizi ripristinati:[/COLOR]'
+    linea2='Scarica tutti gli episodi. (beta test)'
+    linea3='\n[COLOR orange]www.mimediacenter.info[/COLOR] - [I]pelisalacarta (For Italian users)[/I]'
 
     result=dialog.ok('Le serie TV Info',linea1,linea2,linea3)
 
@@ -322,5 +336,22 @@ def HomePage(item):
 # =================================================================
 
 
+def test(item):
+    itemlist=[]
+
+    episodi = item.extra
+    for episodio,titolo,url in episodi:
+        xbmc.log(titolo)
+        downloadtools.downloadtitle(link(url),item.fulltitle + " " + episodio + " " + titolo)
+
+    return itemlist
+
+
+def link(url):
+    data = scrapertools.cache_page(url)
+    url = scrapertools.find_single_match(data, 'config:{file:\'(.*?)\'')
+
+    return url
 
 FilmFanart="https://superrepo.org/static/images/fanart/original/script.artwork.downloader.jpg"
+ThumbnailHome="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Dynamic-blue-up.svg/580px-Dynamic-blue-up.svg.png"
