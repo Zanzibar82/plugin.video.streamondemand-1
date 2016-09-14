@@ -3,6 +3,7 @@
 # streamondemand - XBMC Plugin
 # Conector for openload.co
 # http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# coded by pelisalacarta
 # ------------------------------------------------------------
 
 import re

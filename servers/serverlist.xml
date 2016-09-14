@@ -715,7 +715,7 @@
     <id>openload</id>
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/openload.py</update_url>
     <active>true</active>
-    <version>21</version>
+    <version>22</version>
     <date>27/08/2016</date>
     <changes>Fixed by cmos</changes>
 </server>
