@@ -1,3 +1,10 @@
+v5.3.5
+- fix megadrive, streaminto, openload (plus code jsunpack)
+- beautify jjdecode lib
+- translated downloadtools by artioni81
+- new channel: altadefinizioneclub
+- fixed some channels
+
 v5.3.4
 - openload big fix
 - transictional release
