@@ -284,14 +284,14 @@ def categorias(item):
 
 def search(item, texto):
     logger.info("streamondemand.filmpertutti " + item.url + " search " + texto)
-    item.url = host + "/search/" + texto
+    item.url = host + "/?s=" + texto
     try:
         if item.extra == "film":
-            return peliculas(item)
+            return src_movie(item)
         if item.extra == "serie":
-            return peliculas_tv(item)
+            return src_movie(item)
         if item.extra == "anime":
-            return anime(item)
+            return src_movie(item)
     # Se captura la excepción, para no interrumpir al buscador global si un canal falla
     except:
         import sys
@@ -299,6 +299,63 @@ def search(item, texto):
             logger.error("%s" % line)
         return []
 
+
+def src_movie(item):
+    logger.info("streamondemand.filmpertutti src")
+    itemlist = []
+
+    # Descarga la pagina
+    data = scrapertools.cache_page(item.url)
+
+    # Extrae las entradas (carpetas)
+    patron = '<li><a href="(.*?)" data-thumbnail="(.*?)"><div>\s*<div[^>]+>(.*?)<'
+    matches = re.compile(patron, re.DOTALL).findall(data)
+
+    for scrapedurl, scrapedthumbnail, scrapedtitle  in matches:
+        html = scrapertools.cache_page(scrapedurl)
+        start = html.find("<div class=\"entry-content\">")
+        end = html.find("</a></p>", start)
+        scrapedplot = html[start:end]
+        scrapedplot = re.sub(r'<[^>]*>', '', scrapedplot)
+        scrapedplot = scrapertools.decodeHtmlentities(scrapedplot)
+        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("Streaming", ""))
+        if scrapedtitle.startswith("Link to "):
+            scrapedtitle = scrapedtitle[8:]
+        if (DEBUG): logger.info(
+            "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
+        itemlist.append(
+            Item(channel=__channel__,
+                 action="findvideos",
+                 fulltitle=scrapedtitle,
+                 show=scrapedtitle,
+                 title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
+                 url=scrapedurl,
+                 thumbnail=scrapedthumbnail,
+                 plot=scrapedplot,
+                 extra=item.extra,
+                 folder=True))
+
+    # Extrae el paginador
+    patronvideos = '<a href="([^"]+)" >Avanti</a>'
+    matches = re.compile(patronvideos, re.DOTALL).findall(data)
+
+    if len(matches) > 0:
+        scrapedurl = urlparse.urljoin(item.url, matches[0])
+        itemlist.append(
+            Item(channel=__channel__,
+                 action="HomePage",
+                 title="[COLOR yellow]Torna Home[/COLOR]",
+                 folder=True)),
+        itemlist.append(
+            Item(channel=__channel__,
+                 action="src_movie",
+                 title="[COLOR orange]Successivo >>[/COLOR]",
+                 url=scrapedurl,
+                 thumbnail="http://2.bp.blogspot.com/-fE9tzwmjaeQ/UcM2apxDtjI/AAAAAAAAeeg/WKSGM2TADLM/s1600/pager+old.png",
+                 extra=item.extra,
+                 folder=True))
+
+    return itemlist
 
 def episodios(item):
     logger.info("streamondemand.filmpertutti episodios")
