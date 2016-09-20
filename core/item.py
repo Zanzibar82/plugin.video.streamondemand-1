@@ -68,12 +68,12 @@ class Item(object):
         # Descodificamos los HTML entities
         if name in ["title", "plot", "fulltitle", "contentPlot", "contentTitle"]: value = self.decode_html(value)
 
-       # Al modificar cualquiera de estos atributos content...
+        # Al modificar cualquiera de estos atributos content...
         if name in ["contentTitle", "contentPlot", "contentSerieName", "contentType", "contentEpisodeTitle",
                     "contentSeason", "contentEpisodeNumber", "contentThumbnail"]:
-            #... marcamos hasContentDetails como "true"...
+            # ... marcamos hasContentDetails como "true"...
             self.__dict__["hasContentDetails"] = "true"
-            #...y actualizamos infoLables
+            # ...y actualizamos infoLables
             if name == "contentTitle":
                 self.__dict__["infoLabels"]["title"] = value
             elif name == "contentPlot":
@@ -93,8 +93,7 @@ class Item(object):
 
         else:
 
-        super(Item, self).__setattr__(name, value)
-
+            super(Item, self).__setattr__(name, value)
 
     def __getattr__(self, name):
         '''
@@ -115,23 +114,23 @@ class Item(object):
             return "false"
 
         elif name in ["contentTitle", "contentPlot", "contentSerieName", "contentType", "contentEpisodeTitle",
-                    "contentSeason", "contentEpisodeNumber", "contentThumbnail"]:
+                      "contentSeason", "contentEpisodeNumber", "contentThumbnail"]:
             if name == "contentTitle":
-                return self.__dict__["infoLabels"].get("title","")
+                return self.__dict__["infoLabels"].get("title", "")
             elif name == "contentPlot":
-                return self.__dict__["infoLabels"].get("plot","")
+                return self.__dict__["infoLabels"].get("plot", "")
             elif name == "contentSerieName":
-                return self.__dict__["infoLabels"].get("tvshowtitle","")
+                return self.__dict__["infoLabels"].get("tvshowtitle", "")
             elif name == "contentType":
-                return self.__dict__["infoLabels"].get("mediatype","")
+                return self.__dict__["infoLabels"].get("mediatype", "")
             elif name == "contentEpisodeTitle":
                 return self.__dict__["infoLabels"].get("episodeName", "")
             elif name == "contentSeason":
-                return self.__dict__["infoLabels"].get("season","")
+                return self.__dict__["infoLabels"].get("season", "")
             elif name == "contentEpisodeNumber":
-                return self.__dict__["infoLabels"].get("episode","")
+                return self.__dict__["infoLabels"].get("episode", "")
             elif name == "contentThumbnail":
-                return self.__dict__["infoLabels"].get("thumbnail","")
+                return self.__dict__["infoLabels"].get("thumbnail", "")
 
         # valor por defecto para el resto de atributos
         else:
@@ -155,13 +154,13 @@ class Item(object):
         Genera una cadena de texto con los datos del item para el log
         Uso: logger.info(item.tostring())
         '''
-        dic= self.__dict__.copy()
+        dic = self.__dict__.copy()
 
         # Añadimos los campos content... si tienen algun valor
         for key in ["contentTitle", "contentPlot", "contentSerieName", "contentType",
                     "contentSeason", "contentEpisodeNumber", "contentThumbnail"]:
             value = self.__getattr__(key)
-            if value: dic[key]= value
+            if value: dic[key] = value
 
         return separator.join([var + "=[" + str(dic[var]) + "]" for var in sorted(dic)])
 

@@ -23,7 +23,7 @@
 # along with streamondemand 5.  If not, see <http://www.gnu.org/licenses/>.
 # ------------------------------------------------------------
 # Parámetros de configuración (kodi)
-#------------------------------------------------------------
+# ------------------------------------------------------------
 
 import os
 
@@ -37,14 +37,18 @@ PLUGIN_NAME = "streamondemand"
 __settings__ = xbmcaddon.Addon(id="plugin.video." + PLUGIN_NAME)
 __language__ = __settings__.getLocalizedString
 
+
 def get_platform():
     return PLATFORM_NAME
+
 
 def is_xbmc():
     return True
 
+
 def get_library_support():
     return True
+
 
 def get_system_platform():
     """ fonction: pour recuperer la platform que xbmc tourne """
@@ -60,10 +64,11 @@ def get_system_platform():
         platform = "osx"
     return platform
 
+
 def open_settings():
     __settings__.openSettings()
 
-  
+
 def get_setting(name, channel=""):
     """Retorna el valor de configuracion del parametro solicitado.
 
@@ -81,24 +86,24 @@ def get_setting(name, channel=""):
     Retorna:
     value -- El valor del parametro 'name'
     
-    """   
-    #xbmc.log("config.get_setting name="+name+", channel="+channel+", OLD_PLATFORM="+str(OLD_PLATFORM))
+    """
+    # xbmc.log("config.get_setting name="+name+", channel="+channel+", OLD_PLATFORM="+str(OLD_PLATFORM))
 
     # Specific channel setting
     if channel:
         # Old platforms read settings from settings-oldplatform.xml, all but the "include_in_global_search", "include_in_newest..."
         if OLD_PLATFORM and ("user" in name or "password" in name):
-            #xbmc.log("config.get_setting reading channel setting from main xml '"+channel+"_"+name+"'")
-            value = __settings__.getSetting(channel+"_"+name)
-            #xbmc.log("config.get_setting -> '"+value+"'")
+            # xbmc.log("config.get_setting reading channel setting from main xml '"+channel+"_"+name+"'")
+            value = __settings__.getSetting(channel + "_" + name)
+            # xbmc.log("config.get_setting -> '"+value+"'")
             return value
 
         # New platforms read settings from each channel
         else:
-            #xbmc.log("config.get_setting reading channel setting '"+name+"' from channel xml")
+            # xbmc.log("config.get_setting reading channel setting '"+name+"' from channel xml")
             from core import channeltools
             value = channeltools.get_channel_setting(name, channel)
-            #xbmc.log("config.get_setting -> '"+repr(value)+"'")
+            # xbmc.log("config.get_setting -> '"+repr(value)+"'")
 
             if value is not None:
                 return value
@@ -107,12 +112,13 @@ def get_setting(name, channel=""):
 
     # Global setting
     else:
-        #xbmc.log("config.get_setting reading main setting '"+name+"'")
-        value = __settings__.getSetting(channel+name)
-        #xbmc.log("config.get_setting -> '"+value+"'")
+        # xbmc.log("config.get_setting reading main setting '"+name+"'")
+        value = __settings__.getSetting(channel + name)
+        # xbmc.log("config.get_setting -> '"+value+"'")
         return value
 
-def set_setting(name,value, channel=""):
+
+def set_setting(name, value, channel=""):
     """Fija el valor de configuracion del parametro indicado.
 
     Establece 'value' como el valor del parametro 'name' en la configuracion global o en la configuracion propia del canal 'channel'.
@@ -132,20 +138,20 @@ def set_setting(name,value, channel=""):
     Retorna:
     'value' en caso de que se haya podido fijar el valor y None en caso contrario
         
-    """ 
+    """
     if channel:
-      from core import channeltools
+        from core import channeltools
         return channeltools.set_channel_setting(name, value, channel)
     else:
-      try:
-          __settings__.setSetting(name, value)
-      except:
-          #xbmc.log("[config.py] ERROR al fijar el parametro global {0}= {1}".format(name, value))
-          return None
-              
-      return value
+        try:
+            __settings__.setSetting(name, value)
+        except:
+            # xbmc.log("[config.py] ERROR al fijar el parametro global {0}= {1}".format(name, value))
+            return None
 
-    
+        return value
+
+
 def get_localized_string(code):
     dev = __language__(code)
 
@@ -153,11 +159,11 @@ def get_localized_string(code):
         dev = dev.encode("utf-8")
     except:
         pass
-    
+
     return dev
 
-def get_library_path():
 
+def get_library_path():
     if get_system_platform() == "xbox":
         default = xbmc.translatePath(os.path.join(get_runtime_path(), "library"))
     else:
@@ -170,20 +176,24 @@ def get_library_path():
 
     return value
 
+
 def get_temp_file(filename):
     return xbmc.translatePath(os.path.join("special://temp/", filename))
+
 
 def get_runtime_path():
     return xbmc.translatePath(__settings__.getAddonInfo('Path'))
 
+
 def get_data_path():
     dev = xbmc.translatePath(__settings__.getAddonInfo('Profile'))
-    
+
     # Parche para XBMC4XBOX
     if not os.path.exists(dev):
         os.makedirs(dev)
-    
+
     return dev
+
 
 def get_cookie_data():
     import os
@@ -195,10 +205,11 @@ def get_cookie_data():
 
     return cookiedata
 
+
 # Test if all the required directories are created
 def verify_directories_created():
     import logger
-    #xbmc.log("streamondemand.core.config.verify_directories_created")
+    # xbmc.log("streamondemand.core.config.verify_directories_created")
 
     # Force download path if empty
     download_path = get_setting("downloadpath")
@@ -239,7 +250,7 @@ def verify_directories_created():
             pass
 
     if is_xbmc():
-        #xbmc.log("Es una plataforma XBMC")
+        # xbmc.log("Es una plataforma XBMC")
         if download_path.startswith("special://"):
             # Translate from special and create download_path if not exists
             download_path = xbmc.translatePath(download_path)
@@ -290,55 +301,55 @@ def verify_directories_created():
                     pass
 
     else:
-        #xbmc.log("No es una plataforma XBMC")
-    # Create download_path if not exists
-    if not download_path.lower().startswith("smb") and not os.path.exists(download_path):
-        logger.debug("Creating download_path " + download_path)
-        try:
-            os.mkdir(download_path)
-        except:
-            pass
+        # xbmc.log("No es una plataforma XBMC")
+        # Create download_path if not exists
+        if not download_path.lower().startswith("smb") and not os.path.exists(download_path):
+            logger.debug("Creating download_path " + download_path)
+            try:
+                os.mkdir(download_path)
+            except:
+                pass
 
-    # Create download_list_path if not exists
-    if not download_list_path.lower().startswith("smb") and not os.path.exists(download_list_path):
-        logger.debug("Creating download_list_path " + download_list_path)
-        try:
-            os.mkdir(download_list_path)
-        except:
-            pass
+        # Create download_list_path if not exists
+        if not download_list_path.lower().startswith("smb") and not os.path.exists(download_list_path):
+            logger.debug("Creating download_list_path " + download_list_path)
+            try:
+                os.mkdir(download_list_path)
+            except:
+                pass
 
-    # Create bookmark_path if not exists
-    if not bookmark_path.lower().startswith("smb") and not os.path.exists(bookmark_path):
-        logger.debug("Creating bookmark_path " + bookmark_path)
-        try:
-            os.mkdir(bookmark_path)
-        except:
-            pass
+        # Create bookmark_path if not exists
+        if not bookmark_path.lower().startswith("smb") and not os.path.exists(bookmark_path):
+            logger.debug("Creating bookmark_path " + bookmark_path)
+            try:
+                os.mkdir(bookmark_path)
+            except:
+                pass
 
-    # Create library_path if not exists
-    if not get_library_path().lower().startswith("smb") and not os.path.exists(get_library_path()):
-        logger.debug("Creating library_path " + get_library_path())
-        try:
-            os.mkdir(get_library_path())
-        except:
-            pass
+        # Create library_path if not exists
+        if not get_library_path().lower().startswith("smb") and not os.path.exists(get_library_path()):
+            logger.debug("Creating library_path " + get_library_path())
+            try:
+                os.mkdir(get_library_path())
+            except:
+                pass
 
-    # Create settings_path is not exists
-    settings_path = os.path.join(get_data_path(), "settings_channels")
-    if not os.path.exists(settings_path):
-        logger.debug("Creating settings_path " + settings_path)
-        try:
-            os.mkdir(settings_path)
-        except:
-            pass  
+        # Create settings_path is not exists
+        settings_path = os.path.join(get_data_path(), "settings_channels")
+        if not os.path.exists(settings_path):
+            logger.debug("Creating settings_path " + settings_path)
+            try:
+                os.mkdir(settings_path)
+            except:
+                pass
 
-    
-    # Checks that a directory "xbmc" is not present on platformcode
-    old_xbmc_directory = os.path.join(get_runtime_path(), "platformcode", "xbmc")
-    if os.path.exists(old_xbmc_directory):
-        logger.debug("Removing old platformcode.xbmc directory")
-        try:
-            import shutil
-            shutil.rmtree(old_xbmc_directory)
-        except:
-            pass
+
+                # Checks that a directory "xbmc" is not present on platformcode
+        old_xbmc_directory = os.path.join(get_runtime_path(), "platformcode", "xbmc")
+        if os.path.exists(old_xbmc_directory):
+            logger.debug("Removing old platformcode.xbmc directory")
+            try:
+                import shutil
+                shutil.rmtree(old_xbmc_directory)
+            except:
+                pass

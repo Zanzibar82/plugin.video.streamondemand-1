@@ -39,6 +39,7 @@ from core import filetools
 from core import jsontools
 from core import logger
 from core import scrapertools
+
 try:
     from core import tmdb
 except:
@@ -55,17 +56,14 @@ xbmc_host = config.get_setting("xbmc_host")
 xbmc_port = int(config.get_setting("xbmc_port"))
 # Base URL of the json RPC calls. For GET calls we append a "request" URI
 # parameter. For POSTs, we add the payload as JSON the the HTTP request body
-xbmc_json_rpc_url = "http://"+xbmc_host+":"+str(xbmc_port)+"/jsonrpc"
+xbmc_json_rpc_url = "http://" + xbmc_host + ":" + str(xbmc_port) + "/jsonrpc"
 
 DEBUG = config.get_setting("debug")
-
-
-
 
 LIBRARY_PATH = config.get_library_path()
 if not filetools.exists(LIBRARY_PATH):
     logger.info("streamondemand.platformcode.library Library path doesn't exist:" + LIBRARY_PATH)
-        config.verify_directories_created()
+    config.verify_directories_created()
 
 # TODO permitir cambiar las rutas y nombres en settings para 'cine' y 'series'
 FOLDER_MOVIES = "CINE"  # config.get_localized_string(30072)
@@ -102,8 +100,6 @@ def is_compatible():
         return True
     else:
         return False
-
-
 
 
 def save_library_movie(item):
@@ -279,7 +275,7 @@ def save_library_episodes(path, episodelist, serie, silent=False):
         # progress dialog
         p_dialog = platformtools.dialog_progress('streamondemand', 'Aggiunta episodi...')
         p_dialog.update(0, 'Aggiunta episodio...')
-    
+
     # fix float porque la division se hace mal en python 2.x
     t = float(100) / len(episodelist)
 
@@ -289,7 +285,7 @@ def save_library_episodes(path, episodelist, serie, silent=False):
 
     for i, e in enumerate(episodelist):
         if not silent:
-            p_dialog.update(int(math.ceil((i+1) * t)), 'Aggiunta episodio...', e.title)
+            p_dialog.update(int(math.ceil((i + 1) * t)), 'Aggiunta episodio...', e.title)
         # Añade todos menos el que dice "Añadir esta serie..." o "Descargar esta serie..."
         if e.action == "add_serie_to_library" or e.action == "download_all_episodes":
             continue
@@ -476,7 +472,7 @@ def set_infolabels_from_library(itemlist, tipo):
                     else:
                         r_filename_aux = r['file']
 
-                    #r_filename_aux = r['file'][:-1] if r['file'].endswith(os.sep) or r['file'].endswith('/') else r['file']
+                    # r_filename_aux = r['file'][:-1] if r['file'].endswith(os.sep) or r['file'].endswith('/') else r['file']
                     r_filename = os.path.basename(r_filename_aux)
                     # logger.debug(os.path.basename(i.path) + '\n' + r_filename)
                     i_filename = os.path.basename(i.path)
@@ -486,31 +482,32 @@ def set_infolabels_from_library(itemlist, tipo):
                         # Obtener imagenes y asignarlas al item
                         if 'thumbnail' in infolabels:
 
-                            infolabels['thumbnail'] = urllib.unquote_plus(infolabels['thumbnail']).replace('image://','')
-                            
+                            infolabels['thumbnail'] = urllib.unquote_plus(infolabels['thumbnail']).replace('image://',
+                                                                                                           '')
+
                             if infolabels['thumbnail'].endswith('/'):
-                                i.thumbnail = infolabels['thumbnail'][:-1]  
-                            else: 
+                                i.thumbnail = infolabels['thumbnail'][:-1]
+                            else:
                                 i.thumbnail = infolabels['thumbnail']
 
-                            #i.thumbnail = infolabels['thumbnail'][:-1] if infolabels['thumbnail'].endswith('/') else infolabels['thumbnail']
+                                # i.thumbnail = infolabels['thumbnail'][:-1] if infolabels['thumbnail'].endswith('/') else infolabels['thumbnail']
 
                         if 'fanart' in infolabels:
-                            
+
                             infolabels['fanart'] = urllib.unquote_plus(infolabels['fanart']).replace('image://', '')
-                        
+
                             if infolabels['fanart'].endswith('/'):
                                 i.fanart = infolabels['fanart'][:-1]
                             else:
                                 i.fanart = infolabels['fanart']
 
-                            #i.fanart = infolabels['fanart'][:-1] if infolabels['fanart'].endswith('/') else infolabels['fanart']
-  
+                                # i.fanart = infolabels['fanart'][:-1] if infolabels['fanart'].endswith('/') else infolabels['fanart']
+
                         # Adaptar algunos campos al formato infoLables
                         if 'cast' in infolabels:
                             l_castandrole = list()
                             for c in sorted(infolabels['cast'], key=lambda _c: _c["order"]):
-                            l_castandrole.append((c['name'], c['role']))
+                                l_castandrole.append((c['name'], c['role']))
                             infolabels.pop('cast')
                             infolabels['castandrole'] = l_castandrole
                         if 'genre' in infolabels:
@@ -555,7 +552,7 @@ def mark_as_watched_on_strm(item):
         tiempo_actual = xbmc.Player().getTime()
         totaltime = xbmc.Player().getTotalTime()
         condicion = int(config.get_setting("watched_setting"))
-    
+
         if condicion == 0:  # '5 minutos'
             mark_time = 300
         elif condicion == 1:  # '30%'
@@ -564,9 +561,9 @@ def mark_as_watched_on_strm(item):
             mark_time = totaltime * 0.5
         elif condicion == 3:  # '80%'
             mark_time = totaltime * 0.8
-    
+
         logger.debug(str(mark_time))
-    
+
         if tiempo_actual > mark_time:
             strm = Item().fromurl(filetools.read(item.path))
             if not type(strm.infoLabels) == dict:
@@ -765,7 +762,8 @@ def get_data(payload):
         except Exception, ex:
             template = "An exception of type {0} occured. Arguments:\n{1!r}"
             message = template.format(type(ex).__name__, ex.args)
-            logger.info("streamondemand.platformcode.library get_data:: error en xbmc_json_rpc_url: {0}".format(message))
+            logger.info(
+                "streamondemand.platformcode.library get_data:: error en xbmc_json_rpc_url: {0}".format(message))
             data = ["error"]
     else:
         try:
@@ -835,6 +833,7 @@ def create_nfo_file(video_id, path, type_video):
 
     filetools.write(nfo_file, data)
 
+
 def add_pelicula_to_library(item):
     logger.info("streamondemand.platformcode.library add_pelicula_to_library")
 
@@ -844,12 +843,12 @@ def add_pelicula_to_library(item):
     if fallidos == 0:
         platformtools.dialog_ok("Libreria", "Il film è stato aggiunto alla libreria")
     else:
-        itemlist.append(Item(title="ERRORE, il film non è stato aggiunto alla libreria",  channel=item.channel))
+        itemlist.append(Item(title="ERRORE, il film non è stato aggiunto alla libreria", channel=item.channel))
         platformtools.dialog_ok("Libreria", "ERRORE, il film non è stato aggiunto alla libreria")
 
 
 def add_serie_to_library(item, channel):
-    logger.info("streamondemand.platformcode.library add_serie_to_library, show=#"+item.show+"#")
+    logger.info("streamondemand.platformcode.library add_serie_to_library, show=#" + item.show + "#")
 
     # Esta marca es porque el item tiene algo más aparte en el atributo "extra"
     item.action = item.extra
