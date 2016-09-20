@@ -34,9 +34,77 @@ def isGeneric():
 def mainlist(item):
     log("animetubeita","mainlist")
     itemlist =[]
-    itemlist.append(Item(channel=__channel__, action="lista_anime", title="[COLOR azure]Anime[/COLOR]",url=hostlista, thumbnail=AnimeThumbnail, fanart=AnimeFanart))
-    itemlist.append(Item(channel=__channel__, action="lista_genere", title="[COLOR azure]Genere[/COLOR]", url=hostgeneri, thumbnail=CategoriaThumbnail, fanart=CategoriaFanart))
-    itemlist.append(Item(channel=__channel__, action="dettaglio_genere", title="[COLOR azure]Serie in Corso[/COLOR]", url=hostcorso, thumbnail=CategoriaThumbnail, fanart=CategoriaFanart))
+    itemlist.append(Item(channel=__channel__,
+                         action="lista_home",
+                         title="[COLOR azure]Home[/COLOR]",
+                         url=host,
+                         thumbnail=AnimeThumbnail,
+                         fanart=AnimeFanart))
+    itemlist.append(Item(channel=__channel__,
+                         action="lista_anime",
+                         title="[COLOR azure]A-Z[/COLOR]",
+                         url=hostlista,
+                         thumbnail=AnimeThumbnail,
+                         fanart=AnimeFanart))
+    itemlist.append(Item(channel=__channel__,
+                         action="lista_genere",
+                         title="[COLOR azure]Genere[/COLOR]",
+                         url=hostgeneri,
+                         thumbnail=CategoriaThumbnail,
+                         fanart=CategoriaFanart))
+    itemlist.append(Item(channel=__channel__,
+                         action="lista_in_corso",
+                         title="[COLOR azure]Serie in Corso[/COLOR]",
+                         url=hostcorso,
+                         thumbnail=CategoriaThumbnail,
+                         fanart=CategoriaFanart))
+    itemlist.append(Item(channel=__channel__,
+                         action="search",
+                         title="[COLOR lime]Cerca...[/COLOR]",
+                         url=host+"/?s=",
+                         thumbnail=CercaThumbnail,
+                         fanart=CercaFanart))
+    return itemlist
+#=================================================================
+
+#-----------------------------------------------------------------
+def lista_home(item):
+    log("animetubeita","lista_home")
+
+    itemlist =[]
+
+    patron = '<h2 class="title"><a href="(.*?)" rel="bookmark" title=".*?">.*?<img.*?src="(.*?)".*?<strong>Titolo</strong></td>.*?<td>(.*?)</td>.*?<td><strong>Trama</strong></td>.*?<td>(.*?)</'
+    for scrapedurl,scrapedthumbnail,scrapedtitle,scrapedplot in scrapedAll(item.url, patron):
+        title=scrapertools.decodeHtmlentities(scrapedtitle)
+        title=title.split("Sub")[0]
+        scrapedplot = scrapertools.decodeHtmlentities(scrapedplot)
+        itemlist.append(Item(channel=__channel__,
+                             action="dl_s",
+                             title="[COLOR azure]" + title + "[/COLOR]",
+                             url=scrapedurl,
+                             thumbnail=scrapedthumbnail,
+                             fanart=scrapedthumbnail,
+                             plot=scrapedplot))
+
+    # Paginazione
+    # ===========================================================
+    data = scrapertools.cache_page(item.url)
+    patron = '<link rel="next" href="(.*?)"'
+    next_page = scrapertools.find_single_match(data, patron)
+    if next_page != "":
+        itemlist.append(
+            Item(channel=__channel__,
+                 action="lista_home",
+                 title=AvantiTxt,
+                 url=next_page,
+                 thumbnail=AvantiImg,
+                 folder=True))
+        itemlist.append(
+            Item(channel=__channel__,
+                 action="HomePage",
+                 title=HomeTxt,
+                 folder=True))
+    # ===========================================================
     return itemlist
 #=================================================================
 
@@ -51,38 +119,160 @@ def lista_anime(item):
         title=scrapertools.decodeHtmlentities(scrapedtitle)
         title=title.split("Sub")[0]
         log("url:[" + scrapedurl + "] scrapedtitle:[" + title +"]")
-        itemlist.append(Item(channel=__channel__, action="dettaglio", title="[COLOR azure]" + title + "[/COLOR]", url=scrapedurl,thumbnail="", fanart=""))
+        itemlist.append(Item(channel=__channel__,
+                             action="dettaglio",
+                             title="[COLOR azure]" + title + "[/COLOR]",
+                             url=scrapedurl,
+                             thumbnail="",
+                             fanart=""))
 
     return itemlist
 #=================================================================
 
 #-----------------------------------------------------------------
 def lista_genere(item):
-    log("animetubeita","lista_genere")
+    log("lista_anime_genere", "lista_genere")
+    itemlist = []
+ 
+    data = scrapertools.cache_page(item.url)
+ 
+    bloque = scrapertools.get_match(data, '<div class="hentry page post-1 odd author-admin clear-block">(.*?)<div id="disqus_thread">')
+ 
+    patron = '<li class="cat-item cat-item.*?"><a href="(.*?)" >(.*?)</a>'
+    matches = re.compile(patron, re.DOTALL).findall(bloque)
+    scrapertools.printMatches(matches)
+ 
+    for scrapedurl, scrapedtitle in matches:
+        itemlist.append(
+            Item(channel=__channel__,
+                 action="lista_generi",
+                 title='[COLOR lightsalmon][B]' + scrapedtitle + '[/B][/COLOR]',
+                 url=scrapedurl,
+                 fulltitle=scrapedtitle,
+                 show=scrapedtitle,
+                 thumbnail=item.thumbnail))
+ 
+    return itemlist
+#=================================================================
+
+#-----------------------------------------------------------------
+def lista_generi(item):
+    log("animetubeita","lista_generi")
 
     itemlist =[]
-    single= '<ul>(.*?)</ul>'
-    patron = '<li class="cat-item[^<]+<.*?href="(.*?)".*?>(.*?)</a>'
-    for scrapedurl, scrapedtitle in scrapedSingle(item.url,single,patron):
-        title = scrapertools.decodeHtmlentities(scrapedtitle)
-        log("url:[" + scrapedurl + "] scrapedtitle:[" + title + "]")
-        itemlist.append(Item(channel=__channel__, action="dettaglio_genere", title="[COLOR azure]" + title + "[/COLOR]", url=scrapedurl,thumbnail="", fanart=""))
+    patron = '<h2 class="title"><a href="(.*?)" rel="bookmark" title=".*?">.*?<img.*?src="(.*?)".*?<strong>Titolo</strong></td>.*?<td>(.*?)</td>.*?<td><strong>Trama</strong></td>.*?<td>(.*?)</'
+    for scrapedurl,scrapedthumbnail,scrapedtitle,scrapedplot in scrapedAll(item.url, patron):
+        title=scrapertools.decodeHtmlentities(scrapedtitle)
+        title=title.split("Sub")[0]
+        scrapedplot = scrapertools.decodeHtmlentities(scrapedplot)
+        itemlist.append(Item(channel=__channel__,
+                             action="dettaglio",
+                             title="[COLOR azure]" + title + "[/COLOR]",
+                             url=scrapedurl,
+                             thumbnail=scrapedthumbnail,
+                             fanart=scrapedthumbnail,
+                             plot=scrapedplot))
+
+    # Paginazione
+    # ===========================================================
+    data = scrapertools.cache_page(item.url)
+    patron = '<link rel="next" href="(.*?)"'
+    next_page = scrapertools.find_single_match(data, patron)
+    if next_page != "":
+        itemlist.append(
+            Item(channel=__channel__,
+                 action="lista_generi",
+                 title=AvantiTxt,
+                 url=next_page,
+                 thumbnail=AvantiImg,
+                 folder=True))
+        itemlist.append(
+            Item(channel=__channel__,
+                 action="HomePage",
+                 title=HomeTxt,
+                 folder=True))
+    # ===========================================================
 
 
     return itemlist
 #=================================================================
 
 #-----------------------------------------------------------------
-def dettaglio_genere(item):
-    log("animetubeita","dettaglio")
-    itemlist=[]
+def lista_in_corso(item):
+    log("animetubeita","lista_home")
 
-    patron='<h2 class="title"><a*.?href="(.*?)"[^>]+>(.*?)</a></h2>'
-    for scrapedurl,scrapedtitle in scrapedAll(item.url,patron):
-        log("url:[" + scrapedurl + "] scrapedtitle:[" + scrapedtitle + "]")
-        title = scrapertools.decodeHtmlentities(scrapedtitle)
-        title = title.split("Sub")[0]
-        itemlist.append(Item(channel=__channel__, action="dettaglio", title="[COLOR azure]" + title + "[/COLOR]", url=scrapedurl, thumbnail="", fanart=""))
+    itemlist =[]
+
+    patron = '<h2 class="title"><a href="(.*?)" rel="bookmark" title="Link.*?>(.*?)</a></h2>.*?<img.*?src="(.*?)".*?<td><strong>Trama</strong></td>.*?<td>(.*?)</td>'
+    for scrapedurl,scrapedtitle,scrapedthumbnail,scrapedplot in scrapedAll(item.url, patron):
+        title=scrapertools.decodeHtmlentities(scrapedtitle)
+        title=title.split("Sub")[0]
+        scrapedplot = scrapertools.decodeHtmlentities(scrapedplot)
+        itemlist.append(Item(channel=__channel__,
+                             action="dettaglio",
+                             title="[COLOR azure]" + title + "[/COLOR]",
+                             url=scrapedurl,
+                             thumbnail=scrapedthumbnail,
+                             fanart=scrapedthumbnail,
+                             plot=scrapedplot))
+    # Paginazione
+    # ===========================================================
+    data = scrapertools.cache_page(item.url)
+    patron = '<link rel="next" href="(.*?)"'
+    next_page = scrapertools.find_single_match(data, patron)
+    if next_page != "":
+        itemlist.append(
+            Item(channel=__channel__,
+                 action="lista_genere",
+                 title=AvantiTxt,
+                 url=next_page,
+                 thumbnail=AvantiImg,
+                 folder=True))
+        itemlist.append(
+            Item(channel=__channel__,
+                 action="HomePage",
+                 title=HomeTxt,
+                 folder=True))
+    # ===========================================================
+    return itemlist
+#=================================================================
+
+#-----------------------------------------------------------------
+def dl_s(item):
+    log("animetubeita","dl_s")
+
+    itemlist =[]
+    encontrados = set()
+
+    #1
+    patron = '<p><center><a.*?href="(.*?)"'
+    for scrapedurl in scrapedAll(item.url, patron):
+        if scrapedurl in encontrados: continue
+        encontrados.add(scrapedurl)
+        title = "DOWNLOAD & STREAMING"
+        itemlist.append(Item(channel=__channel__,
+                             action="dettaglio",
+                             title="[COLOR azure]" + title + "[/COLOR]",
+                             url=scrapedurl,
+                             thumbnail=item.thumbnail,
+                             fanart=item.thumbnail,
+                             plot=item.plot,
+                             folder=True))
+    #2
+    patron = '<p><center>.*?<a.*?href="(.*?)"'
+    for scrapedurl in scrapedAll(item.url, patron):
+        if scrapedurl in encontrados: continue
+        encontrados.add(scrapedurl)
+        title = "DOWNLOAD & STREAMING"
+        itemlist.append(Item(channel=__channel__,
+                             action="dettaglio",
+                             title="[COLOR azure]" + title + "[/COLOR]",
+                             url=scrapedurl,
+                             thumbnail=item.thumbnail,
+                             fanart=item.thumbnail,
+                             plot=item.plot,
+                             folder=True))
+
     return itemlist
 #=================================================================
 
@@ -99,11 +289,32 @@ def dettaglio(item):
         episodio+=1
         url = "http://"+scrapedurl
         log("url:[" + url + "  scrapedtitle:" + title +"]")
-        itemlist.append(Item(channel=__channel__, action="play", title="[COLOR azure]" + title + "[/COLOR]", url=url,thumbnail="", fanart=""))
+        itemlist.append(Item(channel=__channel__,
+                             action="play",
+                             title="[COLOR azure]" + title + "[/COLOR]",
+                             url=url,
+                             thumbnail=item.thumbnail,
+                             fanart=item.thumbnail,
+                             plot=item.plot))
 
     return itemlist
 #=================================================================
 
+# -----------------------------------------------------------------
+def search(item, texto):
+    log("animetubeita", "search")
+    item.url = item.url + texto
+ 
+    try:
+        return lista_home(item)
+    except:
+        import sys
+        for line in sys.exc_info():
+            logger.error("%s" % line)
+        return []
+ 
+ 
+# =================================================================
 
 #=================================================================
 # Funzioni di servizio
@@ -137,6 +348,7 @@ def log(funzione="",stringa="",canale=__channel__):
 
 #-----------------------------------------------------------------
 def HomePage(item):
+    import xbmc
     xbmc.executebuiltin("ReplaceWindow(10024,plugin://plugin.video.streamondemand)")
 #=================================================================
 
@@ -152,11 +364,3 @@ CercaFanart="https://i.ytimg.com/vi/IAlbvyBdYdY/maxresdefault.jpg"
 HomeTxt = "[COLOR yellow]Torna Home[/COLOR]"
 AvantiTxt="[COLOR orange]Successivo>>[/COLOR]"
 AvantiImg="http://2.bp.blogspot.com/-fE9tzwmjaeQ/UcM2apxDtjI/AAAAAAAAeeg/WKSGM2TADLM/s1600/pager+old.png"
-
-
-
-
-
-
-
-

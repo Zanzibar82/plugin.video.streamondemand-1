@@ -303,7 +303,7 @@ def episodios(item):
         scrapertools.anti_cloudflare(item.url, headers)
     )
 
-    serie_id = scrapertools.get_match(data, '/?id=(\d+)" rel="nofollow"')
+    serie_id = scrapertools.get_match(data, 'id=([^"]+)" rel="nofollow" target="_blank"')
 
     data = scrapertools.get_match(data, '<div id="episode">(.*?)</div>')
 
