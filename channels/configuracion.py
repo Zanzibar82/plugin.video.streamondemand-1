@@ -40,8 +40,10 @@ def mainlist(item):
     itemlist.append(Item(channel=CHANNELNAME, title="Preferenze", action="settings", folder=False))
     itemlist.append(Item(channel=CHANNELNAME, title="", action="", folder=False))
     itemlist.append(Item(channel="novedades", title="Impostazioni 'Novedades'", action="menu_opciones", folder=True))
-    itemlist.append(
-        Item(channel="buscador", title="Impostazioni della ricerca globale", action="opciones", folder=True))
+    itemlist.append(Item(channel="buscador", title="Impostazioni della ricerca globale", action="opciones", folder=True))
+    if config.is_xbmc():
+        itemlist.append(Item(channel=item.channel, action="updatebiblio",
+                             title="Recupera nuovi episodi e aggiorna la libreria", folder=False))
     itemlist.append(Item(channel=CHANNELNAME, title="", action="", folder=False))
     itemlist.append(Item(channel=CHANNELNAME, title="Avvia aggiornamenti", action="check_for_updates", folder=False))
 
@@ -50,8 +52,26 @@ def mainlist(item):
 
 def check_for_updates(item):
     from core import updater
-    updater.checkforupdates()
 
+    try:
+        version = updater.checkforupdates()
+        if version:
+            import xbmcgui
+            yes_pressed = xbmcgui.Dialog().yesno( "Versione "+version+" disponible" , "Installarla?" )
+      
+            if yes_pressed:
+                item = Item(version=version)
+                updater.update(item)
+
+    except:
+        pass
 
 def settings(item):
     config.open_settings()
+
+def updatebiblio(item):
+    logger.info("streamondemand.channels.ayuda updatebiblio")
+
+    import library_service
+    library_service.main()
+

@@ -29,9 +29,9 @@ import re
 
 import xbmcgui
 
-from core import logger
-from core.item import Item
 from core.tmdb import Tmdb
+from core.item import Item
+from core import logger
 
 
 class InfoWindow(xbmcgui.WindowXMLDialog):
@@ -159,7 +159,7 @@ class InfoWindow(xbmcgui.WindowXMLDialog):
 
         # Informacion de la pelicula
         self.result["type"] = "movie"
-        self.result["id_Tmdb"] = self.otmdb.get_id()
+        self.result["tmdb_id"] = self.otmdb.get_id()
         self.result["title"] = self.otmdb.result["title"]
         self.result["original_title"] = self.otmdb.result["original_title"]
         self.result["date"] = self.get_date(self.otmdb.result["release_date"])
@@ -189,7 +189,7 @@ class InfoWindow(xbmcgui.WindowXMLDialog):
 
         # informacion generica de la serie
         self.result["type"] = "tv"
-        self.result["id_Tmdb"] = self.otmdb.get_id()
+        self.result["tmdb_id"] = self.otmdb.get_id()
         self.result["title"] = self.otmdb.result.get("name", "N/A")
         self.result["rating"] = self.otmdb.result["vote_average"] + "/10 (" + self.otmdb.result["vote_count"] + ")"
         self.result["genres"] = ", ".join(self.otmdb.result["genres"])
@@ -250,7 +250,7 @@ class InfoWindow(xbmcgui.WindowXMLDialog):
 
             # Datos comunes a todos los listados
             data["type"] = data_in["type"]
-            data["id_Tmdb"] = data_in["id"]
+            data["tmdb_id"] = data_in["id"]
             data["language"] = self.get_language(data_in["original_language"])
             data["rating"] = data_in["vote_average"] + "/10 (" + data_in["vote_count"] + ")"
             data["genres"] = ", ".join(data_in["genres"])
@@ -280,12 +280,14 @@ class InfoWindow(xbmcgui.WindowXMLDialog):
                 self.from_tmdb = False
                 self.get_dict_info(data_in)
 
-    def Start(self, data, caption="Información del vídeo", callback=None):
+    def Start(self, data, caption="Información del vídeo", callback=None, item=None):
         # Capturamos los parametros
         self.caption = caption
         self.callback = callback
+        self.item = item
         self.indexList = -1
         self.listData = None
+        self.return_value = None
 
         # Obtenemos el canal desde donde se ha echo la llamada y cargamos los settings disponibles para ese canal
         channelpath = inspect.currentframe().f_back.f_back.f_code.co_filename
@@ -299,7 +301,6 @@ class InfoWindow(xbmcgui.WindowXMLDialog):
         self.get_tmdb_data(data)
 
         # Muestra la ventana
-        self.return_value = None
         self.doModal()
         return self.return_value
 
@@ -392,17 +393,16 @@ class InfoWindow(xbmcgui.WindowXMLDialog):
             if self.callback:
                 cb_channel = None
                 try:
-                    cb_channel = __import__('platformcode.%s' % self.channel,
-                                            fromlist=["platformcode.%s" % self.channel])
+                    cb_channel = __import__('core.%s' % self.channel, fromlist=["core.%s" % self.channel])
                 except ImportError:
                     logger.error('Imposible importar %s' % self.channel)
 
                 if id == 10028:  # Boton Aceptar
                     if cb_channel:
-                        self.return_value = getattr(cb_channel, self.callback)(self.result)
+                        self.return_value = getattr(cb_channel, self.callback)(self.item, self.listData[self.indexList])
                 else:  # Boton Cancelar y [X]
                     if cb_channel:
-                        self.return_value = getattr(cb_channel, self.callback)(None)
+                        self.return_value = getattr(cb_channel, self.callback)(self.item, None)
 
     def onAction(self, action):
         # logger.info("streamondemand.platformcode.xbmc_info_window onAction action="+repr(action.getId()))

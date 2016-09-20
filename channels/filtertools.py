@@ -26,13 +26,12 @@
 # ------------------------------------------------------------
 
 import os
-import sys
 
 from core import config
+from core import filetools
 from core import jsontools
 from core import logger
 from core.item import Item
-from platformcode import library
 from platformcode import platformtools
 
 TAG_TVSHOW_FILTER = "TVSHOW_FILTER"
@@ -83,7 +82,7 @@ def get_filtered_links(list_item, channel):
     _filter = None
 
     dict_filtered_shows = get_filtered_tvshows(channel)
-    tvshow = library.title_to_filename(list_item[0].show.lower().strip())
+    tvshow = list_item[0].show.lower().strip()
     if tvshow in dict_filtered_shows.keys():
         _filter = Filter(dict_filtered_shows[tvshow])
 
@@ -189,7 +188,7 @@ def get_filtered_tvshows(from_channel):
 
     fname = os.path.join(config.get_data_path(), "settings_channels", name_file + "_data.json")
 
-    data = read_file(fname)
+    data = filetools.read(fname)
     dict_data = jsontools.load_json(data)
 
     check_json_file(data, fname, dict_data)
@@ -201,56 +200,6 @@ def get_filtered_tvshows(from_channel):
         logger.info("json_series: {0}".format(dict_series))
 
     return dict_series
-
-
-def read_file(fname):
-    """
-    pythonic way to read from file
-
-    :param fname: filename
-    :type fname: str
-    :return: data from filename.
-    :rtype: str
-    """
-    logger.info("[filtertools.py] read_file")
-    data = ""
-
-    if os.path.isfile(fname):
-        try:
-            with open(fname, "r") as f:
-                for line in f:
-                    data += line
-        except EnvironmentError:
-            logger.info("ERROR al leer el archivo: {0}".format(fname))
-
-    return data
-
-
-def save_file(data, fname, message):
-    """
-    pythonic way to write a file
-
-    :param fname: filename.
-    :type fname: str
-    :param data: data to save.
-    :type data: str
-    :param message: message to display
-    :type message: str
-    :return: result of saving.
-    :rtype: bool
-    """
-    logger.info("[filtertools.py] save_file")
-    logger.info("default encoding: {0}".format(sys.getdefaultencoding()))
-    try:
-        with open(fname, "w") as f:
-            try:
-                f.write(data)
-            except UnicodeEncodeError:
-                logger.info("Error al realizar el encode, se usa uft8")
-                f.write(data.encode('utf-8'))
-    except EnvironmentError:
-        message = "Error al guardar en disco"
-    return message
 
 
 def check_json_file(data, fname, dict_data):
@@ -271,7 +220,7 @@ def check_json_file(data, fname, dict_data):
 
         if data != "":
             # se crea un nuevo fichero
-            title = save_file(data, "{0}.bk".format(fname), "")
+            title = filetools.write("{0}.bk".format(fname), data)
             if title != "":
                 logger.info("Ha habido un error al guardar el fichero: {0}.bk"
                             .format(fname))
@@ -335,7 +284,7 @@ def config_filter(item):
     # OBTENEMOS LOS DATOS DEL JSON
     dict_series = get_filtered_tvshows(item.from_channel)
 
-    tvshow = library.title_to_filename(item.show.lower().strip())
+    tvshow = item.show.lower().strip()
 
     lang_selected = dict_series.get(tvshow, {}).get(TAG_LANGUAGE, 'Español')
     list_quality = dict_series.get(tvshow, {}).get(TAG_QUALITY_NOT_ALLOWED, "")
@@ -345,10 +294,10 @@ def config_filter(item):
     active = True
     custom_method = ""
     allow_option = False
-    if library.title_to_filename(item.show.lower().strip()) in dict_series:
+    if item.show.lower().strip() in dict_series:
         allow_option = True
         custom_method = "borrar_filtro"
-        active = dict_series.get(library.title_to_filename(item.show.lower().strip()), {}).get(TAG_ACTIVE, False)
+        active = dict_series.get(item.show.lower().strip(), {}).get(TAG_ACTIVE, False)
 
     list_controls = []
 
@@ -412,7 +361,7 @@ def borrar_filtro(item):
     if item:
         # OBTENEMOS LOS DATOS DEL JSON
         dict_series = get_filtered_tvshows(item.from_channel)
-        tvshow = library.title_to_filename(item.show.strip().lower())
+        tvshow = item.show.strip().lower()
 
         heading = "¿Está seguro que desea eliminar el filtro?"
         line1 = "Pulse 'Si' para eliminar el filtro de [COLOR blue]{0}[/COLOR], pulse 'No' o cierre la ventana para " \
@@ -421,9 +370,13 @@ def borrar_filtro(item):
         if platformtools.dialog_yesno(heading, line1) == 1:
             lang_selected = dict_series.get(tvshow, {}).get(TAG_LANGUAGE, "")
             dict_series.pop(tvshow, None)
-            message = "FILTRO ELIMINADO"
             fname, json_data = update_json_data(dict_series, item.from_channel)
-            message = save_file(json_data, fname, message)
+            result = filetools.write(fname, json_data)
+
+            if result:
+                message = "FILTRO ELIMINADO"
+            else:
+                message = "Error al guardar en disco"
             heading = "{0} [{1}]".format(item.show.strip(), lang_selected)
             platformtools.dialog_notification(heading, message)
 
@@ -444,7 +397,7 @@ def guardar_valores(item, dict_data_saved):
 
         # OBTENEMOS LOS DATOS DEL JSON
         dict_series = get_filtered_tvshows(item.from_channel)
-        tvshow = library.title_to_filename(item.show.strip().lower())
+        tvshow = item.show.strip().lower()
 
         logger.info("Se actualiza los datos")
 
@@ -458,10 +411,13 @@ def guardar_valores(item, dict_data_saved):
                        TAG_LANGUAGE: lang_selected, TAG_QUALITY_NOT_ALLOWED: list_quality}
         dict_series[tvshow] = dict_filter
 
-        message = "FILTRO GUARDADO"
-
         fname, json_data = update_json_data(dict_series, item.from_channel)
-        message = save_file(json_data, fname, message)
+        result = filetools.write(fname, json_data)
+
+        if result:
+            message = "FILTRO GUARDADO"
+        else:
+            message = "Error al guardar en disco"
 
         heading = "{0} [{1}]".format(item.show.strip(), lang_selected)
         platformtools.dialog_notification(heading, message)
@@ -482,7 +438,7 @@ def update_json_data(dict_series, filename):
     if not os.path.exists(os.path.join(config.get_data_path(), "settings_channels")):
         os.mkdir(os.path.join(config.get_data_path(), "settings_channels"))
     fname = os.path.join(config.get_data_path(), "settings_channels", filename + "_data.json")
-    data = read_file(fname)
+    data = filetools.read(fname)
     dict_data = jsontools.load_json(data)
     # es un dict
     if dict_data:
@@ -511,7 +467,7 @@ def save_filter(item):
 
     dict_series = get_filtered_tvshows(item.from_channel)
 
-    name = library.title_to_filename(item.show.lower().strip())
+    name = item.show.lower().strip()
     logger.info("[filtertools.py] config_filter name {0}".format(name))
 
     open_tag_idioma = (0, item.title.find("[")+1)[item.title.find("[") >= 0]
@@ -539,9 +495,12 @@ def save_filter(item):
     # logger.info("categoria {0}".format(item.from_channel))
 
     fname, json_data = update_json_data(dict_series, item.from_channel)
+    result = filetools.write(fname, json_data)
 
-    message = "FILTRO GUARDADO"
-    message = save_file(json_data, fname, message)
+    if result:
+        message = "FILTRO GUARDADO"
+    else:
+        message = "Error al guardar en disco"
 
     heading = "{0} [1]".format(item.show.strip(), idioma)
     platformtools.dialog_notification(heading, message)
@@ -557,10 +516,15 @@ def del_filter(item):
     logger.info("[filtertools.py] del_filter")
 
     dict_series = get_filtered_tvshows(item.from_channel)
-    dict_series.pop(library.title_to_filename(item.show.lower().strip()), None)
+    dict_series.pop(item.show.lower().strip(), None)
 
     fname, json_data = update_json_data(dict_series, item.from_channel)
-    message = save_file(json_data, fname, "FILTRO Borrado")
+    result = filetools.write(fname, json_data)
+
+    if result:
+        message = "FILTRO ELIMINADO"
+    else:
+        message = "Error al guardar en disco"
 
     heading = "{0}".format(item.show.strip())
     platformtools.dialog_notification(heading, message)

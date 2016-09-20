@@ -75,7 +75,7 @@ def personal_channel(item):
         
             contador = contador + 1
             if contador > maximo:
-                itemlist.append( Item(channel=item.channel, action="personal_channel" , title=">> Página siguiente" , extra=str(pagina_actual+1, viewmode="movie_with_plot"), folder=True))
+                itemlist.append( Item(channel=item.channel, action="personal_channel" , title=">> Página siguiente" , extra=str(pagina_actual+1), viewmode="movie_with_plot", folder=True))
                 break
 
         # Si no está en la página que debe mostrar, simplemente deja pasar el contador

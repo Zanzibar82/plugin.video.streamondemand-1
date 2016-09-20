@@ -738,8 +738,8 @@ class SettingsWindow(xbmcgui.WindowXMLDialog):
                     self.getControl(10004).setEnabled(True)
 
     def check_default(self):
-        if self.custom_button is not None and not self.custom_button:
-            def_values = dict([(c["id"], c["default"]) for c in self.controls])
+        if not self.custom_button:
+            def_values = dict([[c["id"], c["default"]] for c in self.controls])
 
             if def_values == self.values:
                 self.getControl(10006).setEnabled(False)
@@ -749,6 +749,7 @@ class SettingsWindow(xbmcgui.WindowXMLDialog):
     def onClick(self, id):
         # Valores por defecto
         if id == 10006:
+            #DrZ3r0
             if self.custom_button is not None and self.custom_button['method'] != "":
                 self.close()
                 cb_channel = None

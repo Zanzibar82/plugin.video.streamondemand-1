@@ -63,13 +63,6 @@
         <setting id="jdownloader" type="text" label="30022" enable="eq(-1,true)" default="http://127.0.0.1:10025"/>
 
         <setting type="sep"/>
-        <setting id="pyload_enabled" type="bool" label="pyLoad" default="false"/>
-        <setting id="pyload" type="text" label="  URL" enable="eq(-1,true)" default="http://127.0.0.1:8000"/>
-        <setting id="pyload_user" type="text" label="  User" enable="eq(-2,true)" default=""/>
-        <setting id="pyload_password" type="text" option="hidden" label="  Password" enable="!eq(-1,)+eq(-3,true)"
-                 default=""/>
-
-        <setting type="sep"/>
         <setting id="personalchannel" type="bool" label="30013" default="false"/>
         <setting id="personalchannelname" type="text" label="30048" enable="eq(-1,true)"
                  default="Ejemplo de canal personal"/>

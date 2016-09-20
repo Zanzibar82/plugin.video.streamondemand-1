@@ -57,8 +57,8 @@ def dialog_yesno(heading, line1, line2="", line3="", nolabel="No", yeslabel="Si"
         return dialog.yesno(heading, line1, line2, line3, nolabel, yeslabel)
 
 
-def dialog_select(heading, list): 
-    return xbmcgui.Dialog().select(heading, list)
+def dialog_select(heading, _list):
+    return xbmcgui.Dialog().select(heading, _list)
 
 
 def dialog_progress(heading, line1, line2="", line3=""):
@@ -82,9 +82,9 @@ def dialog_input(default="", heading="", hidden=False):
         return None
 
 
-def dialog_numeric(type, heading, default=""):
+def dialog_numeric(_type, heading, default=""):
     dialog = xbmcgui.Dialog()
-    dialog.numeric(type, heading, default)
+    dialog.numeric(_type, heading, default)
     return dialog
 
 
@@ -116,6 +116,21 @@ def show_channel_settings(list_controls=None, dict_values=None, caption="", call
     Muestra un cuadro de configuracion personalizado para cada canal y guarda los datos al cerrarlo.
     
     Parametros: ver descripcion en xbmc_config_menu.SettingsWindow
+    @param list_controls: lista de elementos a mostrar en la ventana.
+    @type list_controls: list
+    @param dict_values: valores que tienen la lista de elementos.
+    @type dict_values: dict
+    @param caption: titulo de la ventana
+    @type caption: str
+    @param callback: función que se llama tras cerrarse la ventana.
+    @type callback: str
+    @param item: item para el que se muestra la ventana de configuración.
+    @type item: Item
+    @param custom_button: botón personalizado, que se muestra junto a "OK" y "Cancelar".
+    @type custom_button: dict
+
+    @return: devuelve la ventana con los elementos
+    @rtype: SettingsWindow
     """
     from xbmc_config_menu import SettingsWindow
     return SettingsWindow("ChannelSettings.xml", config.get_runtime_path())\
@@ -123,7 +138,7 @@ def show_channel_settings(list_controls=None, dict_values=None, caption="", call
                  custom_button=custom_button)
 
 
-def show_video_info(data, caption="", callback=None):
+def show_video_info(data, caption="", callback=None, item=None):
     """
     Muestra una ventana con la info del vídeo. Opcionalmente se puede indicar el titulo de la ventana mendiante
     el argumento 'caption'.
@@ -134,7 +149,8 @@ def show_video_info(data, caption="", callback=None):
                   1. contentTitle (este tiene prioridad 1)
                   2. fulltitle (este tiene prioridad 2)
                   3. title (este tiene prioridad 3)
-            El primero que contenga "algo" lo interpreta como el titulo (es importante asegurarse que el titulo este en su sitio)
+            El primero que contenga "algo" lo interpreta como el titulo (es importante asegurarse que el titulo este en
+            su sitio)
 
         En caso de series:
             1. Busca la temporada y episodio en los campos contentSeason y contentEpisodeNumber
@@ -151,7 +167,8 @@ def show_video_info(data, caption="", callback=None):
                   2. NO Tenemos Temporada y episodio
                     En este caso muestra la informacion generica de la serie
 
-    Si se pasa como argumento 'data' un dict() muestra en la ventana directamente la información pasada (sin usar el scrapper)
+    Si se pasa como argumento 'data' un dict() muestra en la ventana directamente la información pasada (sin usar el
+    scrapper)
         Formato:
             En caso de peliculas:
                 dict({
@@ -183,10 +200,21 @@ def show_video_info(data, caption="", callback=None):
                          "episodes"       : "Numero de episodios de la temporada",
                          "episode"        : "Episodio"
                       }
-    Si se pasa como argumento 'data' un listado de dict() con la estructura anterior, muestra los botones 'Anterior' y 'Siguiente'
-    para ir recorriendo la lista. Ademas muestra los botones 'Aceptar' y 'Cancelar' que llamaran a la funcion 'callback'
-    del canal desde donde se realiza la llamada pasandole como parametros el elemento actual (dict()) o None respectivamente.
+    Si se pasa como argumento 'data' un listado de dict() con la estructura anterior, muestra los botones 'Anterior' y
+    'Siguiente' para ir recorriendo la lista. Ademas muestra los botones 'Aceptar' y 'Cancelar' que llamaran a la
+    funcion 'callback' del canal desde donde se realiza la llamada pasandole como parametros el elemento actual (dict())
+    o None respectivamente.
+
+    @param data: información para obtener datos del scraper.
+    @type data: item, dict, list(dict)
+    @param caption: titulo de la ventana.
+    @type caption: str
+    @param callback: función que se llama después de cerrarse la ventana de información
+    @type callback: str
+    @param item: elemento del que se va a mostrar la ventana de información
+    @type item: Item
     """
 
     from xbmc_info_window import InfoWindow
-    return InfoWindow("InfoWindow.xml", config.get_runtime_path()).Start(data, caption=caption, callback=callback)
+    return InfoWindow("InfoWindow.xml", config.get_runtime_path()).Start(data, caption=caption, callback=callback,
+                                                                         item=item)

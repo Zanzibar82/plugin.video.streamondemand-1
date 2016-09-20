@@ -27,14 +27,98 @@
 
 import imp
 import math
+import re
 
 from core import config
+from core import filetools
 from core import jsontools
 from core import logger
 from core import scrapertools
 from core.item import Item
 from platformcode import library
 from platformcode import platformtools
+
+
+def create_tvshows_from_xml():
+    logger.info("streamondemand.platformcode.library_service create_tvshows_from_xml")
+
+    fname = filetools.join(config.get_data_path(), library.TVSHOW_FILE_OLD)
+    if filetools.exists(fname):
+        platformtools.dialog_ok("Biblioteca: Se va a actualizar al nuevo formato",
+                                "Seleccione el nombre correcto de cada serie, si no está seguro pulse 'Cancelar'.",
+                                "Hay nuevas opciones en 'Biblioteca' y en la 'configuración' del addon.")
+
+        filetools.rename(library.TVSHOWS_PATH, "SERIES_OLD")
+
+        if not filetools.exists(library.TVSHOWS_PATH):
+            filetools.mkdir(library.TVSHOWS_PATH)
+
+            if filetools.exists(library.TVSHOWS_PATH):
+                try:
+                    data = filetools.read(fname)
+                    for line in data.splitlines():
+                        aux = line.rstrip('\n').split(",")
+                        tvshow = aux[0].strip()
+                        url = aux[1].strip()
+                        channel = aux[2].strip()
+
+                        serie = Item(contentSerieName=tvshow, url=url, channel=channel, action="episodios",
+                                     title=tvshow, active=True)
+
+                        patron = "^(.+)[\s]\((\d{4})\)$"
+                        matches = re.compile(patron, re.DOTALL).findall(serie.contentSerieName)
+
+                        if matches:
+                            serie.infoLabels['title'] = matches[0][0]
+                            serie.infoLabels['year'] = matches[0][1]
+                        else:
+                            serie.infoLabels['title'] = tvshow
+
+                        library.save_library_tvshow(serie, list())
+
+                    filetools.rename(fname, "series.xml.old")
+
+                    # Por ultimo limpia la libreria, por que las rutas anteriores ya no existen
+                    library.clean()
+
+                except EnvironmentError:
+                    logger.info("ERROR al leer el archivo: {0}".format(fname))
+
+            else:
+                logger.info("ERROR, no se ha podido crear la nueva carpeta de SERIES")
+        else:
+            logger.info("ERROR, no se ha podido renombrar la antigua carpeta de SERIES")
+
+        return True
+
+    return False
+
+
+def create_tvshows_from_json(_actualizado):
+    logger.info("streamondemand.platformcode.library_service create_tvshows_from_json")
+    fname = filetools.join(config.get_data_path(), library.TVSHOW_FILE)
+
+    if filetools.exists(fname):
+        if not _actualizado:
+            platformtools.dialog_ok("Biblioteca: Actualizando formato",
+                                    "Espere por favor mientras se completa el proceso")
+
+        try:
+            data = jsontools.loads(filetools.read(fname))
+            for tvshow in data:
+                for channel in data[tvshow]["channels"]:
+
+                    serie = Item(contentSerieName=data[tvshow]["channels"][channel]["tvshow"],
+                                 url=data[tvshow]["channels"][channel]["url"], channel=channel, action="episodios",
+                                 title=data[tvshow]["name"], active=True)
+                    if not tvshow.startswith("t_"):
+                        serie.infoLabels["tmdb_id"] = tvshow
+                    library.save_library_tvshow(serie, list())
+
+            filetools.rename(fname, "series.json.old")
+
+        except EnvironmentError:
+            logger.info("ERROR al leer el archivo: {0}".format(fname))
 
 
 def main():
@@ -54,87 +138,76 @@ def main():
         # ----------------------------------------------------------------------
 
         logger.info("streamondemand.library_service Actualizando series...")
-
-        directorio = library.join_path(config.get_library_path(), "SERIES")
-        logger.info("directorio="+directorio)
-
-        if not library.path_exists(directorio):
-            library.make_dir(directorio)
-
-        library.check_tvshow_xml()
-        nombre_fichero_config_canal = library.join_path(config.get_data_path(), library.TVSHOW_FILE)
+        p_dialog = None
 
         try:
 
             if config.get_setting("updatelibrary") == "true":
-
-                data = library.read_file(nombre_fichero_config_canal)
-                dict_data = jsontools.load_json(data)
                 heading = 'Aggiornamento biblioteca....'
                 p_dialog = platformtools.dialog_progress_bg('streamondemand', heading)
                 p_dialog.update(0, '')
-                i = 0
+                show_list = []
+
+                for path, folders, files in filetools.walk(library.TVSHOWS_PATH):
+                    show_list.extend([filetools.join(path, f) for f in files if f == "tvshow.json"])
+
                 # fix float porque la division se hace mal en python 2.x
-                t = float(100) / len(dict_data.keys())
+                t = float(100) / len(show_list)
 
-                for tvshow_id in dict_data.keys():
-                    logger.info("streamondemand.library_service serie="+dict_data[tvshow_id]["name"])
+                for i, tvshow_file in enumerate(show_list):
+                    serie = Item().fromjson(filetools.read(tvshow_file))
+                    path = filetools.dirname(tvshow_file)
 
-                    for channel in dict_data[tvshow_id]["channels"].keys():
-                        carpeta = "{0} [{1}]".format(library.title_to_filename(
-                            dict_data[tvshow_id]["channels"][channel]["tvshow"].lower()), channel)
-                        # carpeta = dict_serie[tvshow_id]["channels"][channel]["path"]
-                        ruta = library.join_path(config.get_library_path(), "SERIES", carpeta)
-                        logger.info("streamondemand.library_service ruta =#"+ruta+"#")
+                    logger.info("streamondemand.library_service serie=" + serie.contentSerieName)
+                    logger.info("streamondemand.library_service Actualizando " + path)
+                    logger.info("streamondemand.library_service url " + serie.url)
+                    show_name = serie.contentTitle
+                    if show_name == "":
+                        show_name = serie.show
+                    p_dialog.update(int(math.ceil((i + 1) * t)), heading, show_name)
 
-                        i += 1
-                        if library.path_exists(ruta):
-                            logger.info("streamondemand.library_service Actualizando "+carpeta)
-                            logger.info("streamondemand.library_service url " +
-                                        dict_data[tvshow_id]["channels"][channel]["url"])
+                    # si la serie esta activa se actualiza
+                    if serie.active:
 
-                            p_dialog.update(int(math.ceil(i * t)), heading, dict_data[tvshow_id]["name"])
+                        try:
+                            pathchannels = filetools.join(config.get_runtime_path(), "channels", serie.channel + '.py')
+                            logger.info("streamondemand.library_service Cargando canal: " + pathchannels + " " +
+                                        serie.channel)
 
-                            item = Item(url=dict_data[tvshow_id]["channels"][channel]["url"],
-                                        show=dict_data[tvshow_id]["channels"][channel]["tvshow"], channel=channel)
+                            obj = imp.load_source(serie.channel, pathchannels)
+                            itemlist = obj.episodios(serie)
 
                             try:
-                                pathchannels = library.join_path(config.get_runtime_path(), 'channels', channel + '.py')
-                                logger.info("streamondemand.library_service Cargando canal  " + pathchannels + " " + channel)
-                                obj = imp.load_source(channel, pathchannels)
-                                itemlist = obj.episodios(item)
-
-                                try:
-                                    library.save_library_tvshow(item, itemlist)
-                                except Exception as ex:
-                                    logger.info("streamondemand.library_service Error al guardar los capitulos de la serie")
-                                    template = "An exception of type {0} occured. Arguments:\n{1!r}"
-                                    message = template.format(type(ex).__name__, ex.args)
-                                    logger.info(message)
-
+                                library.save_library_episodes(path, itemlist, serie, True)
                             except Exception as ex:
-                                logger.error("Error al obtener los episodios de: {0}".
-                                             format(dict_data[tvshow_id]["channels"][channel]["tvshow"]))
+                                logger.info("streamondemand.library_service Error al guardar los capitulos de la serie")
                                 template = "An exception of type {0} occured. Arguments:\n{1!r}"
                                 message = template.format(type(ex).__name__, ex.args)
                                 logger.info(message)
-                        else:
-                            logger.info("streamondemand.library_service No actualiza {0} (no existe el directorio)".
-                                        format(dict_data[tvshow_id]["name"]))
 
-                            p_dialog.update(int(math.ceil(i * t)), 'Error al obtener ruta...', dict_data[tvshow_id]["name"])
+                        except Exception as ex:
+                            logger.error("Error al obtener los episodios de: {0}".
+                                         format(serie.show))
+                            template = "An exception of type {0} occured. Arguments:\n{1!r}"
+                            message = template.format(type(ex).__name__, ex.args)
+                            logger.info(message)
 
                 p_dialog.close()
-                library.update()
+
             else:
                 logger.info("No actualiza la biblioteca, está desactivado en la configuración de streamondemand")
 
         except Exception as ex:
-            import traceback
-            logger.info(traceback.format_exc())
+            logger.info("streamondemand.library_service Se ha producido un error al actualizar las series")
+            template = "An exception of type {0} occured. Arguments:\n{1!r}"
+            message = template.format(type(ex).__name__, ex.args)
+            logger.info(message)
 
             if p_dialog:
                 p_dialog.close()
 
+
 if __name__ == "__main__":
+    actualizado = create_tvshows_from_xml()
+    create_tvshows_from_json(actualizado)
     main()

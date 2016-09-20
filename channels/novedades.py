@@ -46,22 +46,30 @@ def mainlist(item,thumbnail_type="squares"):
 
     itemlist = []
     list_canales = get_list_canales()
-    thumbnail_base = "http://media.tvalacarta.info/streamondemand/"+thumbnail_type+"/"
 
-    thumbnail = (thumbnail_base if list_canales['peliculas'] else thumbnail_base + '/disabled') + "/thumb_canales_peliculas.png"
-    itemlist.append( Item(channel=item.channel, action="novedades", extra="peliculas", title="Películas", thumbnail=thumbnail))
+    thumbnail_base = "http://media.tvalacarta.info/pelisalacarta/"+thumbnail_type+"/"
+    thumbnail = thumbnail_base + '/disabled'
 
-    thumbnail = (thumbnail_base if list_canales['infantiles'] else thumbnail_base + '/disabled')+ "/thumb_canales_infantiles.png"
-    itemlist.append( Item(channel=item.channel, action="novedades", extra="infantiles", title="Para niños", thumbnail=thumbnail ))
+    if list_canales['peliculas']:
+        thumbnail = thumbnail_base + "/thumb_canales_peliculas.png"
+    itemlist.append(Item(channel=item.channel, action="novedades", extra="peliculas", title="Películas", thumbnail=thumbnail))
 
-    thumbnail = (thumbnail_base if list_canales['series'] else thumbnail_base + '/disabled') + "/thumb_canales_series.png"
-    itemlist.append( Item(channel=item.channel, action="novedades", extra="series", title="Episodios de series", thumbnail=thumbnail))
+    if list_canales['infantiles']:
+        thumbnail = thumbnail_base + "/thumb_canales_infantiles.png"
+    itemlist.append(Item(channel=item.channel, action="novedades", extra="infantiles", title="Para niños", thumbnail=thumbnail))
 
-    thumbnail = (thumbnail_base if list_canales['anime'] else thumbnail_base + '/disabled') + "/thumb_canales_anime.png"
-    itemlist.append( Item(channel=item.channel, action="novedades", extra="anime", title="Episodios de anime", thumbnail=thumbnail))
+    if list_canales['series']:
+        thumbnail = thumbnail_base + "/thumb_canales_series.png"
+    itemlist.append(Item(channel=item.channel, action="novedades", extra="series", title="Episodios de series", thumbnail=thumbnail))
 
-    thumbnail = (thumbnail_base if list_canales['documentales'] else thumbnail_base + '/disabled') + "/thumb_canales_documentales.png"
-    itemlist.append( Item(channel=item.channel, action="novedades", extra="documentales", title="Documentales", thumbnail=thumbnail))
+    if list_canales['anime']:
+        thumbnail = thumbnail_base + "/thumb_canales_anime.png"
+    itemlist.append(Item(channel=item.channel, action="novedades", extra="anime", title="Episodios de anime", thumbnail=thumbnail))
+
+    if list_canales['documentales']:
+        thumbnail = thumbnail_base + "/thumb_canales_documentales.png"
+
+    itemlist.append(Item(channel=item.channel, action="novedades", extra="documentales", title="Documentales", thumbnail=thumbnail))
 
     #itemlist.append(Item(channel=item.channel, action="menu_opciones", title="Opciones", viewmode="list",
     #                     thumbnail=thumbnail_base + "/thumb_configuracion.png"))
@@ -111,6 +119,7 @@ def novedades(item):
 
     global list_newest
     l_hilo = []
+    list_newest = []
 
     multithread = config.get_setting("multithread", "novedades")
     logger.info("streamondemand.channels.novedades multithread="+str(multithread))
@@ -118,7 +127,6 @@ def novedades(item):
     list_canales = get_list_canales()
 
     for channel_name in list_canales[item.extra]:
-        logger.info("streamondemand.channels.novedades")
         logger.info("streamondemand.channels.novedades obteniendo novedades de channel_name="+channel_name)
 
         # Modo Multi Thread
@@ -151,19 +159,33 @@ def get_newest(channel_name, categoria):
 
     # Solicitamos las novedades de la categoria (item.extra) buscada en el canal channel
     # Si no existen novedades para esa categoria en el canal devuelve una lista vacia
-    modulo = __import__('channels.%s' % channel_name, fromlist=["channels.%s" % channel_name])
-    list_result = modulo.newest(categoria)
-    logger.info("streamondemand.channels.novedades.get_newest canal= %s %d resultados" %(channel_name, len(list_result)))
+    try:
 
-    for item in list_result:
-        logger.info("streamondemand.channels.novedades.get_newest   item="+item.tostring())
-        item.channel = channel_name
-        list_newest.append(item)
+        puede = True
+        try:
+            modulo = __import__('channels.%s' % channel_name, fromlist=["channels.%s" % channel_name])
+        except:
+            try:
+                exec "import channels."+channel_name+" as modulo"
+            except:
+                puede = False
 
-    '''except:
+        if not puede:
+            return
+
+        logger.info("pelisalacarta.channels.novedades running channel "+modulo.__name__+" "+modulo.__file__)
+        list_result = modulo.newest(categoria)
+        logger.info("streamondemand.channels.novedades.get_newest canal= %s %d resultados" %(channel_name, len(list_result)))
+
+        for item in list_result:
+            logger.info("streamondemand.channels.novedades.get_newest   item="+item.tostring())
+            item.channel = channel_name
+            list_newest.append(item)
+
+    except:
         logger.error("No se pueden recuperar novedades de: "+ channel_name)
         import traceback
-        logger.error(traceback.format_exc())'''
+        logger.error(traceback.format_exc())
 
 
 def noAgrupar(list_result_canal, categoria):
@@ -294,19 +316,19 @@ def menu_opciones(item):
 
     itemlist = []
     itemlist.append(Item(channel=item.channel, title="Canales incluidos en:",
-                         thumbnail="http://media.tvalacarta.info/streamondemand/" + preferred_thumbnail + "/thumb_configuracion.png"))
+                         thumbnail="http://media.tvalacarta.info/streamondemand/" + preferred_thumbnail + "/thumb_configuracion.png", folder=False))
     itemlist.append(Item(channel=item.channel, action="settingCanal", extra="peliculas", title="    - Películas ",
-                         thumbnail="http://media.tvalacarta.info/streamondemand/" + preferred_thumbnail + "/thumb_canales_peliculas.png"))
+                         thumbnail="http://media.tvalacarta.info/streamondemand/" + preferred_thumbnail + "/thumb_canales_peliculas.png", folder=False))
     itemlist.append(Item(channel=item.channel, action="settingCanal", extra="infantiles", title="    - Para niños",
-                         thumbnail="http://media.tvalacarta.info/streamondemand/" + preferred_thumbnail + "/thumb_canales_infantiles.png"))
+                         thumbnail="http://media.tvalacarta.info/streamondemand/" + preferred_thumbnail + "/thumb_canales_infantiles.png", folder=False))
     itemlist.append(Item(channel=item.channel, action="settingCanal", extra="series", title="    - Episodios de series",
-                         thumbnail="http://media.tvalacarta.info/streamondemand/" + preferred_thumbnail + "/thumb_canales_series.png"))
+                         thumbnail="http://media.tvalacarta.info/streamondemand/" + preferred_thumbnail + "/thumb_canales_series.png", folder=False))
     itemlist.append(Item(channel=item.channel, action="settingCanal", extra="anime", title="    - Episodios de anime",
-                         thumbnail="http://media.tvalacarta.info/streamondemand/" + preferred_thumbnail + "/thumb_canales_anime.png"))
+                         thumbnail="http://media.tvalacarta.info/streamondemand/" + preferred_thumbnail + "/thumb_canales_anime.png", folder=False))
     itemlist.append(Item(channel=item.channel, action="settingCanal", extra="documentales", title="    - Documentales",
-                         thumbnail="http://media.tvalacarta.info/streamondemand/" + preferred_thumbnail + "/thumb_canales_documentales.png"))
+                         thumbnail="http://media.tvalacarta.info/streamondemand/" + preferred_thumbnail + "/thumb_canales_documentales.png", folder=False))
     itemlist.append(Item(channel=item.channel, action="settings", title="Otros ajustes",
-                         thumbnail="http://media.tvalacarta.info/streamondemand/"+preferred_thumbnail+"/thumb_configuracion.png"))
+                         thumbnail="http://media.tvalacarta.info/streamondemand/"+preferred_thumbnail+"/thumb_configuracion.png", folder=False))
     return itemlist
 
 

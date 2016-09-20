@@ -35,7 +35,7 @@ class AES:
     BIT_KEY_192 = 192
     BIT_KEY_256 = 256
 
-    # Sbox is pre-computed multiplicative inverse in GF(2^8) used in subBytes and keyExpansion [�5.1.1]
+    # Sbox is pre-computed multiplicative inverse in GF(2^8) used in subBytes and keyExpansion [§5.1.1]
     SBOX = [0x63,0x7c,0x77,0x7b,0xf2,0x6b,0x6f,0xc5,0x30,0x01,0x67,0x2b,0xfe,0xd7,0xab,0x76,
          0xca,0x82,0xc9,0x7d,0xfa,0x59,0x47,0xf0,0xad,0xd4,0xa2,0xaf,0x9c,0xa4,0x72,0xc0,
          0xb7,0xfd,0x93,0x26,0x36,0x3f,0xf7,0xcc,0x34,0xa5,0xe5,0xf1,0x71,0xd8,0x31,0x15,
@@ -53,7 +53,7 @@ class AES:
          0xe1,0xf8,0x98,0x11,0x69,0xd9,0x8e,0x94,0x9b,0x1e,0x87,0xe9,0xce,0x55,0x28,0xdf,
          0x8c,0xa1,0x89,0x0d,0xbf,0xe6,0x42,0x68,0x41,0x99,0x2d,0x0f,0xb0,0x54,0xbb,0x16]
     
-    # Rcon is Round Constant used for the Key Expansion [1st col is 2^(r-1) in GF(2^8)] [�5.2]
+    # Rcon is Round Constant used for the Key Expansion [1st col is 2^(r-1) in GF(2^8)] [§5.2]
     RCON = [[0x00, 0x00, 0x00, 0x00],
          [0x01, 0x00, 0x00, 0x00],
          [0x02, 0x00, 0x00, 0x00],
@@ -87,7 +87,7 @@ class AES:
         
         key = self.cipher(pwBytes, self.keyExpansion(pwBytes))  # gives us 16-byte key
         key = key + key[0 : nBytes - 16]  # expand key to 16/24/32 bytes long
-        # initialise counter block (NIST SP800-38A �B.2): millisecond time-stamp for nonce in 1st 8 bytes,
+        # initialise counter block (NIST SP800-38A §B.2): millisecond time-stamp for nonce in 1st 8 bytes,
         # block counter in 2nd 8 bytes
         counterBlock = [0] * blockSize
         now = datetime.datetime.now()
@@ -156,11 +156,11 @@ class AES:
         return time.mktime(future.timetuple())
 
     def cipher(self, input, w):    
-        # main cipher function [�5.1]
+        # main cipher function [§5.1]
         Nb = 4               #block size (in words): no of columns in state (fixed at 4 for AES)
         Nr = len(w) / Nb - 1 # no of rounds: 10/12/14 for 128/192/256-bit keys
         
-        state = [];  # initialise 4xNb byte-array 'state' with input [�3.4]
+        state = [];  # initialise 4xNb byte-array 'state' with input [§3.4]
         i=0
         while i < 4 * Nb :
             y = []
@@ -186,7 +186,7 @@ class AES:
         state = self.shiftRows(state, Nb)
         state = self.addRoundKey(state, w, Nr, Nb)
         
-        output = []  # convert state to 1-d array before returning [�3.4]
+        output = []  # convert state to 1-d array before returning [§3.4]
         for i in range(4 * Nb):
             output.append(state[i % 4][int(math.floor(i / 4))])
         
@@ -195,7 +195,7 @@ class AES:
 
 
     def keyExpansion(self, key): 
-        # generate Key Schedule (byte-array Nr+1 x Nb) from Key [�5.2]
+        # generate Key Schedule (byte-array Nr+1 x Nb) from Key [§5.2]
         Nb = 4            # block size (in words): no of columns in state (fixed at 4 for AES)
         Nk = len(key) / 4  # key length (in words): 4/6/8 for 128/192/256-bit keys
         Nr = Nk + 6       # no of rounds: 10/12/14 for 128/192/256-bit keys
@@ -235,14 +235,14 @@ class AES:
 
 
     def subBytes(self, s, Nb):   
-        # apply SBox to state S [�5.1.1]
+        # apply SBox to state S [§5.1.1]
         for r in range(4):
             for c in range(Nb): 
                 s[r][c] = self.SBOX[s[r][c]]
         return s
        
     def shiftRows(self,s, Nb):   
-        # shift row r of state S left by r bytes [�5.1.2]
+        # shift row r of state S left by r bytes [§5.1.2]
         t = [0] * 4
         r=1
         while r<4 :       
@@ -255,10 +255,10 @@ class AES:
         return s;  # see asmaes.sourceforge.net/rijndael/rijndaelImplementation.pdf
 
     def mixColumns(self,s):  
-        # combine bytes of each col of state S [�5.1.3]
+        # combine bytes of each col of state S [§5.1.3]
         for c in range(4):
             a = []  # 'a' is a copy of the current column from 's'
-            b = []  # 'b' is a�{02} in GF(2^8)
+            b = []  # 'b' is a·{02} in GF(2^8)
             for i in range(4):
                 a.append(s[i][c])
                 if(s[i][c] & 0x80):
@@ -266,7 +266,7 @@ class AES:
                 else:
                     b.append(s[i][c] << 1)
             
-            # a[n] ^ b[n] is a�{03} in GF(2^8)
+            # a[n] ^ b[n] is a·{03} in GF(2^8)
             s[0][c] = b[0] ^ a[1] ^ b[1] ^ a[2] ^ a[3] # 2*a0 + 3*a1 + a2 + a3
             s[1][c] = a[0] ^ b[1] ^ a[2] ^ b[2] ^ a[3] # a0 * 2*a1 + 3*a2 + a3
             s[2][c] = a[0] ^ a[1] ^ b[2] ^ a[3] ^ b[3] # a0 + a1 + 2*a2 + 3*a3
@@ -274,7 +274,7 @@ class AES:
         return s
 
     def addRoundKey(self,state, w, rnd, Nb): 
-        # xor Round Key into state S [�5.1.4]
+        # xor Round Key into state S [§5.1.4]
         for r in range(4): 
             for c in range(Nb):
                 state[r][c] ^= w[rnd * 4 + c][r]       

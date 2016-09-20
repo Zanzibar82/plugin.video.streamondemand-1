@@ -26,6 +26,7 @@
 # ------------------------------------------------------------
 
 import os
+import re
 
 import config
 import jsontools
@@ -105,15 +106,19 @@ def get_channel_controls_settings(channel_name):
         if not c.has_key('enabled') or c['enabled'] is None: 
             c['enabled']= True
         else:
-            if c['enabled'].lower() == "true": c['enabled'] = True 
-            elif c['enabled'].lower() == "false": c['enabled'] = False  
+            if c['enabled'].lower() == "true":
+                c['enabled'] = True 
+            elif c['enabled'].lower() == "false":
+                c['enabled'] = False  
         if not c.has_key('visible') or c['visible'] is None: 
             c['visible']= True
         else:
-            if c['visible'].lower() == "true": c['visible'] = True 
-            elif c['visible'].lower() == "false": c['visible'] = False 
+            if c['visible'].lower() == "true": 
+                c['visible'] = True 
+            elif c['visible'].lower() == "false": 
+                c['visible'] = False 
         if c['type'] == 'bool':
-            c['default'] = True if c['default'].lower() == "true" else False
+            c['default'] = (c['default'].lower() == "true")
             
         if unicode(c['default']).isnumeric():
             c['default'] = int(c['default'])    
@@ -192,36 +197,41 @@ def set_channel_setting(name, value, channel):
     y establece el parametro 'name' al valor indicado por 'value'. 
     Si el parametro 'name' no existe lo añade, con su valor, al archivo correspondiente.
     
+    @param name: nombre del parametro
+    @type name: str
+    @param value: valor del parametro
+    @type value: str
+    @param channel: nombre del canal
+    @type channel: str
     
-    Parametros:
-    name -- nombre del parametro
-    value -- valor del parametro
-    channel -- nombre del canal
-    
-    Retorna:
-    'value' en caso de que se haya podido fijar el valor y None en caso contrario
+    @return: 'value' en caso de que se haya podido fijar el valor y None en caso contrario
+    @rtype: str, None
         
     """ 
-    #Creamos la carpeta si no existe
+    # Creamos la carpeta si no existe
     if not os.path.exists(os.path.join(config.get_data_path(), "settings_channels")):
       os.mkdir(os.path.join(config.get_data_path(), "settings_channels"))
       
-    file_settings= os.path.join(config.get_data_path(), "settings_channels", channel+"_data.json")
-    dict_settings ={}
+    file_settings = os.path.join(config.get_data_path(), "settings_channels", channel+"_data.json")
+    dict_settings = {}
+
+    dict_file = None
             
     if os.path.exists(file_settings):
         # Obtenemos configuracion guardada de ../settings/channel_data.json
         try:
             dict_file = jsontools.load_json(open(file_settings, "r").read())
-            if dict_file.has_key('settings'): 
-              dict_settings = dict_file['settings']
+            dict_settings = dict_file.get('settings', {})
         except EnvironmentError:
             logger.info("ERROR al leer el archivo: {0}".format(file_settings))
                 
-                           
     dict_settings[name] = value
-    dict_file = {}
-    dict_file['settings']= dict_settings
+                           
+    # comprobamos si existe dict_file y es un diccionario, sino lo creamos
+    if dict_file is None or not dict_file:
+        dict_file = {}
+
+    dict_file['settings'] = dict_settings
     # Creamos el archivo ../settings/channel_data.json
     try:
         open(file_settings, "w").write(jsontools.dump_json(dict_file))

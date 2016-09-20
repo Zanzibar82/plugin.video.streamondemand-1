@@ -65,7 +65,7 @@ def add_new_folder(item, totalItems=0):
     listitem = xbmcgui.ListItem( item.title, iconImage="DefaultFolder.png", thumbnailImage=item.thumbnail )
 
     if item.action !="":
-        set_infoLabels(listitem,item) # Modificacion introducida por super_berny para añadir infoLabels al ListItem
+        set_infoLabels(listitem,item)
     
     if item.fanart!="":
         listitem.setProperty('fanart_image',item.fanart) 
@@ -86,7 +86,7 @@ def add_new_folder(item, totalItems=0):
         filter_serie_command = "XBMC.RunPlugin(%s?%s)" % \
                                (sys.argv[0], item.clone(channel="filtertools", action="config_filter",
                                                         from_channel=item.channel).tourl())
-        contextCommands.append(("Menu filtro", filter_serie_command))
+        contextCommands.append(("Menu Filtro", filter_serie_command))
 
     if "guardar filtro" in item.context:
         filter_serie_command = "XBMC.RunPlugin(%s%s)" % \
@@ -145,7 +145,7 @@ def add_new_video(item, IsPlayable='false', totalItems = 0):
     listitem = xbmcgui.ListItem( item.title, iconImage="DefaultVideo.png", thumbnailImage=item.thumbnail )
 
     if item.action !="":
-        set_infoLabels(listitem,item) # Modificacion introducida por super_berny para añadir infoLabels al ListItem
+        set_infoLabels(listitem,item)
    
     if item.fanart!="":
         #logger.info("item.fanart :%s" %item.fanart)
@@ -178,7 +178,6 @@ def add_new_video(item, IsPlayable='false', totalItems = 0):
 
 def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescargas=False,strmfile=False):
     from core import servertools
-    import xbmcgui,xbmc
     
     logger.info("streamondemand.platformcode.xbmctools play_video")
     #logger.info(item.tostring('\n'))
@@ -234,8 +233,6 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
 
             if config.get_setting("jdownloader_enabled")=="true":
                 opciones.append(config.get_localized_string(30158)) # "Enviar a JDownloader"
-            if config.get_setting("pyload_enabled")=="true":
-                opciones.append(config.get_localized_string(30158).replace("jDownloader","pyLoad")) # "Enviar a pyLoad"
 
         if default_action=="3":
             seleccion = len(opciones)-1
@@ -246,7 +243,6 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
 
     # Si no puedes ver el vídeo te informa
     else:
-        import xbmcgui
         if item.server!="":
             advertencia = xbmcgui.Dialog()
             if "<br/>" in motivo:
@@ -272,7 +268,6 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
 
     # Si la accion por defecto es "Preguntar", pregunta
     if default_action=="0": # and server!="torrent":
-        import xbmcgui
         dia = xbmcgui.Dialog()
         seleccion = dia.select(config.get_localized_string(30163), opciones) # "Elige una opción"
         #dia.close()
@@ -303,7 +298,6 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
     if seleccion==-1:
         #Para evitar el error "Uno o más elementos fallaron" al cancelar la selección desde fichero strm
         listitem = xbmcgui.ListItem( item.title, iconImage="DefaultVideo.png", thumbnailImage=item.thumbnail)
-        import sys
         xbmcplugin.setResolvedUrl(int(sys.argv[ 1 ]),False,listitem)    # JUR Added
         #if config.get_setting("subtitulo") == "true":
         #    config.set_setting("subtitulo", "false")
@@ -334,7 +328,6 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
 
     elif opciones[seleccion]==config.get_localized_string(30164): # Borrar archivo en descargas
         # En "extra" está el nombre del fichero en favoritos
-        import os
         os.remove( item.url )
         xbmc.executebuiltin( "Container.Refresh" )
         return
@@ -358,7 +351,6 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
         if item.hasContentDetails=="true":
             download_title = item.contentTitle
 
-        import xbmc
         # El vídeo de más calidad es el último
         mediaurl = video_urls[len(video_urls)-1][1]
 
@@ -425,14 +417,14 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
         keyboard.doModal()
         if keyboard.isConfirmed():
             title = keyboard.getText()
-            favoritos.savebookmark(titulo=download_title,url=item.url,thumbnail=download_thumbnail,server=item.server,plot=download_plot,fulltitle=item.title)
+            favoritos.savebookmark(titulo=title,url=item.url,thumbnail=download_thumbnail,server=item.server,plot=download_plot,fulltitle=title)
             advertencia = xbmcgui.Dialog()
-            resultado = advertencia.ok(config.get_localized_string(30102) , item.title , config.get_localized_string(30108)) # 'se ha añadido a favoritos'
+            resultado = advertencia.ok(config.get_localized_string(30102) , title , config.get_localized_string(30108)) # 'se ha añadido a favoritos'
         return
 
     elif opciones[seleccion]==config.get_localized_string(30156): #"Quitar de lista de descargas":
-        from channels import descargas
         # La categoría es el nombre del fichero en la lista de descargas
+        from channels import descargas
         descargas.deletebookmark((urllib.unquote_plus( item.extra )))
 
         advertencia = xbmcgui.Dialog()
@@ -442,7 +434,6 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
         return
 
     elif opciones[seleccion]==config.get_localized_string(30157): #"Añadir a lista de descargas":
-        from channels import descargas
         from core import downloadtools
 
         download_title = item.fulltitle
@@ -459,6 +450,7 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
         if keyboard.isConfirmed():
             download_title = keyboard.getText()
 
+            from channels import descargas
             descargas.savebookmark(titulo=download_title,url=item.url,thumbnail=download_thumbnail,server=item.server,plot=download_plot,fulltitle=download_title)
 
             advertencia = xbmcgui.Dialog()
@@ -486,7 +478,6 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
 
     elif opciones[seleccion]==config.get_localized_string(30162): #"Buscar Trailer":
         config.set_setting("subtitulo", "false")
-        import sys
         xbmc.executebuiltin("XBMC.RunPlugin(%s?%s)" % ( sys.argv[ 0 ] , item.clone(channel="trailertools", action="buscartrailer", contextual=True).tourl()))
         return
 
@@ -506,7 +497,6 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
             return
 
     # Obtención datos de la Biblioteca (solo strms que estén en la biblioteca)
-    import xbmcgui
     if strmfile:
         xlistitem = getLibraryInfo(mediaurl)
     else:
@@ -532,7 +522,6 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
         # Lanza el reproductor
 
     if strmfile and not item.from_biblioteca: #Si es un fichero strm no hace falta el play
-        import sys
         xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, xlistitem)
         if item.subtitle != "":
             xbmc.sleep(2000)
@@ -562,7 +551,6 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
 
 
         if len(torrent_options)>1:
-            import xbmcgui
             seleccion = xbmcgui.Dialog().select("Abrir torrent con...", [opcion[0] for opcion in torrent_options])
         else:
             seleccion = 0
@@ -579,7 +567,6 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
         #Reproductor propio (libtorrent)
         if seleccion == 0:
             import time
-            import os
             videourl = None
             played = False
   
@@ -712,7 +699,6 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
 
 def handle_wait(time_to_wait,title,text):
     logger.info ("[xbmctools.py] handle_wait(time_to_wait=%d)" % time_to_wait)
-    import xbmc,xbmcgui
     espera = xbmcgui.DialogProgress()
     ret = espera.create(' '+title)
 
@@ -986,12 +972,10 @@ def setSubtitles():
 def trailer(item):
     logger.info("streamondemand.platformcode.xbmctools trailer")
     config.set_setting("subtitulo", "false")
-    import sys
     xbmc.executebuiltin("XBMC.RunPlugin(%s?channel=%s&action=%s&category=%s&title=%s&url=%s&thumbnail=%s&plot=%s&server=%s)" % ( sys.argv[ 0 ] , "trailertools" , "buscartrailer" , urllib.quote_plus( item.category ) , urllib.quote_plus( item.fulltitle ) , urllib.quote_plus( item.url ) , urllib.quote_plus( item.thumbnail ) , urllib.quote_plus( "" ) ))
     return
 
 def alert_no_puedes_ver_video(server,url,motivo):
-    import xbmcgui
 
     if server!="":
         advertencia = xbmcgui.Dialog()
@@ -1006,36 +990,18 @@ def alert_no_puedes_ver_video(server,url,motivo):
 
 
 def set_infoLabels(listitem,item):
-    '''
-    Metodo para añadir informacion extra al listitem.
-    Se mantiene por retocompatibilidad, pero deberia despreciarse en futuras versiones.
-    '''
-    if item.plot.startswith("{'infoLabels'"):
-        # Esta forma de pasar la informacion al listitem es obsoleta y deberia despreciarse
-        # plot tiene que ser un str con el siguiente formato:
-        #   plot="{'infoLabels':{dicionario con los pares de clave/valor descritos en
-        #               http://mirrors.xbmc.org/docs/python-docs/14.x-helix/xbmcgui.html#ListItem-setInfo}}"
+    """
+    Metodo para pasar la informacion al listitem (ver tmdb.set_InfoLabels() )
+    item.infoLabels es un dicionario con los pares de clave/valor descritos en:
+    http://mirrors.xbmc.org/docs/python-docs/14.x-helix/xbmcgui.html#ListItem-setInfo
+    :param listitem: objeto xbmcgui.ListItem
+    :param item: objeto Item que representa a una pelicula, serie o capitulo
+    :return: None
+    """
+    if item.plot and item.infoLabels.get("plot","") == "":
+        item.infoLabels['plot'] = item.plot
 
-        try:
-            import ast
-            infodict=ast.literal_eval(item.plot)['infoLabels']
+    it = item.clone()
+    it.infoLabels['title'] = it.title
 
-            #if not infodict.has_key('title'): 
-            #    infodict['title'] = item.title
-            infodict['title'] = item.title
-            
-            listitem.setInfo( "video", infodict)
-        except:
-            pass
-
-    elif len(item.infoLabels) >0:
-        # Nuevo modelo para pasar la informacion al listitem (ver tmdb.set_InfoLabels() )
-        # item.infoLabels es un dicionario con los pares de clave/valor descritos en:
-        # http://mirrors.xbmc.org/docs/python-docs/14.x-helix/xbmcgui.html#ListItem-setInfo
-        item.infoLabels['title'] = item.title
-        listitem.setInfo( "video", item.infoLabels)
-
-    elif item.plot !='':
-        # Retrocompatibilidad con canales q no utilizan infoLabels de ningun tipo
-        listitem.setInfo( "video", { "Title" : item.title, "Plot" : item.plot, "Studio" : item.channel.capitalize() } )
-
+    listitem.setInfo("video", it.infoLabels)
