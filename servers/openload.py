@@ -33,7 +33,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
     data = scrapertools.downloadpageWithoutCookies(page_url)
     subtitle = scrapertools.find_single_match(data, '<track kind="captions" src="([^"]+)" srclang="it"')
     # Header para la descarga
-    header_down = "|User-Agent=" + headers['User-Agent']
+    header_down = "|User-Agent=" + headers['User-Agent'] + "|"
 
     videourl = decode_openLoad(data)
 
@@ -77,9 +77,6 @@ def find_videos(text):
 def decode_openLoad(html):
     # fixed by the openload guy ;)  based on work by pitoosie
 
-    hiddenurl = scrapertools.unescape(
-        re.search("</span>[^>]+>([^<]+)</sp.*?streamurl", html, re.DOTALL | re.IGNORECASE).group(1))
-
     jjstring = re.compile('a="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(html)[1]
     shiftint = re.compile(r";\}\((\d+)\)", re.DOTALL | re.IGNORECASE).findall(html)[1]
 
@@ -105,6 +102,10 @@ def decode_openLoad(html):
     jjstring = JJDecoder(jjstring).decode()
 
     magicnumber = re.compile(r"charCodeAt\(\d+?\)\s*?\+\s*?(\d+?)\)", re.DOTALL | re.IGNORECASE).findall(jjstring)[0]
+    hiddenid = re.compile(r'=\s*?\$\("#([^"]+)"', re.DOTALL | re.IGNORECASE).findall(jjstring)[0]
+
+    hiddenurl = scrapertools.unescape(
+        re.compile(r'<span id="' + hiddenid + '">([^<]+)</span', re.DOTALL | re.IGNORECASE).findall(html)[0])
 
     s = []
     for idx, i in enumerate(hiddenurl):
