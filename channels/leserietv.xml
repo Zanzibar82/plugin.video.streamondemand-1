@@ -13,9 +13,9 @@
 	<bannermenu>http://www.leserie.tv/templates/LeserieTv/images/logo.png</bannermenu>
 
 	<update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
-	<version>6</version>
-	<date>22/06/2016</date>
-	<changes>update</changes>
+	<version>8</version>
+	<date>13/09/2016</date>
+	<changes>scarica episodi ripristinato</changes>
 
 	<categories>
 		<category>serie</category>
@@ -23,11 +23,6 @@
 	</categories>
 
 	<settings>
-		<id>include_in_global_search</id>
-		<type>bool</type>
-		<label>Includi ricerca globale</label>
-		<default>true</default>
-		<enabled>true</enabled>
-		<visible>true</visible>
+		<include_in_global_search>true</include_in_global_search>
 	</settings>
 </channel>
