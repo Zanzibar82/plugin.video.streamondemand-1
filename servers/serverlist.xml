@@ -562,7 +562,7 @@
     <id>megahd</id>
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/megahd.py</update_url>
     <active>true</active>
-    <version>2</version>
+    <version>3</version>
     <date>12/09/2015</date>
     <changes>Prima versione di Pelisalacarta 4</changes>
 </server>
@@ -877,7 +877,7 @@
     <id>servertools</id>
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/servertools.py</update_url>
     <active>true</active>
-    <version>8</version>
+    <version>9</version>
     <date>29/09/2015</date>
     <changes>Prima versione di Pelisalacarta 4</changes>
 </server>
@@ -1409,6 +1409,15 @@
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/youwatch.py</update_url>
     <active>true</active>
     <version>3</version>
+    <date>12/09/2015</date>
+    <changes>Prima versione di Pelisalacarta 4</changes>
+</server>
+
+<server>
+    <id>wstream</id>
+    <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/wstream.py</update_url>
+    <active>true</active>
+    <version>1</version>
     <date>12/09/2015</date>
     <changes>Prima versione di Pelisalacarta 4</changes>
 </server>
