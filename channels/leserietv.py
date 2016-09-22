@@ -2,17 +2,19 @@
 # ------------------------------------------------------------
 # streamondemand.- XBMC Plugin
 # Canal para itafilmtv
-# http://www.mimediacenter.info/foro/viewforum.php?f=36
+# http://blog.tvalacarta.info/plugin-xbmc/streamondemand.
 #  By Costaplus
 # ------------------------------------------------------------
 import re
 import urlparse
 
 import xbmc
+import xbmcgui
 
 from core import config
 from core import logger
 from core import scrapertools
+from core import downloadtools
 from core.item import Item
 from core.tmdb import infoSod
 
@@ -33,43 +35,53 @@ header = [
 ]
 
 
+
 def isGeneric():
     return True
-
 
 # -----------------------------------------------------------------
 def mainlist(item):
     logger.info("[leserietv.py] mainlist")
-    itemlist = [Item(channel=__channel__,
-                     action="novita",
-                     title="[COLOR yellow]Novità[/COLOR]",
-                     url=("%s/streaming/" % host),
-                     thumbnail="http://www.ilmioprofessionista.it/wp-content/uploads/2015/04/TVSeries3.png",
-                     fanart="http://www.macroidee.it/wp-content/uploads/2015/06/migliori-serie-da-vedere.jpg"),
-                Item(channel=__channel__,
-                     action="lista_serie",
-                     title="[COLOR azure]Tutte le serie[/COLOR]",
-                     url=("%s/streaming/" % host),
-                     thumbnail="http://www.ilmioprofessionista.it/wp-content/uploads/2015/04/TVSeries3.png",
-                     fanart="http://www.macroidee.it/wp-content/uploads/2015/06/migliori-serie-da-vedere.jpg"),
-                Item(channel=__channel__,
-                     title="[COLOR azure]Categorie[/COLOR]",
-                     action="categorias",
-                     url=host,
-                     thumbnail="http://xbmc-repo-ackbarr.googlecode.com/svn/trunk/dev/skin.cirrus%20extended%20v2/extras/moviegenres/All%20Movies%20by%20Genre.png"),
-                Item(channel=__channel__,
-                     action="top50",
-                     title="[COLOR azure]Top 50[/COLOR]",
-                     url=("%s/top50.html" % host),
-                     thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png",
-                     fanart="http://www.macroidee.it/wp-content/uploads/2015/06/migliori-serie-da-vedere.jpg"),
-                Item(channel=__channel__,
-                     action="search",
-                     extra="serie",
-                     title="[COLOR orange]Cerca...[/COLOR][I](minimo 3 caratteri)[/I]",
-                     thumbnail="http://dc467.4shared.com/img/fEbJqOum/s7/13feaf0c8c0/Search",
-                     fanart="http://www.kaushik.net/avinash/wp-content/uploads/2010/02/search_engine.png")]
+    itemlist = []
+    itemlist.append(Item(channel=__channel__,
+                         action="novita",
+                         title="[COLOR yellow]Novità[/COLOR]",
+                         url=("%s/streaming/" % host),
+                         thumbnail="http://www.ilmioprofessionista.it/wp-content/uploads/2015/04/TVSeries3.png",
+                         fanart=FilmFanart))
 
+    itemlist.append(Item(channel=__channel__,
+                         action="lista_serie",
+                         title="[COLOR azure]Tutte le serie[/COLOR]",
+                         url=("%s/streaming/" % host),
+                         thumbnail="http://www.ilmioprofessionista.it/wp-content/uploads/2015/04/TVSeries3.png",
+                         fanart=FilmFanart))
+
+    itemlist.append(Item(channel=__channel__,
+                         title="[COLOR azure]Categorie[/COLOR]",
+                         action="categorias",
+                         url=host,
+                         thumbnail="https://farm8.staticflickr.com/7562/15516589868_13689936d0_o.png",
+                         fanart=FilmFanart))
+
+
+    itemlist.append(Item(channel=__channel__,
+                         action="top50",
+                         title="[COLOR azure]Top 50[/COLOR]",
+                         url=("%s/top50.html" % host),
+                         thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png",
+                         fanart=FilmFanart))
+
+    itemlist.append(Item(channel=__channel__,
+                         action="search",
+                         title="[COLOR orange]Cerca...[/COLOR][I](minimo 3 caratteri)[/I]",
+                         thumbnail="http://dc467.4shared.com/img/fEbJqOum/s7/13feaf0c8c0/Search",
+                         fanart=FilmFanart))
+
+    itemlist.append(Item(channel=__channel__,
+                         action="info",
+                             title="[COLOR lime][I]Info canale[/I][/COLOR] [COLOR yellow]13/09/2016[/COLOR]",
+                         thumbnail="http://www.mimediacenter.info/wp-content/uploads/2016/01/newlogo-final.png"))
     return itemlist
 
 
@@ -89,8 +101,7 @@ def novita(item):
 
     for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
         scrapedthumbnail = host + scrapedthumbnail
-        if (DEBUG): logger.info(
-            "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
+        logger.info("title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(infoSod(
             Item(channel=__channel__,
                  action="episodi",
@@ -98,7 +109,7 @@ def novita(item):
                  url=scrapedurl,
                  thumbnail=scrapedthumbnail,
                  fulltitle=scrapedtitle,
-                 show=scrapedtitle), tipo='tv'))
+                 show=scrapedtitle,viewmode="movie"), tipo='tv'))
 
     # Paginazione
     # ===========================================================
@@ -116,10 +127,8 @@ def novita(item):
                  thumbnail="http://2.bp.blogspot.com/-fE9tzwmjaeQ/UcM2apxDtjI/AAAAAAAAeeg/WKSGM2TADLM/s1600/pager+old.png",
                  folder=True))
         itemlist.append(
-            Item(channel=__channel__, action="HomePage", title="[COLOR yellow]Torna Home[/COLOR]", folder=True))
+            Item(channel=__channel__, action="HomePage", title="[COLOR yellow]Torna Home[/COLOR]",thumbnail=ThumbnailHome, folder=True))
     return itemlist
-
-
 # =================================================================
 
 # -----------------------------------------------------------------
@@ -145,7 +154,7 @@ def lista_serie(item):
                  url=scrapedurl,
                  thumbnail=scrapedthumbnail,
                  fulltitle=scrapedtitle,
-                 show=scrapedtitle), tipo='tv'))
+                 show=scrapedtitle,viewmode="movie"), tipo='tv'))
 
     # Paginazione
     # ===========================================================
@@ -163,10 +172,8 @@ def lista_serie(item):
                  thumbnail="http://2.bp.blogspot.com/-fE9tzwmjaeQ/UcM2apxDtjI/AAAAAAAAeeg/WKSGM2TADLM/s1600/pager+old.png",
                  folder=True))
         itemlist.append(
-            Item(channel=__channel__, action="HomePage", title="[COLOR yellow]Torna Home[/COLOR]", folder=True))
+            Item(channel=__channel__, action="HomePage", title="[COLOR yellow]Torna Home[/COLOR]",thumbnail=ThumbnailHome, folder=True))
     return itemlist
-
-
 # =================================================================
 
 # -----------------------------------------------------------------
@@ -198,8 +205,6 @@ def categorias(item):
                  plot=scrapedplot))
 
     return itemlist
-
-
 # =================================================================
 
 # -----------------------------------------------------------------
@@ -228,8 +233,6 @@ def search(item, texto):
                  show=scrapedtitle), tipo='tv'))
 
     return itemlist
-
-
 # =================================================================
 
 # -----------------------------------------------------------------
@@ -253,20 +256,17 @@ def top50(item):
                  url=scrapedurl,
                  thumbnail=scrapedthumbnail,
                  fulltitle=scrapedtitle,
-                 show=scrapedtitle), tipo='tv'))
+                 show=scrapedtitle,viewmode="movie"), tipo='tv'))
 
     return itemlist
-
-
 # =================================================================
 
 # -----------------------------------------------------------------
 def episodi(item):
     logger.info("[leserietv.py] episodi")
     itemlist = []
-
+    elenco = []
     data = scrapertools.cache_page(item.url)
-
     #xbmc.log("qua"+data)
     patron = '<li id[^<]+<[^<]+<.*?class="serie-title">(.*?)</span>[^>]+>[^<]+<.*?megadrive-(.*?)".*?data-link="([^"]+)">Megadrive</a>'
     matches = re.compile(patron, re.DOTALL).findall(data)
@@ -274,6 +274,9 @@ def episodi(item):
 
     for scrapedlongtitle,scrapedtitle, scrapedurl in matches:
         scrapedtitle = scrapedtitle.replace('_', "x")
+        #xbmc.log(scrapedlongtitle + " " + scrapedtitle + " " + scrapedurl)
+        elenco.append([scrapedtitle,scrapedlongtitle,scrapedurl])
+
         scrapedtitle = scrapedtitle + " [COLOR orange]" + scrapedlongtitle + "[/COLOR]"
         itemlist.append(Item(channel=__channel__,
                              action="play",
@@ -283,28 +286,18 @@ def episodi(item):
                              fanart=item.fanart if item.fanart != "" else item.scrapedthumbnail,
                              fulltitle=item.fulltitle,
                              show=item.fulltitle))
-
-    if config.get_library_support() and len(itemlist) != 0:
-        itemlist.append(
-            Item(channel=__channel__,
-                 title="Aggiungi a preferiti",
-                 url=item.url,
-                 action="add_serie_to_library",
-                 extra="episodi",
-                 show=item.show))
-        itemlist.append(
-            Item(channel=item.channel,
-                 title="Scarica tutti gli episodi della serie",
-                 url=item.url,
-                 action="download_all_episodes",
-                 extra="episodi",
-                 show=item.show))
+    itemlist.append(Item(channel=__channel__,
+                         action="test",
+                         title="Scarica tutta la serie [COLOR yellow]"+ item.fulltitle + "[/COLOR]",
+                         url=scrapedurl,
+                         extra=elenco,
+                         thumbnail=item.thumbnail,
+                         fanart=item.fanart if item.fanart != "" else item.scrapedthumbnail,
+                         fulltitle=item.fulltitle,
+                         show=item.fulltitle))
 
     return itemlist
-
-
 # =================================================================
-
 
 #------------------------------------------------------------------
 def play(item):
@@ -324,9 +317,41 @@ def play(item):
     return itemlist
 # =================================================================
 
+# -----------------------------------------------------------------
+def info(item):
+    itemlist = []
 
+    dialog = xbmcgui.Dialog()
+    linea1='[COLOR yellow]Servizi ripristinati:[/COLOR]'
+    linea2='Scarica tutti gli episodi. (beta test)'
+    linea3='\n[COLOR orange]www.mimediacenter.info[/COLOR] - [I]pelisalacarta (For Italian users)[/I]'
+
+    result=dialog.ok('Le serie TV Info',linea1,linea2,linea3)
+
+    return mainlist(itemlist)
+# =================================================================
 # -----------------------------------------------------------------
 def HomePage(item):
     xbmc.executebuiltin("ReplaceWindow(10024,plugin://plugin.video.streamondemand)")
-
 # =================================================================
+
+
+def test(item):
+    itemlist=[]
+
+    episodi = item.extra
+    for episodio,titolo,url in episodi:
+        xbmc.log(titolo)
+        downloadtools.downloadtitle(link(url),item.fulltitle + " " + episodio + " " + titolo)
+
+    return itemlist
+
+
+def link(url):
+    data = scrapertools.cache_page(url)
+    url = scrapertools.find_single_match(data, 'config:{file:\'(.*?)\'')
+
+    return url
+
+FilmFanart="https://superrepo.org/static/images/fanart/original/script.artwork.downloader.jpg"
+ThumbnailHome="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Dynamic-blue-up.svg/580px-Dynamic-blue-up.svg.png"
