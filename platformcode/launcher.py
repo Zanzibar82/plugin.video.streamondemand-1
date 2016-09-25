@@ -97,9 +97,9 @@ def run():
                     if version:
                         import xbmcgui
                         advertencia = xbmcgui.Dialog()
-                        advertencia.ok("Versión "+version+" disponible","Ya puedes descargar la nueva versión del plugin\ndesde el listado principal")
+                        advertencia.ok("Versione "+version+" disponible","E' possibile fare il download della nuova versione\nselezionare la relativa voce nel menu principale")
 
-                        itemlist.insert(0,Item(title="Descargar version "+version, version=version, channel="updater", action="update", thumbnail=channelselector.get_thumbnail_path() + "Crystal_Clear_action_info.png"))
+                        itemlist.insert(0,Item(title="Download versione "+version, version=version, channel="updater", action="update", thumbnail=channelselector.get_thumbnail_path() + "Crystal_Clear_action_info.png"))
                 except:
                     import xbmcgui
                     advertencia = xbmcgui.Dialog()
