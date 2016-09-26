@@ -65,7 +65,7 @@ MONTH_TIME = (DTTIME - datetime.timedelta(days=30)).strftime('%Y-%m-%d')
 MONTH2_TIME = (DTTIME - datetime.timedelta(days=60)).strftime('%Y-%m-%d')
 YEAR_DATE = (DTTIME - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
 
-TIMEOUT_TOTAL = 60
+TIMEOUT_TOTAL = 90
 
 NLS_Search_by_Title = config.get_localized_string(30980)
 NLS_Search_by_Person = config.get_localized_string(30981)
@@ -280,7 +280,7 @@ def search_movie_by_title(item, search_terms):
         Item(channel=item.channel,
              url='search/movie?query=%s&' % url_quote_plus(search_terms),
              plot="1",
-             type="film"))
+             type="movie"))
 
 
 def search_similar_movie_by_title(item, search_terms):
@@ -290,7 +290,7 @@ def search_similar_movie_by_title(item, search_terms):
         Item(channel=item.channel,
              url='search/movie?append_to_response=similar_movies,alternative_title&query=%s&' % url_quote_plus(search_terms),
              plot="1",
-             type='film'))
+             type='movie'))
 
 
 def search_movie_by_year(item, search_terms):
@@ -304,7 +304,7 @@ def search_movie_by_year(item, search_terms):
                 Item(channel=item.channel,
                      url='discover/movie?primary_release_year=%s&' % year,
                      plot="1",
-                     type="film")))
+                     type="movie")))
     return result
 
 
@@ -335,7 +335,7 @@ def search_person_by_name(item, search_terms):
                 thumbnail=poster,
                 viewmode='list',
                 fanart=fanart,
-                type='film'
+                type='movie'
                 # extracmds=extracmds
         ))
 
@@ -382,7 +382,7 @@ def search_collection_by_name(item, search_terms):
                 thumbnail=poster,
                 viewmode='list',
                 fanart=fanart,
-                type='film'
+                type='movie'
         ))
 
     return itemlist
