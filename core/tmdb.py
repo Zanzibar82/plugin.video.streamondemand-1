@@ -318,14 +318,14 @@ def set_infoLabels_item(item, seekTmdb=True, idioma_busqueda='it', lock=None):
 
             elif item.infoLabels['IMDBNumber'] or item.infoLabels['code'] or item.infoLabels['imdb_id']:
                 if item.infoLabels['IMDBNumber']:
-                    item.infoLabels['code'] == item.infoLabels['IMDBNumber']
-                    item.infoLabels['imdb_id'] == item.infoLabels['IMDBNumber']
+                    item.infoLabels['code'] = item.infoLabels['IMDBNumber']
+                    item.infoLabels['imdb_id'] = item.infoLabels['IMDBNumber']
                 elif item.infoLabels['code']:
-                    item.infoLabels['IMDBNumber'] == item.infoLabels['code']
-                    item.infoLabels['imdb_id'] == item.infoLabels['code']
+                    item.infoLabels['IMDBNumber'] = item.infoLabels['code']
+                    item.infoLabels['imdb_id'] = item.infoLabels['code']
                 else:
-                    item.infoLabels['code'] == item.infoLabels['imdb_id']
-                    item.infoLabels['IMDBNumber'] == item.infoLabels['imdb_id']
+                    item.infoLabels['code'] = item.infoLabels['imdb_id']
+                    item.infoLabels['IMDBNumber'] = item.infoLabels['imdb_id']
                 # ...Busqueda por imdb code
                 otmdb = Tmdb(external_id=item.infoLabels['imdb_id'], external_source="imdb_id", tipo=tipo,
                                     idioma_busqueda=idioma_busqueda)

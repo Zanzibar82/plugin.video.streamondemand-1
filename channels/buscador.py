@@ -90,7 +90,7 @@ def channel_search(queue, channel_parameters, category, tecleado):
         mainlist = module.mainlist(Item(channel=channel_parameters["channel"]))
 
         for item in mainlist:
-            if item.action != "search" or category is not None and item.extra != category:
+            if item.action != "search" or category and item.extra != category:
                 continue
 
             for res_item in module.search(item.clone(), tecleado):
@@ -114,7 +114,6 @@ def channel_search(queue, channel_parameters, category, tecleado):
 # Esta es la función que realmente realiza la búsqueda
 def do_search(item):
 
-    result_mode = config.get_setting("result_mode", "buscador")
     logger.info("streamondemand.channels.buscador do_search")
 
     tecleado, category = item.extra.split('{}')
@@ -133,13 +132,12 @@ def do_search(item):
     progreso = platformtools.dialog_progress_bg("Cercando " + tecleado, "")
     channel_files = glob.glob(channels_path)
 
-    searches = []
+    number_of_channels = 0
     search_results = Queue.Queue()
 
-    for index, infile in enumerate(channel_files):
+    for infile in channel_files:
 
-        basename = os.path.basename(infile)
-        basename_without_extension = basename[:-4]
+        basename_without_extension = os.path.basename(infile)[:-4]
 
         channel_parameters = channeltools.get_channel_parameters(basename_without_extension)
 
@@ -170,11 +168,10 @@ def do_search(item):
         t = Thread(target=channel_search, args=[search_results, channel_parameters, category, tecleado])
         t.setDaemon(True)
         t.start()
-        searches.append(t)
+        number_of_channels += 1
 
     start_time = int(time.time())
 
-    number_of_channels = len(searches)
     completed_channels = 0
     while completed_channels < number_of_channels:
 

@@ -4,16 +4,14 @@
 # Ricerca "buscadorall"
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
-
 import Queue
 import datetime
 import glob
-import imp
 import os
 import re
-import threading
 import time
 import urllib
+from threading import Thread
 from unicodedata import normalize
 
 import xbmc
@@ -21,6 +19,7 @@ import xbmc
 from core import channeltools
 from core import scrapertools
 from lib.fuzzywuzzy import fuzz
+from platformcode import platformtools
 
 try:
     import json
@@ -452,11 +451,10 @@ def build_movie_list(item, movies):
                         title='[COLOR orange][%s][/COLOR] ' % NLS_Library + kodi_db_movie["title"] + jobrole,
                         thumbnail=poster,
                         category=genres,
-                        plot=str({"infoLabels": extrameta}),
+                        plot=plot,
                         viewmode='movie_with_plot',
                         fanart=fanart,
-                        # extrameta=extrameta,
-                        # extracmds=extracmds,
+                        infoLabels=extrameta,
                         folder=False,
                 ))
 
@@ -465,16 +463,14 @@ def build_movie_list(item, movies):
             itemlist.append(Item(
                     channel=item.channel,
                     action='do_channels_search',
-                    extra=("%4s" % year) + title_search,
+                    extra=title_search + '{}' + item.type + '{}' + year,
                     title=title + jobrole,
                     thumbnail=poster,
                     category=genres,
-                    plot=str({"infoLabels": extrameta}),
+                    plot=plot,
                     viewmode='movie_with_plot',
                     fanart=fanart,
-                    # extrameta=extrameta,
-                    # extracmds=extracmds,
-                    url=item.type
+                    infoLabels=extrameta,
             ))
 
     return itemlist
@@ -570,15 +566,50 @@ def get_json_response(url=""):
     return results
 
 
+def channel_search(queue, channel_parameters, category, title_year, tecleado):
+    try:
+        search_results = []
+
+        exec "from channels import " + channel_parameters["channel"] + " as module"
+        mainlist = module.mainlist(Item(channel=channel_parameters["channel"]))
+
+        for item in mainlist:
+            if item.action != "search" or category and item.extra != category:
+                continue
+
+            for res_item in module.search(item.clone(), tecleado):
+                title = res_item.fulltitle
+
+                # If the release year is known, check if it matches the year found in the title
+                if title_year > 0:
+                    year_match = re.search('\(.*(\d{4}).*\)', title)
+                    if year_match and abs(int(year_match.group(1)) - title_year) > 1:
+                        continue
+
+                # Clean up a bit the returned title to improve the fuzzy matching
+                title = re.sub(r'\(.*\)', '', title)  # Anything within ()
+                title = re.sub(r'\[.*\]', '', title)  # Anything within []
+
+                # Check if the found title fuzzy matches the searched one
+                if fuzz.token_sort_ratio(tecleado, title) > 85: search_results.append(res_item)
+
+        queue.put(search_results)
+
+    except:
+        logger.error("No se puede buscar en: " + channel_parameters["title"])
+        import traceback
+        logger.error(traceback.format_exc())
+
+
 def do_channels_search(item):
     logger.info("streamondemand.channels.buscadorall do_channels_search")
 
+    tecleado, category, title_year = item.extra.split('{}')
+
     try:
-        title_year = int(item.extra[0:4])
+        title_year = int(title_year)
     except:
         title_year = 0
-    mostra = item.extra[4:]
-    tecleado = urllib.quote_plus(mostra)
 
     itemlist = []
 
@@ -591,36 +622,13 @@ def do_channels_search(item):
         channel_language = "all"
         logger.info("streamondemand.channels.buscador channel_language=" + channel_language)
 
-    if config.is_xbmc():
-        show_dialog = True
-
-    try:
-        import xbmcgui
-        progreso = xbmcgui.DialogProgressBG()
-        progreso.create(NLS_Looking_For % mostra)
-    except:
-        show_dialog = False
-
-    def worker(infile, queue):
-        channel_result_itemlist = []
-        try:
-            basename_without_extension = os.path.basename(infile)[:-4]
-            # http://docs.python.org/library/imp.html?highlight=imp#module-imp
-            obj = imp.load_source(basename_without_extension, infile[:-4]+".py")
-            logger.info("streamondemand.channels.buscador cargado " + basename_without_extension + " de " + infile)
-            # item.url contains search type: serie, anime, etc...
-            channel_result_itemlist.extend(obj.search(Item(extra=item.url), tecleado))
-            for local_item in channel_result_itemlist:
-                local_item.title = " [COLOR azure] " + local_item.title + " [/COLOR] [COLOR orange]su[/COLOR] [COLOR green]" + basename_without_extension + "[/COLOR]"
-                local_item.viewmode = "list"
-        except:
-            import traceback
-            logger.error(traceback.format_exc())
-        queue.put(channel_result_itemlist)
+    progreso = platformtools.dialog_progress_bg(NLS_Looking_For % tecleado)
 
     channel_files = glob.glob(channels_path)
 
-    channel_files_tmp = []
+    search_results = Queue.Queue()
+    number_of_channels = 0
+
     for infile in channel_files:
 
         basename_without_extension = os.path.basename(infile)[:-4]
@@ -629,6 +637,10 @@ def do_channels_search(item):
 
         # No busca si es un canal inactivo
         if channel_parameters["active"] != "true":
+            continue
+
+        # En caso de busqueda por categorias
+        if category and category not in channel_parameters["categories"]:
             continue
 
         # No busca si es un canal para adultos, y el modo adulto está desactivado
@@ -647,20 +659,13 @@ def do_channels_search(item):
         if include_in_global_search.lower() != "true":
             continue
 
-        channel_files_tmp.append(infile)
-
-    channel_files = channel_files_tmp
-
-    result = Queue.Queue()
-    threads = [threading.Thread(target=worker, args=(infile, result)) for infile in channel_files]
+        t = Thread(target=channel_search, args=[search_results, channel_parameters, category, title_year, tecleado])
+        t.setDaemon(True)
+        t.start()
+        number_of_channels += 1
 
     start_time = int(time.time())
 
-    for t in threads:
-        t.daemon = True  # NOTE: setting dameon to True allows the main thread to exit even if there are threads still running
-        t.start()
-
-    number_of_channels = len(channel_files)
     completed_channels = 0
     while completed_channels < number_of_channels:
 
@@ -672,34 +677,16 @@ def do_channels_search(item):
         else:
             timeout = TIMEOUT_TOTAL - delta_time  # Still time to gather other results
 
-        if show_dialog:
-            progreso.update(completed_channels * 100 / number_of_channels)
+        progreso.update(completed_channels * 100 / number_of_channels)
 
         try:
-            result_itemlist = result.get(timeout=timeout)
+            itemlist.extend(search_results.get(timeout=timeout))
             completed_channels += 1
         except:
             # Expired timeout raise an exception
             break
 
-        for item in result_itemlist:
-            title = item.fulltitle
-
-            # If the release year is known, check if it matches the year found in the title
-            if title_year > 0:
-                year_match = re.search('\(.*(\d{4}).*\)', title)
-                if year_match and abs(int(year_match.group(1)) - title_year) > 1:
-                    continue
-
-            # Clean up a bit the returned title to improve the fuzzy matching
-            title = re.sub(r'\(.*\)', '', title)  # Anything within ()
-            title = re.sub(r'\[.*\]', '', title)  # Anything within []
-
-            # Check if the found title fuzzy matches the searched one
-            if fuzz.token_sort_ratio(mostra, title) > 85: itemlist.append(item)
-
-    if show_dialog:
-        progreso.close()
+    progreso.close()
 
     itemlist = sorted(itemlist, key=lambda item: item.fulltitle)
 
