@@ -101,7 +101,9 @@ def channel_search(queue, channel_parameters, category, tecleado):
                 title = re.sub(r'\[.*\]', '', title)  # Anything within []
 
                 # Check if the found title fuzzy matches the searched one
-                if fuzz.WRatio(tecleado, title) > 85: search_results.append(res_item)
+                if fuzz.WRatio(tecleado, title) > 85:
+                    res_item.title = "[COLOR azure]" + res_item.title + "[/COLOR][COLOR orange] su [/COLOR][COLOR green]" + channel_parameters["title"] + "[/COLOR]"
+                    search_results.append(res_item)
 
         queue.put(search_results)
 

@@ -6,7 +6,6 @@
 # ------------------------------------------------------------
 
 import re
-import urllib
 
 from core import config
 from core import logger
@@ -86,13 +85,12 @@ def tvoggi(item):
     for scrapedthumbnail, scrapedtitle, scrapedtv in matches:
         scrapedurl = ""
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle).strip()
-        titolo = urllib.quote_plus(scrapedtitle)
         if (DEBUG): logger.info("title=[" + scrapedtitle + "], url=[" + scrapedurl + "]")
 
         itemlist.append(infoSod(
             Item(channel=__channel__,
                  action="do_search",
-                 extra=titolo + '{}' + 'movie',
+                 extra=scrapedtitle + '{}' + 'movie',
                  title=scrapedtitle + "[COLOR yellow]   " + scrapedtv + "[/COLOR]",
                  fulltitle=scrapedtitle,
                  url=scrapedurl,
