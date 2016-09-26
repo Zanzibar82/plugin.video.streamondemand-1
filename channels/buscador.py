@@ -47,7 +47,7 @@ def mainlist(item, preferred_thumbnail="squares"):
     saved_searches_list = get_saved_searches()
 
     for saved_search_text in saved_searches_list:
-        itemlist.append(Item(channel=item.channel, action="do_search", title=' "' + saved_search_text.slip('{}')[0] + '"',
+        itemlist.append(Item(channel=item.channel, action="do_search", title=' "' + saved_search_text.split('{}')[0] + '"',
                              extra=saved_search_text))
 
     if len(saved_searches_list) > 0:
