@@ -1,3 +1,7 @@
+v5.3.6
+- openload big fix
+- jjdecode lib
+
 v5.3.5
 - fix megadrive, streaminto, openload (plus code jsunpack)
 - beautify jjdecode lib
