@@ -18,6 +18,10 @@ class JJDecoder(object):
         return re.sub('^\s+|\s+$', '', self.encoded_str)
 
     def checkPalindrome(self, Str):
+        startpos = -1
+        endpos = -1
+        gv, gvl = -1, -1
+
         index = Str.find('"\'\\"+\'+",')
 
         if index == 0:
@@ -31,7 +35,7 @@ class JJDecoder(object):
             startpos = Str.find('"\\""+') + 5
             endpos = Str.find('"\\"")())()')
 
-        return startpos, endpos, gv, gvl
+        return (startpos, endpos, gv, gvl)
 
     def decode(self):
 
@@ -178,7 +182,8 @@ class JJDecoder(object):
                     # if there is, loop s until R 0r +
                     # if there is no matching s block, throw error
 
-                    match = 0
+                    match = 0;
+                    n = None
 
                     # searching for matching pure s block
                     while True:
@@ -204,20 +209,25 @@ class JJDecoder(object):
                             data = data[len(str_upper):]  # skip sig
 
                             ch_str = ''
+                            ch_lotux = ''
 
                             for j in range(10):  # shouldn't be more than 10 hex chars
                                 if j > 1:  # lotu check
                                     if data.find(str_l) == 0:
                                         data = data[len(str_l):]
+                                        ch_lotux = 'l'
                                         break
                                     elif data.find(str_o) == 0:
                                         data = data[len(str_o):]
+                                        ch_lotux = 'o'
                                         break
                                     elif data.find(str_t) == 0:
                                         data = data[len(str_t):]
+                                        ch_lotux = 't'
                                         break
                                     elif data.find(str_u) == 0:
                                         data = data[len(str_u):]
+                                        ch_lotux = 'u'
                                         break
 
                                 # gv + "."+b[ c ]
@@ -240,6 +250,7 @@ class JJDecoder(object):
 
                             ch_str = ''
                             ch_lotux = ''
+                            temp = ''
                             b_checkR1 = 0
 
                             for j in range(3):  # shouldn't be more than 3 octal chars
@@ -288,7 +299,8 @@ class JJDecoder(object):
                                     break
                             out += chr(int(ch_str, 8)) + ch_lotux
                             break  # step out of the while loop
-                        elif (0x21 <= n <= 0x2f) or (0x3A <= n <= 0x40) or (0x5b <= n <= 0x60) or (0x7b <= n <= 0x7f):
+                        elif (0x21 <= n and n <= 0x2f) or (0x3A <= n and n <= 0x40) or (0x5b <= n and n <= 0x60) or (
+                                0x7b <= n and n <= 0x7f):
                             out += data[0]
                             data = data[1:]
                             match += 1
