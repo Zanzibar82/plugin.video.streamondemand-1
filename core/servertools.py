@@ -51,7 +51,7 @@ def find_video_items(item=None, data=None, channel=""):
 
     itemlist = []
     for video in listavideos:
-        scrapedtitle = " Link su "+video[2]
+        scrapedtitle = " [ "+video[2]+" ] "
         scrapedurl = video[1]
         server = video[2]
         # DrZ3r0
