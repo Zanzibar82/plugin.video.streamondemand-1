@@ -23,11 +23,9 @@
 # along with streamondemand 5.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------------------
 
-import time
-import traceback
-import urllib2
-import re
 import copy
+import re
+import time
 
 from core import jsontools
 from core import logger
@@ -1336,20 +1334,16 @@ def infoSod(item, tipo="movie"):
         tmdbtitle = item.fulltitle.split("|")[0].split("{")[0].split("[")[0].split("(")[0].split("Sub-ITA")[0].split("Sub ITA")[0].split("20")[0].split("19")[0].split("S0")[0].split("Serie")[0].split("HD ")[0]
         year = scrapertools.find_single_match(item.fulltitle, '\((\d{4})\)')
 
-        title = item.title
-        fulltitle = item.fulltitle
-        show = item.show
+        otmdb = Tmdb(texto_buscado=tmdbtitle,
+                     tipo=tipo,
+                     idioma_busqueda='it',
+                     year=year)
 
-        item.infoLabels = {'year': year, 'mediatype': 'tvshow' if tipo == 'tv' else tipo}
-        item.title = tmdbtitle
-        item.fulltitle = tmdbtitle
-        item.show = tmdbtitle
-
-        set_infoLabels_item(item, seekTmdb=True, idioma_busqueda='it')
-
-        item.title = title
-        item.fulltitle = fulltitle
-        item.show = show
+        item.infoLabels = otmdb.get_infoLabels()
+        if 'thumbnail' in item.infoLabels:
+            item.thumbnail = item.infoLabels['thumbnail']
+        if 'fanart' in item.infoLabels:
+            item.fanart = item.infoLabels['fanart']
 
     except:
         pass
