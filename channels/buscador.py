@@ -21,7 +21,7 @@ logger.info("streamondemand.channels.buscador init")
 
 DEBUG = config.get_setting("debug")
 
-TIMEOUT_TOTAL = 90
+TIMEOUT_TOTAL = 75
 
 
 def mainlist(item, preferred_thumbnail="squares"):

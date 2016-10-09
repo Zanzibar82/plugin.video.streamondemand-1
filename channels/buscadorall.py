@@ -65,7 +65,7 @@ MONTH_TIME = (DTTIME - datetime.timedelta(days=30)).strftime('%Y-%m-%d')
 MONTH2_TIME = (DTTIME - datetime.timedelta(days=60)).strftime('%Y-%m-%d')
 YEAR_DATE = (DTTIME - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
 
-TIMEOUT_TOTAL = 90
+TIMEOUT_TOTAL = 75
 
 NLS_Search_by_Title = config.get_localized_string(30980)
 NLS_Search_by_Person = config.get_localized_string(30981)
