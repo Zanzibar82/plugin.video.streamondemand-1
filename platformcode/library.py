@@ -40,6 +40,8 @@ from core import jsontools
 from core import logger
 from core import scrapertools
 
+PLUGIN_NAME = "streamondemand"
+
 try:
     from core import tmdb
 except:
@@ -60,10 +62,11 @@ xbmc_json_rpc_url = "http://" + xbmc_host + ":" + str(xbmc_port) + "/jsonrpc"
 
 DEBUG = config.get_setting("debug")
 
-LIBRARY_PATH = config.get_library_path()
+FOLDER_LIBRARY = "/library" 
+LIBRARY_PATH = xbmc.translatePath("special://profile/addon_data/plugin.video." + PLUGIN_NAME + FOLDER_LIBRARY)
 if not filetools.exists(LIBRARY_PATH):
     logger.info("streamondemand.platformcode.library Library path doesn't exist:" + LIBRARY_PATH)
-    config.verify_directories_created()
+    filetools.mkdir(LIBRARY_PATH)
 
 # TODO permitir cambiar las rutas y nombres en settings para 'cine' y 'series'
 FOLDER_MOVIES = "CINE"  # config.get_localized_string(30072)
