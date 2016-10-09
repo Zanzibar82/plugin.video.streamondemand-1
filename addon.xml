@@ -11,11 +11,11 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="it">Film e serie tv on demand</summary>
-        <description lang="it">Cinema, serie tv, documentari, anime, ... tutto ciò che puoi trovare su Internet in
+        <description lang="it">Cinema, serie tv, documentari, anime... tutto ciò che puoi trovare su Internet in
             streaming ora è sul tuo media center.
         </description>
         <summary lang="en">Movies and TV Shows on demand</summary>
-        <description lang="en">Movies, Series, Documentaries, Anime, ... any streaming website you can find on Internet
+        <description lang="en">Movies, Series, Documentaries, Anime... any streaming website you can find on Internet
             now on is ported to your media center.
         </description>
         <platform>all</platform>
