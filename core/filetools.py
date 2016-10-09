@@ -217,8 +217,8 @@ def exists(path):
             return samba.file_exists(os.path.basename(path), os.path.dirname(path)) or \
                    samba.folder_exists(os.path.basename(path), os.path.dirname(path))
         except gaierror:
-            logger.info("pelisalacarta.core.filetools exists: No es posible conectar con la ruta")
-            platformtools.dialog_notification("No es posible conectar con la ruta", path)
+            logger.info("pelisalacarta.core.filetools exists: Impossibile connettersi al path")
+            platformtools.dialog_notification("Impossibile connettersi al path", path)
             return True
     else:
         return os.path.exists(path)
