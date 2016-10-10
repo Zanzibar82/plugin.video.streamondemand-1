@@ -8,6 +8,8 @@ import glob
 import os
 from threading import Thread
 
+import time
+
 from core import config
 from core import updater
 
@@ -26,19 +28,22 @@ def update_servers():
     progress.create("Update servers list")
     # ----------------------------
 
+    len_server_files = len(server_files)
     for index, server in enumerate(server_files):
         # ----------------------------
-        percentage = index * 100 / len(server_files)
+        percentage = index * 100 / len_server_files
         # ----------------------------
-        server_name = os.path.basename(server)[:-4]
-        updater.updateserver(server_name)
-        # ----------------------------
-        progress.update(percentage, ' Update server: ' + server_name)
+        time.sleep(4.2 / len_server_files)
+
+        progress.update(percentage, ' Update server: ' + os.path.basename(server)[:-4])
         # ----------------------------
 
     # ----------------------------
     progress.close()
     # ----------------------------
+
+    for server in server_files:
+        updater.updateserver(os.path.basename(server)[:-4])
 
 
 ### Run

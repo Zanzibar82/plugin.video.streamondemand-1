@@ -8,6 +8,8 @@ import glob
 import os
 from threading import Thread
 
+import time
+
 from core import config
 from core import updater
 
@@ -26,19 +28,22 @@ def update_channels():
     progress.create("Update channels list")
     # ----------------------------
 
+    len_channel_files = len(channel_files)
     for index, channel in enumerate(channel_files):
         # ----------------------------
-        percentage = index * 100 / len(channel_files)
+        percentage = index * 100 / len_channel_files
         # ----------------------------
-        channel_id = os.path.basename(channel)[:-4]
-        updater.updatechannel(channel_id)
-        # ----------------------------
-        progress.update(percentage, ' Update channel: ' + channel_id)
+        time.sleep(4.2 / len_channel_files)
+
+        progress.update(percentage, ' Update channel: ' + os.path.basename(channel)[:-4])
         # ----------------------------
 
     # ----------------------------
     progress.close()
     # ----------------------------
+
+    for channel in channel_files:
+        updater.updatechannel(os.path.basename(channel)[:-4])
 
 
 ### Run
