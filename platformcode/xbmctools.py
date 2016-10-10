@@ -363,13 +363,13 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
             
             if devuelve==0:
                 advertencia = xbmcgui.Dialog()
-                resultado = advertencia.ok("plugin", "Scaricato con successo")
+                resultado = advertencia.ok("Download", "Scaricato con successo")
             elif devuelve==-1:
                 advertencia = xbmcgui.Dialog()
-                resultado = advertencia.ok("plugin", "Download interrotto")
+                resultado = advertencia.ok("Download", "Download interrotto")
             else:
                 advertencia = xbmcgui.Dialog()
-                resultado = advertencia.ok("plugin", "Errore nel download")
+                resultado = advertencia.ok("Download", "Errore nel download")
         return
 
     elif opciones[seleccion]==config.get_localized_string(30154): #"Quitar de favoritos"
@@ -578,7 +578,7 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
   
             #Mostramos el progreso
             progreso = xbmcgui.DialogProgress()
-            progreso.create( "streamondemand - Torrent" , "Iniciando...")
+            progreso.create( "streamondemand - Torrent" , "Avviando...")
   
   
             #Mientras el progreso no sea cancelado ni el cliente cerrado
@@ -625,7 +625,7 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
                           time.sleep(1)
         
                         #Cuando este cerrado,  Volvemos a mostrar el dialogo
-                        progreso.create( "streamondemand - Torrent" , "Iniciando...")
+                        progreso.create( "streamondemand - Torrent" , "Avviando...")
       
                 except:
                     import traceback
