@@ -80,8 +80,6 @@ def sottomenu(item):
     # data = anti_cloudflare(item.url)
     data = scrapertools.cache_page(item.url, headers=headers)
 
-    print data
-
     patron = '<a href="([^"]+)">([^<]+)</a>'
 
     matches = re.compile(patron, re.DOTALL).findall(data)
