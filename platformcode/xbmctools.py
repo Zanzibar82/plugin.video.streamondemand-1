@@ -532,26 +532,26 @@ def play_video(item,desdefavoritos=False,desdedescargados=False,desderrordescarg
 
         #Opciones disponibles para Reproducir torrents
         torrent_options = []
-        torrent_options.append(["Cliente interno (necesario libtorrent)"])
-        torrent_options.append(["Cliente interno MCT (necesario libtorrent)"])
+        torrent_options.append(["Client  (necessario libtorrent)"])
+        torrent_options.append(["Client interno MCT (necessario libtorrent)"])
 
         #Plugins externos se pueden añadir otros
         if xbmc.getCondVisibility('System.HasAddon("plugin.video.xbmctorrent")'):
-            torrent_options.append(["Plugin externo: xbmctorrent","plugin://plugin.video.xbmctorrent/play/%s"])
+            torrent_options.append(["Plugin esterno: xbmctorrent","plugin://plugin.video.xbmctorrent/play/%s"])
         if xbmc.getCondVisibility('System.HasAddon("plugin.video.pulsar")'):
-            torrent_options.append(["Plugin externo: pulsar","plugin://plugin.video.pulsar/play?uri=%s"])
+            torrent_options.append(["Plugin esterno: pulsar","plugin://plugin.video.pulsar/play?uri=%s"])
         if xbmc.getCondVisibility('System.HasAddon("plugin.video.quasar")'):
-            torrent_options.append(["Plugin externo: quasar","plugin://plugin.video.quasar/play?uri=%s"])
+            torrent_options.append(["Plugin esterno: quasar","plugin://plugin.video.quasar/play?uri=%s"])
         if xbmc.getCondVisibility('System.HasAddon("plugin.video.stream")'):
-            torrent_options.append(["Plugin externo: stream","plugin://plugin.video.stream/play/%s"])
+            torrent_options.append(["Plugin esterno: stream","plugin://plugin.video.stream/play/%s"])
         if xbmc.getCondVisibility('System.HasAddon("plugin.video.torrenter")'):
-            torrent_options.append(["Plugin externo: torrenter","plugin://plugin.video.torrenter/?action=playSTRM&url=%s"])
+            torrent_options.append(["Plugin esterno: torrenter","plugin://plugin.video.torrenter/?action=playSTRM&url=%s"])
         if xbmc.getCondVisibility('System.HasAddon("plugin.video.torrentin")'):
-            torrent_options.append(["Plugin externo: torrentin","plugin://plugin.video.torrentin/?uri=%s&image="])
+            torrent_options.append(["Plugin esterno: torrentin","plugin://plugin.video.torrentin/?uri=%s&image="])
 
 
         if len(torrent_options)>1:
-            seleccion = xbmcgui.Dialog().select("Abrir torrent con...", [opcion[0] for opcion in torrent_options])
+            seleccion = xbmcgui.Dialog().select("Aprire torrent con...", [opcion[0] for opcion in torrent_options])
         else:
             seleccion = 0
 
