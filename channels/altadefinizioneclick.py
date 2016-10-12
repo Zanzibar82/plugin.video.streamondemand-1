@@ -220,7 +220,7 @@ def fichas(item):
 
 
 def findvideos(item):
-    logger.info("[italiafilmvideohd.py] findvideos")
+    logger.info("[altadefinizioneclick.py] findvideos")
 
     # Descarga la página
     data = scrapertools.anti_cloudflare(item.url, headers).replace('\n', '')
