@@ -406,6 +406,7 @@ def episodios_serie(item):
             if title == '':
                 title = scrapedtitle
             if title != '':
+                title = title.replace('×', 'x')
                 itemlist.append(
                     Item(channel=__channel__,
                          action="findvideos",
@@ -413,7 +414,7 @@ def episodios_serie(item):
                          url=data,
                          thumbnail=item.thumbnail,
                          extra=item.extra,
-                         fulltitle=item.show + ' | ' + title + " (" + lang_title + ")",
+                         fulltitle=title + " (" + lang_title + ")" + ' - ' + item.show,
                          show=item.show))
 
     logger.info("[cineblog01.py] episodios")
