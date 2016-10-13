@@ -74,7 +74,6 @@ def peliculas(item):
     ## ------------------------------------------------
     cookies = ""
     matches = config.get_cookie_data(item.url).splitlines()[4:]
-    logger.info('### bocchino ' + str(matches))
     for cookie in matches:
         name = cookie.split('\t')[5]
         value = cookie.split('\t')[6]
