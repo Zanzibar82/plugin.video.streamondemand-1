@@ -19,7 +19,7 @@ __type__ = "generic"
 __title__ = "documentaristreaming (TV)"
 __language__ = "IT"
 
-sito = "http://documentaristreaming.net/"
+sito = "https://www.documentaristreaming.net/"
 
 DEBUG = config.get_setting("debug")
 
@@ -57,18 +57,19 @@ def peliculas(item):
 
 
     # Extrae las entradas (carpetas)
-    patron = '<a class="vw-post-box-thumbnail" href="(.*?)".*?rel="bookmark".*?itemprop="url" >.*?<img.*?src="(.*?)"'
+    patron = '<div class="vw-block-grid-item">\s*<[^>]+>\s*<[^>]+>\s*<a class=[^=]+="(.*?)"[^>]+>\s*<img[^s]+src="(.*?)"[^>]+>\s*<h3[^>]+>\s*(.*?)<'
     matches = re.compile(patron, re.DOTALL).findall(data)
     scrapertools.printMatches(matches)
 
-    for scrapedurl, scrapedthumbnail in matches:
-        #scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle).strip()
-        #scrapedplot = scrapertools.decodeHtmlentities(scrapedplot)
+    for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
+        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle).strip()
         scrapedplot = ""
-        scrapedtitle=scrapedurl
-        scrapedtitle=scrapertools.decodeHtmlentities(scrapedtitle.replace("https://www.documentaristreaming.net/",""))
-        scrapedtitle=scrapertools.decodeHtmlentities(scrapedtitle.replace("-"," "))
-        scrapedtitle=scrapertools.decodeHtmlentities(scrapedtitle.replace("/",""))
+        #html = scrapertools.cache_page(scrapedurl)
+        #start = html.find("</strong></p>")
+        #end = html.find("<p>&nbsp;</p>", start)
+        #scrapedplot = html[start:end]
+        #scrapedplot = re.sub(r'<[^>]*>', '', scrapedplot)
+        #scrapedplot = scrapertools.decodeHtmlentities(scrapedplot)
         if (DEBUG): logger.info(
             "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(
