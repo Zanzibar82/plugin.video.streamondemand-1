@@ -78,6 +78,7 @@ def mainlist(item):
 
     return itemlist
 
+#disabled from global search
 
 # Al llamarse "search" la función, el launcher pide un texto a buscar y lo añade como parámetro
 def search(item, texto):
