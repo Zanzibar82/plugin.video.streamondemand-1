@@ -637,6 +637,8 @@ def play(item):
             print "##### The content is yet unpacked"
 
         data = scrapertools.get_match(data, 'var link(?:\s)?=(?:\s)?"([^"]+)";')
+        if 'vcrypt' in data:
+            data = scrapertools.get_header_from_response(data, headers=headers, header_to_get="Location")
         print "##### play /link/ data ##\n%s\n##" % data
     else:
         data = item.url
