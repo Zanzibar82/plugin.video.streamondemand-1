@@ -361,13 +361,6 @@ class InfoWindow(xbmcgui.WindowXMLDialog):
         # Cargamos los botones si es necesario
 
         self.getControl(10024).setVisible(self.indexList > -1)
-        # ==============Costaplus=======================================================================================
-        self.getControl(10025).setLabel("Indietro")
-        self.getControl(10026).setLabel("Avanti")
-        self.getControl(10027).setLabel("Cancella")
-        self.getControl(10028).setLabel("Accetta")
-        # --------------------------------------------------------------------------------------------------------------
-
         self.getControl(10025).setEnabled(self.indexList > 0)
         self.getControl(10026).setEnabled(self.indexList + 1 != len(self.listData))
         self.getControl(100029).setLabel("({0}/{1})".format(self.indexList + 1, len(self.listData)))
