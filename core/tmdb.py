@@ -126,7 +126,6 @@ def find_and_set_infoLabels_tmdb(item, ask_video=True):
 
 
         if tmdb_result is None:
-            title ="[COLOR orange]"+ title + "[/COLOR]"
             if platformtools.dialog_yesno("Ricerca titolo" ,
                                           "Titolo non travato {0}:".
                                           format("della serie" if video_type == "tv" else "del film"),
