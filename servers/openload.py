@@ -21,7 +21,7 @@ def test_video_exists(page_url):
     data = scrapertools.downloadpageWithoutCookies(page_url)
 
     if 'We are sorry!' in data:
-        return False, "[Openload] File non presente o cancellato" 
+        return False, "[Openload] Il file non esiste o è stato rimosso" 
 
     return True, ""
 
@@ -147,8 +147,9 @@ def openload_clean(string):
 
 
 def decode_hidden(text, number):
+    text = text.replace("&gt9", ">").replace("&quot9", '"').replace("&lt9", '<') \
+               .replace("&amp9", '&').replace("&gt;", ">").replace("&lt;", "<")
     text = scrapertools.decodeHtmlentities(text)
-    text = text.replace("&gt9", ">").replace("&quot9", '"').replace("&lt9", '<').replace("&amp9", '&')
     s = []
     for char in text:
         j = ord(char)
