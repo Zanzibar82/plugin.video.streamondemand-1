@@ -4,6 +4,7 @@
 # Canale per filmpertutti.co
 # http://www.mimediacenter.info/foro/viewforum.php?f=36&sid=2e761b3d716d9f7dc625f6edc0a40f86
 # ------------------------------------------------------------
+import base64
 import re
 import urlparse
 
@@ -21,6 +22,12 @@ __title__ = "filmpertutti"
 __language__ = "IT"
 
 host = "http://www.filmpertutti.click"
+
+headers = [
+    ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0'],
+    ['Accept-Encoding', 'gzip, deflate']
+]
+
 
 DEBUG = config.get_setting("debug")
 
@@ -83,23 +90,31 @@ def peliculas(item):
     itemlist = []
 
     # Descarga la pagina
-    data = scrapertools.cache_page(item.url)
+    data = scrapertools.anti_cloudflare(item.url, headers)
+
+    # ------------------------------------------------
+    cookies = ""
+    matches = config.get_cookie_data(item.url).splitlines()[4:]
+    for cookie in matches:
+        name = cookie.split('\t')[5]
+        value = cookie.split('\t')[6]
+        cookies += name + "=" + value + ";"
+    headers.append(['Cookie', cookies[:-1]])
+    import urllib
+    _headers = urllib.urlencode(dict(headers))
+    # ------------------------------------------------
 
     # Extrae las entradas (carpetas)
-    patron = '<div class="general-box container-single-image">\s*'
-    patron += '<a href="([^>"]+)"?.*?title="?([^>"]+)"?.*?<img.*?src="([^>"]+)"'
+    patron = '<li><a href="([^"]+)" data-thumbnail="([^"]+)"><div>\s*<div class="title">(.*?)<'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
-    for scrapedurl, scrapedtitle, scrapedthumbnail in matches:
+    for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
         scrapedplot = ""
-        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("Streaming", ""))
-        if scrapedtitle.startswith("Link to "):
-            scrapedtitle = scrapedtitle[8:]
         if (DEBUG): logger.info(
             "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(infoSod(
             Item(channel=__channel__,
-                 action="findvideos",
+                 action="episodios",
                  fulltitle=scrapedtitle,
                  show=scrapedtitle,
                  title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
@@ -257,11 +272,11 @@ def categorias(item):
     data = scrapertools.cache_page(item.url)
 
     # Narrow search by selecting only the combo
-    patron = '<select class="form-control" name="linkIole2" size="1" onchange="location.href = this.value">(.*?)</select'
+    patron = '<option>Scegli per Genere</option>(.*?)</select'
     bloque = scrapertools.get_match(data, patron)
 
     # The categories are the options for the combo  
-    patron = '<option value="([^"]+)">([^<]+)</option>'
+    patron = '<option data-src="([^"]+)">([^<]+)</option>'
     matches = re.compile(patron, re.DOTALL).findall(bloque)
 
     for scrapedurl, scrapedtitle in matches:
