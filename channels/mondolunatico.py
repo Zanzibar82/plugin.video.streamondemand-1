@@ -133,7 +133,7 @@ def peliculas(item):
         title = scrapertools.decodeHtmlentities(scrapedtitle)
         itemlist.append(infoSod(
             Item(channel=__channel__,
-                 action="findvideos",
+                 action="findvideos_2",
                  title=title,
                  url=scrapedurl,
                  thumbnail=scrapedthumbnail,
@@ -268,3 +268,22 @@ def play(item):
         itemlist.append(item)
 
     return itemlist
+
+def findvideos_2(item):
+    logger.info("streamondemand.mondolunatico findvideos_2")
+
+    # Descarga la página
+    data = scrapertools.cache_page(item.url, headers=headers)
+
+    itemlist = servertools.find_video_items(data=data)
+
+    for videoitem in itemlist:
+        videoitem.title = item.title + videoitem.title
+        videoitem.fulltitle = item.fulltitle
+        videoitem.thumbnail = item.thumbnail
+        videoitem.show = item.show
+        videoitem.plot = item.plot
+        videoitem.channel = __channel__
+
+    return itemlist
+
