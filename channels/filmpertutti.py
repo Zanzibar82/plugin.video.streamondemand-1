@@ -227,35 +227,56 @@ def search(item, texto):
 
 
 def episodios(item):
-    logger.info("streamondemand.filmpertutti episodios")
+    def load_episodios(html, item, itemlist, lang_title):
+        patron = '((?:.*?<a href="[^"]+" target="_blank" rel="nofollow">[^<]+</a>)+)'
+        matches = re.compile(patron).findall(html)
+        for data in matches:
+            # Extrae las entradas
+            scrapedtitle = data.split('<a ')[0]
+            scrapedtitle = re.sub(r'<[^>]*>', '', scrapedtitle).strip()
+            if scrapedtitle != 'Categorie':
+                scrapedtitle = scrapedtitle.replace('&#215;', 'x')
+                itemlist.append(
+                    Item(channel=__channel__,
+                         action="findvideos",
+                         title="[COLOR azure]%s[/COLOR]" % (scrapedtitle + " (" + lang_title + ")"),
+                         url=data,
+                         thumbnail=item.thumbnail,
+                         extra=item.extra,
+                         fulltitle=scrapedtitle + " (" + lang_title + ")" + ' - ' + item.show,
+                         show=item.show))
+
+    logger.info("[filmpertutti.py] episodios")
 
     itemlist = []
 
-    # Downloads page
+    # Descarga la página
     data = scrapertools.cache_page(item.url)
+    data = scrapertools.decodeHtmlentities(data)
 
-    patron = '<div class="pad">(.*?)<div class="addtoany_share_save_container addtoany_content_bottom">'
-    bloque = scrapertools.find_single_match(data, patron)
+    lang_titles = []
+    starts = []
+    patron = r"Stagione.*?ITA"
+    matches = re.compile(patron, re.IGNORECASE).finditer(data)
+    for match in matches:
+        season_title = match.group()
+        if season_title != '':
+            lang_titles.append('SUB ITA' if 'SUB' in season_title.upper() else 'ITA')
+            starts.append(match.end())
 
-    # Extracts the entries
-    patron = '(.*?)<a href="(.*?)" target="_blank" rel="nofollow".*?>(.*?)</a>'
-    matches = re.compile(patron).findall(bloque)
+    i = 1
+    len_lang_titles = len(lang_titles)
 
-    for scrapedtitle, scrapedurl, scrapedserver in matches:
-        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle)
-        scrapedtitle = ''.join(scrapedtitle.splitlines())
-        if scrapedtitle.startswith("<p>"):
-            scrapedtitle = scrapedtitle[3:]
+    while i <= len_lang_titles:
+        inizio = starts[i - 1]
+        fine = starts[i] if i < len_lang_titles else -1
 
-        itemlist.append(
-            Item(channel=__channel__,
-                 action="findvideos_tv",
-                 title="[COLOR red]" + scrapedtitle + " [/COLOR]" + "[COLOR azure]" + item.fulltitle + " [/COLOR]" + "[COLOR orange] [" + scrapedserver + "][/COLOR]",
-                 url=scrapedurl,
-                 thumbnail=item.thumbnail,
-                 fulltitle=item.show + ' | ' + scrapedtitle,
-                 extra=item.extra,
-                 show=item.show))
+        html = data[inizio:fine]
+        lang_title = lang_titles[i - 1]
+
+        load_episodios(html, item, itemlist, lang_title)
+
+        i += 1
 
     if config.get_library_support() and len(itemlist) != 0:
         itemlist.append(
@@ -266,7 +287,7 @@ def episodios(item):
                  extra="episodios" + "###" + item.extra,
                  show=item.show))
         itemlist.append(
-            Item(channel=item.channel,
+            Item(channel=__channel__,
                  title="Scarica tutti gli episodi della serie",
                  url=item.url,
                  action="download_all_episodes",
@@ -275,29 +296,12 @@ def episodios(item):
 
     return itemlist
 
+
 def findvideos(item):
     logger.info("streamondemand.filmpertutti findvideos")
 
     # Descarga la página
-    data = scrapertools.cache_page(item.url)
-
-    itemlist = servertools.find_video_items(data=data)
-
-    for videoitem in itemlist:
-        videoitem.title = item.title + videoitem.title
-        videoitem.fulltitle = item.fulltitle
-        videoitem.thumbnail = item.thumbnail
-        videoitem.show = item.show
-        videoitem.plot = item.plot
-        videoitem.channel = __channel__
-
-    return itemlist
-
-def findvideos_tv(item):
-    logger.info("streamondemand.filmpertutti findvideos")
-
-    # Descarga la página
-    data = scrapertools.cache_page(item.url)
+    data = item.url if item.extra == 'serie' else scrapertools.cache_page(item.url)
 
     itemlist = servertools.find_video_items(data=data)
 
