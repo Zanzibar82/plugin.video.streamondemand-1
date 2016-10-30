@@ -226,7 +226,7 @@ def categorias(item):
 
 def episodios(item):
     def load_episodios(html, item, itemlist, lang_title):
-        patron = '((?:.*?<a href="[^"]+" target="_blank" rel="nofollow"[^>]+>[^<]+</a>)+)'
+        patron = '.*?<a href="[^"]+" target="_blank" rel=[^>]+>[^<]+</a><(?:b|/)[^>]+>'
         matches = re.compile(patron).findall(html)
         for data in matches:
             # Extrae las entradas
@@ -234,6 +234,7 @@ def episodios(item):
             scrapedtitle = re.sub(r'<[^>]*>', '', scrapedtitle).strip()
             if scrapedtitle != 'Categorie':
                 scrapedtitle = scrapedtitle.replace('&#215;', 'x')
+                scrapedtitle = scrapedtitle.replace('×', 'x')
                 itemlist.append(
                     Item(channel=__channel__,
                          action="findvideos",
