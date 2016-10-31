@@ -61,6 +61,9 @@ def categorias(item):
     matches = re.compile(patron, re.DOTALL).findall(bloque)
 
     for scrapedtitle in matches:
+        scrapedtitle = scrapedtitle.lower()
+        scrapedtitle = scrapedtitle.title()
+
         scrapedplot = ""
         scrapedthumbnail = ""
         scrapedurl = "http://i-streaming.co/category/" + scrapedtitle
