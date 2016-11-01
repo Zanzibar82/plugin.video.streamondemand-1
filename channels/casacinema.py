@@ -226,7 +226,7 @@ def categorias(item):
 
 def episodios(item):
     def load_episodios(html, item, itemlist, lang_title):
-        patron = '.*?<a href="[^"]+" target="_blank" rel=[^>]+>[^<]+</a><(?:b|/)[^>]+>'
+        patron = '.*?<a href="[^"]+"[^o]+ofollow[^>]+>[^<]+</a><(?:b|/)[^>]+>'
         matches = re.compile(patron).findall(html)
         for data in matches:
             # Extrae las entradas
@@ -252,6 +252,7 @@ def episodios(item):
     # Descarga la página
     data = scrapertools.cache_page(item.url)
     data = scrapertools.decodeHtmlentities(data)
+    data = scrapertools.get_match(data, '<p><strong>(.*?)<div id="disqus_thread">')
 
     lang_titles = []
     starts = []
