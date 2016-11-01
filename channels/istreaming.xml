@@ -11,9 +11,8 @@
     <thumbnail>http://i-streaming.co/wp-content/uploads/2015/11/TEST1.png</thumbnail>
     <bannermenu>http://i-streaming.co/wp-content/uploads/2015/11/TEST1.png</bannermenu>
 
-    <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/
-    </update_url>
-    <version>2</version>
+    <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
+    <version>3</version>
     <date>22/06/2016</date>
     <changes>update</changes>
 

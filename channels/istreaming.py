@@ -64,6 +64,9 @@ def categorias(item):
         scrapedtitle = scrapedtitle.lower()
         scrapedtitle = scrapedtitle.title()
 
+        if scrapedtitle.startswith(("Ebook", "Guide", "Cambio")):
+            scrapedtitle = scrapedtitle.replace(scrapedtitle, "-")
+
         scrapedplot = ""
         scrapedthumbnail = ""
         scrapedurl = "http://i-streaming.co/category/" + scrapedtitle
