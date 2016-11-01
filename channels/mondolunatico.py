@@ -133,7 +133,7 @@ def peliculas(item):
         title = scrapertools.decodeHtmlentities(scrapedtitle)
         itemlist.append(infoSod(
             Item(channel=__channel__,
-                 action="findvideos_2",
+                 action="findvideos",
                  title=title,
                  url=scrapedurl,
                  thumbnail=scrapedthumbnail,
@@ -193,6 +193,22 @@ def findvideos(item):
                  show=item.show,
                  server='captcha',
                  folder=False))
+
+    if 'http://mondolunatico.org/stream/' in data:
+
+        data = scrapertools.cache_page(item.url)
+
+        itemlist = servertools.find_video_items(data=data)
+
+        patron = '<iframe src="(.*?)" frameborder="0" allowfullscreen></iframe>'
+        url = scrapertools.find_single_match(data, patron)
+        if url:
+            headers.append(['Referer', item.url])
+            data = scrapertools.cache_page(url, headers=headers)
+            html = []
+
+            itemlist.extend(servertools.find_video_items(data=''.join(html)))
+
 
     ### robalo fix obfuscator - start ####
 
@@ -266,24 +282,6 @@ def play(item):
             videoitem.channel = __channel__
     else:
         itemlist.append(item)
-
-    return itemlist
-
-def findvideos_2(item):
-    logger.info("streamondemand.mondolunatico findvideos_2")
-
-    # Descarga la página
-    data = scrapertools.cache_page(item.url, headers=headers)
-
-    itemlist = servertools.find_video_items(data=data)
-
-    for videoitem in itemlist:
-        videoitem.title = item.title + videoitem.title
-        videoitem.fulltitle = item.fulltitle
-        videoitem.thumbnail = item.thumbnail
-        videoitem.show = item.show
-        videoitem.plot = item.plot
-        videoitem.channel = __channel__
 
     return itemlist
 
