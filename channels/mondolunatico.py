@@ -6,15 +6,16 @@
 # ------------------------------------------------------------
 import os
 import re
+import time
 import urllib
 import urlparse
 
 from core import config
 from core import logger
 from core import scrapertools
+from core import servertools
 from core.item import Item
 from core.tmdb import infoSod
-from core import servertools
 
 __channel__ = "mondolunatico"
 __category__ = "F"
@@ -178,7 +179,7 @@ def findvideos(item):
     data = scrapertools.cache_page(item.url, headers=headers)
 
     # Extrae las entradas
-    patron = r'noshade>(.*?)<br>.*?<a href="(http://mondolunatico\.org/pass/index\.php\?ID=[^"]+)"'
+    patron = r'noshade>(.*?)<br>.*?<a href="(%s/pass/index\.php\?ID=[^"]+)"' % host
     matches = re.compile(patron, re.DOTALL).findall(data)
     for scrapedtitle, scrapedurl in matches:
         scrapedtitle = scrapedtitle.replace('*', '').replace('Streaming', '').strip()
@@ -194,35 +195,21 @@ def findvideos(item):
                  server='captcha',
                  folder=False))
 
-    if 'http://mondolunatico.org/stream/' in data:
-
-        data = scrapertools.cache_page(item.url)
-
-        itemlist = servertools.find_video_items(data=data)
-
-        patron = '<iframe src="(.*?)" frameborder="0" allowfullscreen></iframe>'
-        url = scrapertools.find_single_match(data, patron)
-        if url:
-            headers.append(['Referer', item.url])
-            data = scrapertools.cache_page(url, headers=headers)
-            html = []
-
-            itemlist.extend(servertools.find_video_items(data=''.join(html)))
-
+    patron = 'href="(%s/stream/links/\d+/)"' % host
+    matches = re.compile(patron, re.DOTALL).findall(data)
+    for scrapedurl in matches:
+        data += scrapertools.cache_page(scrapedurl, headers=headers)
 
     ### robalo fix obfuscator - start ####
 
-    if 'keeplinks.eu' in data:
-        import time
-
-        patron = 'href="(https?://www\.keeplinks\.eu/p92/([^"]+))"'
-        keeplinks, id = scrapertools.get_match(data, patron)
-
+    patron = 'href="(https?://www\.keeplinks\.eu/p92/([^"]+))"'
+    matches = re.compile(patron, re.DOTALL).findall(data)
+    for keeplinks, id in matches:
         headers.append(['Cookie', 'flag[' + id + ']=1; defaults=1; nopopatall=' + str(int(time.time()))])
         headers.append(['Referer', keeplinks])
 
-        data = scrapertools.cache_page(keeplinks, headers=headers)
-        data = str(scrapertools.find_multiple_matches(data, '</lable><a href="([^"]+)" target="_blank"'))
+        html = scrapertools.cache_page(keeplinks, headers=headers)
+        data += str(scrapertools.find_multiple_matches(html, '</lable><a href="([^"]+)" target="_blank"'))
 
     ### robalo fix obfuscator - end ####
 
