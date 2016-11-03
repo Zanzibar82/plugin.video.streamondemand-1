@@ -14,7 +14,6 @@ import xbmcgui
 from core import config
 from core import logger
 from core import scrapertools
-from core import downloadtools
 from core.item import Item
 from core.tmdb import infoSod
 
@@ -41,46 +40,41 @@ def isGeneric():
 # -----------------------------------------------------------------
 def mainlist(item):
     logger.info("[leserietv.py] mainlist")
-    itemlist = []
-    itemlist.append(Item(channel=__channel__,
-                         action="novita",
-                         title="[COLOR yellow]Novità[/COLOR]",
-                         url=("%s/streaming/" % host),
-                         thumbnail="http://www.ilmioprofessionista.it/wp-content/uploads/2015/04/TVSeries3.png",
-                         fanart=FilmFanart))
+    itemlist = [Item(channel=__channel__,
+                     action="novita",
+                     title="[COLOR yellow]Novità[/COLOR]",
+                     url=("%s/streaming/" % host),
+                     thumbnail="http://www.ilmioprofessionista.it/wp-content/uploads/2015/04/TVSeries3.png",
+                     fanart=FilmFanart),
+                Item(channel=__channel__,
+                     action="lista_serie",
+                     title="[COLOR azure]Tutte le serie[/COLOR]",
+                     url=("%s/streaming/" % host),
+                     thumbnail="http://www.ilmioprofessionista.it/wp-content/uploads/2015/04/TVSeries3.png",
+                     fanart=FilmFanart),
+                Item(channel=__channel__,
+                     title="[COLOR azure]Categorie[/COLOR]",
+                     action="categorias",
+                     url=host,
+                     thumbnail="https://farm8.staticflickr.com/7562/15516589868_13689936d0_o.png",
+                     fanart=FilmFanart),
+                Item(channel=__channel__,
+                     action="top50",
+                     title="[COLOR azure]Top 50[/COLOR]",
+                     url=("%s/top50.html" % host),
+                     thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png",
+                     fanart=FilmFanart),
+                Item(channel=__channel__,
+                     extra="serie",
+                     action="search",
+                     title="[COLOR orange]Cerca...[/COLOR][I](minimo 3 caratteri)[/I]",
+                     thumbnail="http://dc467.4shared.com/img/fEbJqOum/s7/13feaf0c8c0/Search",
+                     fanart=FilmFanart),
+                Item(channel=__channel__,
+                     action="info",
+                     title="[COLOR lime][I]Info canale[/I][/COLOR] [COLOR yellow]14/10/2016[/COLOR]",
+                     thumbnail="http://www.mimediacenter.info/wp-content/uploads/2016/01/newlogo-final.png")]
 
-    itemlist.append(Item(channel=__channel__,
-                         action="lista_serie",
-                         title="[COLOR azure]Tutte le serie[/COLOR]",
-                         url=("%s/streaming/" % host),
-                         thumbnail="http://www.ilmioprofessionista.it/wp-content/uploads/2015/04/TVSeries3.png",
-                         fanart=FilmFanart))
-
-    itemlist.append(Item(channel=__channel__,
-                         title="[COLOR azure]Categorie[/COLOR]",
-                         action="categorias",
-                         url=host,
-                         thumbnail="https://farm8.staticflickr.com/7562/15516589868_13689936d0_o.png",
-                         fanart=FilmFanart))
-
-
-    itemlist.append(Item(channel=__channel__,
-                         action="top50",
-                         title="[COLOR azure]Top 50[/COLOR]",
-                         url=("%s/top50.html" % host),
-                         thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png",
-                         fanart=FilmFanart))
-
-    itemlist.append(Item(channel=__channel__,
-                         action="search",
-                         title="[COLOR orange]Cerca...[/COLOR][I](minimo 3 caratteri)[/I]",
-                         thumbnail="http://dc467.4shared.com/img/fEbJqOum/s7/13feaf0c8c0/Search",
-                         fanart=FilmFanart))
-
-    itemlist.append(Item(channel=__channel__,
-                         action="info",
-                             title="[COLOR lime][I]Info canale[/I][/COLOR] [COLOR yellow]14/10/2016[/COLOR]",
-                         thumbnail="http://www.mimediacenter.info/wp-content/uploads/2016/01/newlogo-final.png"))
     return itemlist
 
 
