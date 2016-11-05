@@ -56,13 +56,8 @@ def peliculas(item):
 
     for scrapedurl, scrapedtitle, scrapedthumbnail in matches:
         scrapedplot = ""
-        #html = scrapertools.cache_page(scrapedurl)
-        #start = html.find("<div class=\"entry-content\">")
-        #end = html.find("</p>", start)
-        #scrapedplot = html[start:end]
-        #scrapedplot = re.sub(r'<[^>]*>', '', scrapedplot)
-        #scrapedplot = scrapertools.decodeHtmlentities(scrapedplot)
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle)
+        scrapedurl = scrapedurl.replace("-1/", "-links/")
         if (DEBUG): logger.info(
             "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(infoSod(
@@ -144,7 +139,6 @@ def episodios(item):
     # Download pagina
     data = scrapertools.cache_page(item.url)
     data = scrapertools.decodeHtmlentities(data)
-    #data = scrapertools.get_match(data, '<span class="rating">(.*?)<div class="clear">')
     data = scrapertools.get_match(data, '<div class="su-spoiler-title">(.*?)<span style="color: #e0e0e0;">')
 
     lang_titles = []
