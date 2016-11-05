@@ -431,7 +431,7 @@ def episodios_serie(item):
 
     lang_titles = []
     starts = []
-    patron = r"STAGION[I|E].*?ITA"
+    patron = '<div class="sp-head unfolded" title="Expand">\s*(.*?)\s*</div>'
     matches = re.compile(patron).finditer(data)
     for match in matches:
         season_title = match.group()
