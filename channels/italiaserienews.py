@@ -14,22 +14,22 @@ from core import servertools
 from core.item import Item
 from core.tmdb import infoSod
 
-__channel__ = "italiaserie"
+__channel__ = "italiaserienews"
 __category__ = "S"
 __type__ = "generic"
-__title__ = "italiaserie"
+__title__ = "italiaserienews"
 __language__ = "IT"
 
 DEBUG = config.get_setting("debug")
 
-host = "http://www.italiaserie.co"
+host = "http://www.italiaserie.news"
 
 def isGeneric():
     return True
 
 
 def mainlist(item):
-    logger.info("streamondemand.italiaserie mainlist")
+    logger.info("streamondemand.italiaserienews mainlist")
     itemlist = [Item(channel=__channel__,
                      title="[COLOR azure]Aggiornamenti Serie TV[/COLOR]",
                      action="peliculas",
@@ -44,7 +44,7 @@ def mainlist(item):
 
 
 def peliculas(item):
-    logger.info("streamondemand.italiaserie peliculas")
+    logger.info("streamondemand.italiaserienews peliculas")
     itemlist = []
 
     # Descarga la pagina
@@ -57,7 +57,6 @@ def peliculas(item):
     for scrapedurl, scrapedtitle, scrapedthumbnail in matches:
         scrapedplot = ""
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle)
-        scrapedurl = scrapedurl.replace("-1/", "-links/")
         if (DEBUG): logger.info(
             "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(infoSod(
@@ -100,7 +99,7 @@ def HomePage(item):
 
 
 def search(item, texto):
-    logger.info("[italiaserie.py] " + item.url + " search " + texto)
+    logger.info("[italiaserienews.py] " + item.url + " search " + texto)
     item.url = host + "/?s=" + texto
     try:
         return peliculas(item)
@@ -132,14 +131,14 @@ def episodios(item):
                          fulltitle=scrapedtitle + " (" + lang_title + ")" + ' - ' + item.show,
                          show=item.show))
 
-    logger.info("[italiaserie.py] episodios")
+    logger.info("[italiaserienews.py] episodios")
 
     itemlist = []
 
     # Download pagina
     data = scrapertools.cache_page(item.url)
     data = scrapertools.decodeHtmlentities(data)
-    data = scrapertools.get_match(data, '<div class="su-spoiler-title">(.*?)<span style="color: #e0e0e0;">')
+    data = scrapertools.get_match(data, '<span class="rating">(.*?)<div class="clear">')
 
     lang_titles = []
     starts = []
@@ -184,7 +183,7 @@ def episodios(item):
     return itemlist
 
 def findvideos(item):
-    logger.info("streamondemand.italiaserie findvideos")
+    logger.info("streamondemand.italiaserienews findvideos")
 
     # Descarga la página
     data = item.url 
@@ -200,3 +199,4 @@ def findvideos(item):
         videoitem.channel = __channel__
 
     return itemlist
+

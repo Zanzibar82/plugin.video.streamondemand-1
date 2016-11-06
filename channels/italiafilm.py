@@ -54,11 +54,6 @@ def mainlist(item):
                      extra="serie",
                      url="%s/category/anime-e-cartoon/" % host,
                      thumbnail="http://orig09.deviantart.net/df5a/f/2014/169/2/a/fist_of_the_north_star_folder_icon_by_minacsky_saya-d7mq8c8.png"),
-                # Item(channel=__channel__,
-                #      title="[COLOR azure]Contenuti per Genere[/COLOR]",
-                #      action="categorias",
-                #      url=host,
-                #      thumbnail="http://xbmc-repo-ackbarr.googlecode.com/svn/trunk/dev/skin.cirrus%20extended%20v2/extras/moviegenres/All%20Movies%20by%20Genre.png"),
                 Item(channel=__channel__,
                      title="[COLOR yellow]Cerca...[/COLOR]",
                      action="search",
@@ -94,7 +89,7 @@ def categorias(item):
     logger.info("[italiafilm.py] categorias")
     itemlist = []
 
-    data = scrapertools.cache_page(item.url)
+    data = scrapertools.anti_cloudflare(item.url, headers)
     data = scrapertools.find_single_match(data, '<a href=".">Categorie</a>(.*?)</div>')
 
     patron = '<li[^>]+><a href="([^"]+)">([^<]+)</a></li>'
@@ -142,7 +137,7 @@ def peliculas(item):
     logger.info("[italiafilm.py] peliculas")
     itemlist = []
 
-    data = scrapertools.cache_page(item.url)
+    data = scrapertools.anti_cloudflare(item.url, headers)
     patron = '<article(.*?)</article>'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
@@ -195,7 +190,7 @@ def peliculas_tv(item):
     logger.info("[italiafilm.py] peliculas")
     itemlist = []
 
-    data = scrapertools.cache_page(item.url)
+    data = scrapertools.anti_cloudflare(item.url, headers)
     patron = '<article(.*?)</article>'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
@@ -249,7 +244,7 @@ def pel_tv(item):
     logger.info("[italiafilm.py] pel_tv")
     itemlist = []
 
-    data = scrapertools.cache_page(item.url)
+    data = scrapertools.anti_cloudflare(item.url, headers)
     patron = '<li class="cat_7(.*?)</li>'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
@@ -306,7 +301,7 @@ def anime(item):
     logger.info("[italiafilm.py] anime")
     itemlist = []
 
-    data = scrapertools.cache_page(item.url)
+    data = scrapertools.anti_cloudflare(item.url, headers)
     patron = '<li class="cat_19(.*?)</li>'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
@@ -396,7 +391,7 @@ def episodios(item):
     itemlist = []
 
     # Descarga la pagina
-    data = scrapertools.cache_page(item.url)
+    data = scrapertools.anti_cloudflare(item.url, headers)
 
     start = data.find('id="pd_rating_holder')
     end = data.find('id="linkcorrotto-show"', start)
@@ -460,13 +455,13 @@ def findvideos(item):
 
         headers.append(['Referer', item.url])
         for url in scrapertools.find_multiple_matches(data, r'href="(http://hdlink\.[^?]+?)\?'):
-            for num in scrapertools.find_multiple_matches(scrapertools.cache_page(url, headers=headers), 'id="mlink_(\d+)"'):
-                html.append(scrapertools.cache_page(url + '?host=%s' % num, headers=headers))
+            for num in scrapertools.find_multiple_matches(scrapertools.anti_cloudflare(item.url, headers), 'id="mlink_(\d+)"'):
+                html.append(scrapertools.anti_cloudflare(url + '?host=%s' % num, headers))
 
         itemlist = servertools.find_video_items(data=''.join(html))
     else:
         # Descarga la pagina
-        data = scrapertools.cache_page(item.url)
+        data = scrapertools.anti_cloudflare(item.url, headers)
 
         itemlist = servertools.find_video_items(data=data)
 
@@ -474,10 +469,10 @@ def findvideos(item):
         url = scrapertools.find_single_match(data, patron)
         if url:
             headers.append(['Referer', item.url])
-            data = scrapertools.cache_page(url, headers=headers)
+            scrapertools.anti_cloudflare(item.url, headers)
             html = []
             for num in scrapertools.find_multiple_matches(data, 'id="mlink_(\d+)"'):
-                html.append(scrapertools.cache_page(url + '?host=%s' % num, headers=headers))
+                html.append(scrapertools.anti_cloudflare(url + '?host=%s' % num, headers))
 
             itemlist.extend(servertools.find_video_items(data=''.join(html)))
 
