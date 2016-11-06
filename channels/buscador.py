@@ -62,6 +62,61 @@ def mainlist(item, preferred_thumbnail="squares"):
     return itemlist
 
 
+def opciones(item):
+    itemlist = [Item(channel=item.channel, action="settingCanal", title="Scegli i canali da includere nella ricerca"),
+                Item(channel=item.channel, action="clear_saved_searches", title="Cancella ricerche salvate"),
+                Item(channel=item.channel, action="settings", title="Altre opzioni")]
+    return itemlist
+
+
+def settingCanal(item):
+    channels_path = os.path.join(config.get_runtime_path(), "channels", '*.xml')
+    channel_language = config.get_setting("channel_language")
+
+    if channel_language == "":
+        channel_language = "all"
+
+    list_controls = []
+    for infile in sorted(glob.glob(channels_path)):
+        channel_name = os.path.basename(infile)[:-4]
+        channel_parameters = channeltools.get_channel_parameters(channel_name)
+
+        # No incluir si es un canal inactivo
+        if channel_parameters["active"] != "true":
+            continue
+
+        # No incluir si es un canal para adultos, y el modo adulto está desactivado
+        if channel_parameters["adult"] == "true" and config.get_setting("adult_mode") == "false":
+            continue
+
+        # No incluir si el canal es en un idioma filtrado
+        if channel_language != "all" and channel_parameters["language"] != channel_language:
+            continue
+
+        # No incluir si en la configuracion del canal no existe "include_in_global_search"
+        include_in_global_search = config.get_setting("include_in_global_search", channel_name)
+        if include_in_global_search == "":
+            continue
+
+        control = {'id': channel_name,
+                   'type': "bool",
+                   'label': channel_parameters["title"],
+                   'default': include_in_global_search,
+                   'enabled': True,
+                   'visible': True}
+
+        list_controls.append(control)
+
+    return platformtools.show_channel_settings(list_controls=list_controls,
+                                               caption="Canali inclusi nella ricerca globale",
+                                               callback="save_settings", item=item)
+
+
+def save_settings(item, dict_values):
+    for v in dict_values:
+        config.set_setting("include_in_global_search", dict_values[v], v)
+
+
 def settings(item):
     return platformtools.show_channel_settings()
 
