@@ -5,7 +5,7 @@
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 
-#this channel must be removed
+#this channel must be removed #
 
 import re
 
