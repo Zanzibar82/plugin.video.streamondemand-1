@@ -120,9 +120,9 @@ def categorias(item):
 
 def search(item, texto):
     logger.info("[italiafilm.py] search " + texto)
+    item.url = host + "/?s=" + texto
 
     try:
-        item.url = host + "/?s=" + texto
         if item.extra == "movie":
             return peliculas(item)
         if item.extra == "serie":
