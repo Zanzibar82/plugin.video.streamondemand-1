@@ -15,7 +15,7 @@ from core.item import Item
 from core.tmdb import infoSod
 
 __channel__ = "cineblog01"
-__category__ = "F,S,A"
+__category__ = "F,S"
 __type__ = "generic"
 __title__ = "CineBlog 01"
 __language__ = "IT"
