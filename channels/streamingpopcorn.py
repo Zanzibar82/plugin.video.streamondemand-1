@@ -28,7 +28,6 @@ headers = [
 
 host = "http://streamingpopcorn.com/portal/"
 
-
 def isGeneric():
     return True
 
@@ -96,7 +95,6 @@ def peliculas(item):
                      folder=True))
 
     return itemlist
-
 
 def play(item):
     logger.info("[streamingpopcorn.py] play")
