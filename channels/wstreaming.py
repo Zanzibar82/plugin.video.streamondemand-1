@@ -102,7 +102,6 @@ def search(item, texto):
 
     return itemlist
 
-
 def peliculas(item):
     logger.info("streamondemand.wstreaming peliculas")
     itemlist = []
