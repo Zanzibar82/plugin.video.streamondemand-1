@@ -104,7 +104,7 @@ def search(item, texto):
 
 
 def peliculas(item):
-    logger.info("streamondemand.istreaming peliculas")
+    logger.info("streamondemand.wstreaming peliculas")
     itemlist = []
 
     # Descarga la pagina
@@ -115,6 +115,7 @@ def peliculas(item):
     matches = re.compile(patron, re.DOTALL).findall(data)
 
     for scrapedurl, scrapedthumbnail, scrapedtitle  in matches:
+        scrapedthumbnail = host + scrapedthumbnail
         scrapedplot = ""
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("-", " "))
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("  ", " - "))
