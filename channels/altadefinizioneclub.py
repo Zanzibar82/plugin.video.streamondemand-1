@@ -20,7 +20,7 @@ __type__ = "generic"
 __title__ = "AltaDefinizioneclub"
 __language__ = "IT"
 
-host = "http://altadefinizione.club"
+host = "http://altadefinizione.film"
 
 
 DEBUG = config.get_setting("debug")
