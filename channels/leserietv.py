@@ -5,7 +5,6 @@
 # http://blog.tvalacarta.info/plugin-xbmc/streamondemand.
 #  By Costaplus
 # ------------------------------------------------------------
-import base64
 import re
 import urlparse
 
@@ -15,7 +14,6 @@ import xbmcgui
 from core import config
 from core import logger
 from core import scrapertools
-from core import servertools
 from core.item import Item
 from core.tmdb import infoSod
 
@@ -205,12 +203,12 @@ def categorias(item):
 
 # -----------------------------------------------------------------
 def search(item, texto):
-    logger.info("[laserietv.py] " + item.url + " search " + texto)
+    logger.info("[laserietv.py] " + host + " search " + texto)
+
     itemlist = []
-    url = "%s/" % host
+
     post = "do=search&subaction=search&story=" + texto
-    # logger.debug(post)
-    data = scrapertools.cache_page(item.url, post=post, headers=headers)
+    data = scrapertools.cache_page(host, post=post, headers=headers)
 
     patron = '<div class="video-item-cover"[^<]+<a href="(.*?)">[^<]+<img src="(.*?)" alt="(.*?)">'
     matches = re.compile(patron, re.DOTALL).findall(data)
