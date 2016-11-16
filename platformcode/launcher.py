@@ -241,6 +241,12 @@ def run():
                 else:
                     xbmctools.renderItems([], item)
 
+            # DrZ3r0
+            # Special action for play_from_library, where the plugin looks for known urls
+            elif item.action == "play_from_library":
+                # Special action for playing a video from the library
+                play_from_library(item, channel, server_white_list, server_black_list)
+
             # Special action for adding a movie to the library
             elif item.action == "add_pelicula_to_library":
                 library.add_pelicula_to_library(item)
@@ -395,7 +401,8 @@ def play_from_library(item, channel, server_white_list, server_black_list):
     logger.info("streamondemand.platformcode.launcher play_from_library item.server=#"+item.server+"#")
     # Ejecuta find_videos, del canal o común
     if hasattr(channel, 'findvideos'):
-        itemlist = getattr(channel, item.action)(item)
+        # DrZ3r0
+        itemlist = getattr(channel, 'findvideos')(item)
     else:
         from core import servertools
         itemlist = servertools.find_video_items(item)
