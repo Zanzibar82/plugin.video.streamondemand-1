@@ -475,6 +475,7 @@ def findvideos(item):
         return findvid_film(item)
     if item.extra == 'serie':
         return findvid_serie(item)
+    return []
 
 
 def findvid_film(item):
