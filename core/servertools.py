@@ -64,7 +64,7 @@ def find_video_items(item=None, data=None, channel=""):
             else:
                 thumbnail = "http://media.tvalacarta.info/servers/server_"+server+".png"
         
-        itemlist.append( Item(channel=item.channel, title=scrapedtitle , action="play" , server=server, url=scrapedurl, thumbnail=thumbnail, show=item.show , plot=item.plot , parentContent=item, folder=False) )
+        itemlist.append( Item(channel=item.channel, title=scrapedtitle, action="play", server=server, url=scrapedurl, thumbnail=thumbnail, fulltitle=item.fulltitle, show=item.show, plot=item.plot, parentContent=item, folder=False) )
 
     return itemlist
 
