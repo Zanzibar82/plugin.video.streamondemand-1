@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <channel>
 	<id>altadefinizioneclick</id>
-	<name>Altadefizioneclick</name>
+	<name>AltadefinizioneClick</name>
 
 	<active>true</active>
 	<adult>false</adult>
