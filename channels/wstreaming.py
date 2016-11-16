@@ -28,8 +28,10 @@ headers = [
     ['Accept-Encoding', 'gzip, deflate']
 ]
 
+
 def isGeneric():
     return True
+
 
 def mainlist(item):
     logger.info("streamondemand.istreaming mainlist")
@@ -101,6 +103,7 @@ def search(item, texto):
 
     return itemlist
 
+
 def peliculas(item):
     logger.info("streamondemand.wstreaming peliculas")
     itemlist = []
@@ -112,13 +115,12 @@ def peliculas(item):
     patron = '<article class="hideImage"><a href="(.*?)">\s*<[^>]+>\s*<img[^I]+I[^I]+I[^I]+Image" src="(.*?)" alt="(.*?)">'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
-    for scrapedurl, scrapedthumbnail, scrapedtitle  in matches:
+    for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
         scrapedthumbnail = host + scrapedthumbnail
         scrapedplot = ""
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("-", " "))
-        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("  ", " - "))
-        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.lower())
-        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.title())
+        scrapedtitle = scrapedtitle.replace("  ", " - ")
+        scrapedtitle = scrapedtitle.title()
         if DEBUG: logger.info(
             "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(infoSod(
@@ -157,4 +159,3 @@ def peliculas(item):
 def HomePage(item):
     import xbmc
     xbmc.executebuiltin("ReplaceWindow(10024,plugin://plugin.video.streamondemand)")
-
