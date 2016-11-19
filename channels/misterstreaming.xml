@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <channel>
-    <id>vediserie</id>
-    <name>VediSerie</name>
+    <id>misterstreaming</id>
+    <name>Misterstreaming</name>
 
     <active>true</active>
     <adult>false</adult>
     <language>it</language>
 
     <fanart></fanart>
-    <thumbnail>http://www.vediserie.com/wp-content/uploads/2015/09/logo-vediseriea.png</thumbnail>
-    <bannermenu>http://www.vediserie.com/wp-content/uploads/2015/09/logo-vediseriea.png</bannermenu>
+    <thumbnail>http://misterstreaming.online/wp-content/uploads/2016/06/logo-misterstreaming.png</thumbnail>
+    <bannermenu>http://misterstreaming.online/wp-content/uploads/2016/06/logo-misterstreaming.png</bannermenu>
 
-    <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/
-    </update_url>
-    <version>3</version>
-    <date>22/06/2016</date>
+    <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
+    <version>1</version>
+    <date>22/10/2016</date>
     <changes>update</changes>
 
     <categories>
+        <category>movie</category>
         <category>serie</category>
-        <category>top channels</category>
     </categories>
 
     <settings>

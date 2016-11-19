@@ -21,7 +21,7 @@ def test_video_exists(page_url):
     data = scrapertools.downloadpageWithoutCookies(page_url)
 
     if 'We are sorry!' in data:
-        return False, "[Openload] Il file non esiste o è stato cancellato" 
+        return False, "[Openload] Il file non esiste o è stato rimosso" 
 
     return True, ""
 

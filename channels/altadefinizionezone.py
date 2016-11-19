@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
 # streamondemand.- XBMC Plugin
-# Canal para playcinema
+# Canal para altadefinizionezone
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import re
@@ -14,20 +14,22 @@ from core import servertools
 from core.item import Item
 from core.tmdb import infoSod
 
-__channel__ = "playcinema"
+__channel__ = "altadefinizionezone"
 __category__ = "F"
 __type__ = "generic"
-__title__ = "playcinema.org (IT)"
+__title__ = "altadefinizionezone (IT)"
 __language__ = "IT"
 
 DEBUG = config.get_setting("debug")
 
-host = "http://www.playcinema.org"
+host = "http://altadefinizione.zone"
 
 headers = [
-    ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0'],
+    ['User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0'],
+    ['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'],
     ['Accept-Encoding', 'gzip, deflate'],
-    ['Referer', host]
+    ['Referer', host],
+    ['Cache-Control', 'max-age=0']
 ]
 
 def isGeneric():
@@ -35,11 +37,11 @@ def isGeneric():
 
 
 def mainlist(item):
-    logger.info("streamondemand.playcinema mainlist")
+    logger.info("streamondemand.altadefinizionezone mainlist")
     itemlist = [Item(channel=__channel__,
                      title="[COLOR azure]Ultimi Film Inseriti[/COLOR]",
                      action="peliculas",
-                     url=host,
+                     url="%s/film-streaming/" % host,
                      thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png"),
                 Item(channel=__channel__,
                      title="[COLOR azure]Film Per Categoria[/COLOR]",
@@ -59,18 +61,19 @@ def categorias(item):
     itemlist = []
 
     # Descarga la pagina
-    data = scrapertools.anti_cloudflare(item.url, headers)
-
-    patron = 'class="sub-menu"><li(.*?)</ul>'
-    bloque = scrapertools.find_single_match(data, patron)
+    data = scrapertools.cache_page(item.url, headers=headers)
+    bloque = scrapertools.get_match(data, '<ul class="dropdown-menu">(.*?)</ul>')
 
     # Extrae las entradas (carpetas)
-    patron = 'href="([^"]+)">(.*?)</a>'
+    patron = '<li><a href="(.*?)">(.*?)</a></li>'
     matches = re.compile(patron, re.DOTALL).findall(bloque)
 
     for scrapedurl, scrapedtitle in matches:
-        if (DEBUG): logger.info("title=[" + scrapedtitle + "], url=[" + scrapedurl + "]")
-        scrapedtitle = scrapedtitle.title()
+        scrapedplot = ""
+        scrapedthumbnail = ""
+        scrapedurl = host + scrapedurl
+
+        if DEBUG: logger.info("title=[" + scrapedtitle + "]")
         itemlist.append(
             Item(channel=__channel__,
                  action="peliculas",
@@ -83,45 +86,47 @@ def categorias(item):
 
 
 def search(item, texto):
-    logger.info("[playcinema.py] " + item.url + " search " + texto)
-    item.url = host + "/?s=" + texto
-    try:
-        return peliculas(item)
-    # Se captura la excepción, para no interrumpir al buscador global si un canal falla
-    except:
-        import sys
-        for line in sys.exc_info():
-            logger.error("%s" % line)
-        return []
+    logger.info("[altadefinizionezone.py] " + item.url + " search " + texto)
+    itemlist = []
+
+    post = "do=search&subaction=search&story=" + texto
+    data = scrapertools.cache_page(host, post=post, headers=headers)
+
+    patron = '<div class="short-images">\s*<a href="(.*?)"[^>]+>\s*<img src="(.*?)" alt="(.*?)" />'
+    matches = re.compile(patron, re.DOTALL).findall(data)
+    scrapertools.printMatches(matches)
+
+    for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
+        scrapedthumbnail = host + scrapedthumbnail
+        logger.info(scrapedurl + " " + scrapedtitle + scrapedthumbnail)
+        itemlist.append(infoSod(
+            Item(channel=__channel__,
+                 action="findvideos",
+                 title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
+                 url=scrapedurl,
+                 thumbnail=scrapedthumbnail,
+                 fulltitle=scrapedtitle,
+                 show=scrapedtitle), tipo='movie'))
+
+    return itemlist
 
 
 def peliculas(item):
-    logger.info("streamondemand.playcinema peliculas")
+    logger.info("streamondemand.altadefinizionezone peliculas")
     itemlist = []
 
-    data = scrapertools.anti_cloudflare(item.url, headers)
-
-    # ------------------------------------------------
-    cookies = ""
-    matches = config.get_cookie_data(item.url).splitlines()[4:]
-    for cookie in matches:
-        name = cookie.split('\t')[5]
-        value = cookie.split('\t')[6]
-        cookies += name + "=" + value + ";"
-    headers.append(['Cookie', cookies[:-1]])
-    import urllib
-    _headers = urllib.urlencode(dict(headers))
-    # ------------------------------------------------
+    # Descarga la pagina
+    data = scrapertools.cache_page(item.url, headers=headers)
 
     # Extrae las entradas (carpetas)
-    patron = '<img\s*src="(.*?)"[^>]+><\/a><div\s*class[^<]+<a\s*href="(.*?)">(.*?)<'
+    patron = '<div class="short-images">\s*<a href="(.*?)"[^>]+>\s*<img src="(.*?)" alt="(.*?)" />'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
     for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
         scrapedplot = ""
-        scrapedtitle = scrapedtitle.replace("streaming", "")
-        scrapedthumbnail += '|' + _headers
-        if (DEBUG): logger.info(
+        scrapedthumbnail = host + scrapedthumbnail
+        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle)
+        if DEBUG: logger.info(
             "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(infoSod(
             Item(channel=__channel__,
@@ -135,7 +140,7 @@ def peliculas(item):
                  folder=True), tipo='movie'))
 
     # Extrae el paginador
-    patronvideos = 'class="nextpostslink" rel="next" href="([^"]+)">'
+    patronvideos = '<span>[^<]+</span> <a href="(.*?)">'
     matches = re.compile(patronvideos, re.DOTALL).findall(data)
 
     if len(matches) > 0:
@@ -155,22 +160,6 @@ def peliculas(item):
 
     return itemlist
 
-def findvideos(item):
-    logger.info("[playcinema.py] findvideos")
-
-    # Descarga la página
-    data = scrapertools.anti_cloudflare(item.url, headers)
-
-    itemlist = servertools.find_video_items(data=data)
-
-    for videoitem in itemlist:
-        videoitem.title = "".join([item.title, '[COLOR green][B]' + videoitem.title + '[/B][/COLOR]'])
-        videoitem.fulltitle = item.fulltitle
-        videoitem.show = item.show
-        videoitem.thumbnail = item.thumbnail
-        videoitem.channel = __channel__
-
-    return itemlist
 
 def HomePage(item):
     import xbmc

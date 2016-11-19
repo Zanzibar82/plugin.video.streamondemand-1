@@ -18,21 +18,22 @@ from core.item import Item
 from core.tmdb import infoSod
 
 __channel__ = "leserietv"
-__category__ = "F"
+__category__ = "S"
 __type__ = "generic"
 __title__ = "leserie.tv"
 __language__ = "IT"
 
 DEBUG = config.get_setting("debug")
 
-host = 'http://www.leserie.tv'
+host = 'http://www.leserie.online'
 
 headers = [
-    ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0'],
+    ['User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0'],
+    ['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'],
     ['Accept-Encoding', 'gzip, deflate'],
-    ['Referer', ('%s/streaming/' % host)]
+    ['Referer', host],
+    ['Cache-Control', 'max-age=0']
 ]
-
 
 def isGeneric():
     return True
@@ -86,7 +87,7 @@ def novita(item):
     logger.info("streamondemand.laserietv novità")
     itemlist = []
 
-    data = scrapertools.cache_page(item.url, headers=headers)
+    data = scrapertools.anti_cloudflare(item.url, headers)
 
     patron = '<div class="video-item-cover"[^<]+<a href="(.*?)">[^<]+<img src="(.*?)" alt="(.*?)">'
     matches = re.compile(patron, re.DOTALL).findall(data)
@@ -174,7 +175,7 @@ def categorias(item):
     logger.info("streamondemand.laserietv categorias")
     itemlist = []
 
-    data = scrapertools.cache_page(item.url, headers=headers)
+    data = scrapertools.anti_cloudflare(item.url, headers)
 
     # Narrow search by selecting only the combo
     bloque = scrapertools.get_match(data, '<ul class="dropdown-menu cat-menu">(.*?)</ul>')
@@ -202,12 +203,12 @@ def categorias(item):
 
 # -----------------------------------------------------------------
 def search(item, texto):
-    logger.info("[laserietv.py] " + item.url + " search " + texto)
+    logger.info("[laserietv.py] " + host + " search " + texto)
+
     itemlist = []
-    url = "%s/" % host
+
     post = "do=search&subaction=search&story=" + texto
-    # logger.debug(post)
-    data = scrapertools.cache_page(url, post=post, headers=headers)
+    data = scrapertools.cache_page(host, post=post, headers=headers)
 
     patron = '<div class="video-item-cover"[^<]+<a href="(.*?)">[^<]+<img src="(.*?)" alt="(.*?)">'
     matches = re.compile(patron, re.DOTALL).findall(data)
@@ -233,7 +234,7 @@ def top50(item):
     logger.info("[laserietv.py] top50")
     itemlist = []
 
-    data = scrapertools.cache_page(item.url, headers=headers)
+    data = scrapertools.anti_cloudflare(item.url, headers)
 
     patron = 'class="top50item">\s*<[^>]+>\s*<.*?="([^"]+)">([^<]+)</a>'
     matches = re.compile(patron, re.DOTALL).findall(data)
@@ -259,7 +260,7 @@ def episodios(item):
     logger.info("[leserietv.py] episodios")
     itemlist = []
     elenco = []
-    data = scrapertools.cache_page(item.url, headers=headers)
+    data = scrapertools.anti_cloudflare(item.url, headers)
     #xbmc.log("qua"+data)
     patron = '<li id[^<]+<[^<]+<.*?class="serie-title">(.*?)</span>[^>]+>[^<]+<.*?megadrive-(.*?)".*?data-link="([^"]+)">Megadrive</a>'
     matches = re.compile(patron, re.DOTALL).findall(data)
@@ -295,7 +296,7 @@ def episodios(item):
 #------------------------------------------------------------------
 def play(item):
     itemlist=[]
-    data = scrapertools.cache_page(item.url, headers=headers)
+    data = scrapertools.anti_cloudflare(item.url, headers)
 
     elemento = scrapertools.find_single_match(data, 'config:{file:\'(.*?)\'')
 

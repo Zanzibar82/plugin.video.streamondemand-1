@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
 # streamondemand.- XBMC Plugin
-# Canal para playcinema
+# Canal para istreaming
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import re
@@ -10,32 +10,31 @@ import urlparse
 from core import config
 from core import logger
 from core import scrapertools
-from core import servertools
 from core.item import Item
 from core.tmdb import infoSod
 
-__channel__ = "playcinema"
+__channel__ = "wstreaming"
 __category__ = "F"
 __type__ = "generic"
-__title__ = "playcinema.org (IT)"
+__title__ = "wstreaming (IT)"
 __language__ = "IT"
 
 DEBUG = config.get_setting("debug")
 
-host = "http://www.playcinema.org"
+host = "https://wstreaming.co"
 
 headers = [
     ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0'],
-    ['Accept-Encoding', 'gzip, deflate'],
-    ['Referer', host]
+    ['Accept-Encoding', 'gzip, deflate']
 ]
+
 
 def isGeneric():
     return True
 
 
 def mainlist(item):
-    logger.info("streamondemand.playcinema mainlist")
+    logger.info("streamondemand.istreaming mainlist")
     itemlist = [Item(channel=__channel__,
                      title="[COLOR azure]Ultimi Film Inseriti[/COLOR]",
                      action="peliculas",
@@ -59,18 +58,16 @@ def categorias(item):
     itemlist = []
 
     # Descarga la pagina
-    data = scrapertools.anti_cloudflare(item.url, headers)
-
-    patron = 'class="sub-menu"><li(.*?)</ul>'
-    bloque = scrapertools.find_single_match(data, patron)
+    data = scrapertools.cache_page(item.url, headers=headers)
+    bloque = scrapertools.get_match(data, '<ul class="asideInner" role="menu">(.*?)</ul>')
 
     # Extrae las entradas (carpetas)
-    patron = 'href="([^"]+)">(.*?)</a>'
+    patron = '<li[^>]+><a href="([^"]+)">(.*?)</a>'
     matches = re.compile(patron, re.DOTALL).findall(bloque)
 
     for scrapedurl, scrapedtitle in matches:
+        scrapedurl = host + scrapedurl
         if (DEBUG): logger.info("title=[" + scrapedtitle + "], url=[" + scrapedurl + "]")
-        scrapedtitle = scrapedtitle.title()
         itemlist.append(
             Item(channel=__channel__,
                  action="peliculas",
@@ -83,45 +80,48 @@ def categorias(item):
 
 
 def search(item, texto):
-    logger.info("[playcinema.py] " + item.url + " search " + texto)
-    item.url = host + "/?s=" + texto
-    try:
-        return peliculas(item)
-    # Se captura la excepción, para no interrumpir al buscador global si un canal falla
-    except:
-        import sys
-        for line in sys.exc_info():
-            logger.error("%s" % line)
-        return []
+    logger.info("[wstreaming.py] " + item.url + " search " + texto)
+    itemlist = []
+    url = host + "/search.php?q=" + texto
+    data = scrapertools.cache_page(url, headers=headers)
+
+    patron = '<h3><a class="linkRisultato" href="(.*?)">(.*?)</a></h3>'
+    matches = re.compile(patron, re.DOTALL).findall(data)
+    scrapertools.printMatches(matches)
+
+    for scrapedurl, scrapedtitle in matches:
+        scrapedthumbnail = ""
+        logger.info(scrapedurl + " " + scrapedtitle)
+        itemlist.append(infoSod(
+            Item(channel=__channel__,
+                 action="findvideos",
+                 title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
+                 url=scrapedurl,
+                 thumbnail=scrapedthumbnail,
+                 fulltitle=scrapedtitle,
+                 show=scrapedtitle), tipo='movie'))
+
+    return itemlist
 
 
 def peliculas(item):
-    logger.info("streamondemand.playcinema peliculas")
+    logger.info("streamondemand.wstreaming peliculas")
     itemlist = []
 
-    data = scrapertools.anti_cloudflare(item.url, headers)
-
-    # ------------------------------------------------
-    cookies = ""
-    matches = config.get_cookie_data(item.url).splitlines()[4:]
-    for cookie in matches:
-        name = cookie.split('\t')[5]
-        value = cookie.split('\t')[6]
-        cookies += name + "=" + value + ";"
-    headers.append(['Cookie', cookies[:-1]])
-    import urllib
-    _headers = urllib.urlencode(dict(headers))
-    # ------------------------------------------------
+    # Descarga la pagina
+    data = scrapertools.cache_page(item.url, headers=headers)
 
     # Extrae las entradas (carpetas)
-    patron = '<img\s*src="(.*?)"[^>]+><\/a><div\s*class[^<]+<a\s*href="(.*?)">(.*?)<'
+    patron = '<article class="hideImage"><a href="(.*?)">\s*<[^>]+>\s*<img[^I]+I[^I]+I[^I]+Image" src="(.*?)" alt="(.*?)">'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
     for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
+        scrapedthumbnail = host + scrapedthumbnail
         scrapedplot = ""
-        scrapedtitle = scrapedtitle.replace("streaming", "")
-        scrapedthumbnail += '|' + _headers
-        if (DEBUG): logger.info(
+        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("-", " "))
+        scrapedtitle = scrapedtitle.replace("  ", " - ")
+        scrapedtitle = scrapedtitle.title()
+        if DEBUG: logger.info(
             "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(infoSod(
             Item(channel=__channel__,
@@ -135,7 +135,7 @@ def peliculas(item):
                  folder=True), tipo='movie'))
 
     # Extrae el paginador
-    patronvideos = 'class="nextpostslink" rel="next" href="([^"]+)">'
+    patronvideos = '<li><a href="(.*?)">Next</a></li>'
     matches = re.compile(patronvideos, re.DOTALL).findall(data)
 
     if len(matches) > 0:
@@ -155,22 +155,6 @@ def peliculas(item):
 
     return itemlist
 
-def findvideos(item):
-    logger.info("[playcinema.py] findvideos")
-
-    # Descarga la página
-    data = scrapertools.anti_cloudflare(item.url, headers)
-
-    itemlist = servertools.find_video_items(data=data)
-
-    for videoitem in itemlist:
-        videoitem.title = "".join([item.title, '[COLOR green][B]' + videoitem.title + '[/B][/COLOR]'])
-        videoitem.fulltitle = item.fulltitle
-        videoitem.show = item.show
-        videoitem.thumbnail = item.thumbnail
-        videoitem.channel = __channel__
-
-    return itemlist
 
 def HomePage(item):
     import xbmc
