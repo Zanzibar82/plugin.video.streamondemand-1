@@ -23,6 +23,13 @@ DEBUG = config.get_setting("debug")
 
 host = "http://www.filmissimi.net"
 
+headers = [
+    ['User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0'],
+    ['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'],
+    ['Accept-Encoding', 'gzip, deflate'],
+    ['Referer', host],
+    ['Cache-Control', 'max-age=0']
+]
 
 def isGeneric():
     return True
@@ -78,16 +85,24 @@ def genere(item):
     log("genere", "init")
     itemlist = []
 
-    patron = '<a href="(.*?)">(.*?)</a>'
-    for scrapedurl, scrapedtitle in scrapedSingle(item.url, '<h3 class="title">Categorie</h3><ul>(.*?)</ul>', patron):
-        log("genere", "title=[" + scrapedtitle + "] url=[" + scrapedurl + "]")
+    data = scrapertools.cache_page(item.url, headers=headers)
+    bloque = scrapertools.get_match(data, '<ul id="menu-categorie-1" class="ge">(.*?)</div>')
+
+    patron = '<li id=[^>]+><a href="(.*?)">(.*?)</a></li>'
+    matches = re.compile(patron, re.DOTALL).findall(bloque)
+
+    for scrapedurl, scrapedtitle in matches:
+        scrapedplot = ""
+        scrapedthumbnail = ""
+ 
+        if DEBUG: logger.info("title=[" + scrapedtitle + "]")
         itemlist.append(
             Item(channel=__channel__,
                  action="elenco",
                  title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
                  url=scrapedurl,
-                 thumbnail=NovitaThumbnail,
-                 fanart=FilmFanart))
+                 thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png",
+                 folder=True))
 
     return itemlist
 
@@ -99,9 +114,12 @@ def elenco(item):
     log("elenco", "init")
     itemlist = []
 
-    patron = '<img src="(.*?)"[^=]+=.*?[^=]+="Thumbnail[^>]+>[^>]+><h2><a.*?href="(.*?)"[^>]+>(.*?)</a></h2>'
-    for scrapedthumbnail, scrapedurl, scrapedtitle in scrapedSingle(item.url, '<ul class="recent-posts">(.*?)</ul>',
-                                                                    patron):
+    data = scrapertools.cache_page(item.url, headers=headers)
+
+    patron = '<div class="item">\s*<a href="([^"]+)" title="([^"]+)">\s*<[^>]+>\s*<img[^>]+><img src="([^"]+)"[^>]+>'
+    matches = re.compile(patron, re.DOTALL).findall(data)
+
+    for scrapedurl, scrapedtitle, scrapedthumbnail in matches:
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle)
         log("elenco", "title=[" + scrapedtitle + "] url=[" + scrapedurl + "] thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(infoSod(
