@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
+# streamondemand - XBMC Plugin
 # Conector para flashx
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# http://blog.tvalacarta.info/plugin-xbmc/streamondemand/
 # ------------------------------------------------------------
-# fix by cmos
 
 import os
 import re
@@ -28,7 +27,9 @@ def test_video_exists(page_url):
     data = scrapertools.downloadpageWithoutCookies(page_url)
 
     if 'File Not Found' in data:
-        return False, "[FlashX] File inesistente o eliminato"
+        return False, "[FlashX] Il file non esiste o è stato eliminato"
+    elif 'Video is processing now' in data:
+        return False, "[FlashX] Processo in corso"
 
     return True, ""
 
@@ -48,13 +49,18 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         except:
             pass
 
-    match = scrapertools.find_single_match(data, "<script type='text/javascript'>(.*?)</script>")
+    matches = scrapertools.find_multiple_matches(data, "<script type='text/javascript'>(.*?)</script>")
 
-    if match.startswith("eval"):
-        try:
-            match = jsunpack.unpack(match)
-        except:
-            pass
+    for m in matches:
+        if m.startswith("eval"):
+            try:
+                m = jsunpack.unpack(m)
+                not_fake = scrapertools.find_single_match(m, "(\w{40,})")
+                if not_fake:
+                    break
+            except:
+                m = ""
+    match = m
 
     if not "sources:[{file:" in match:
         page_url = page_url.replace("playvid-", "")
@@ -99,7 +105,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
     media_urls = scrapertools.find_multiple_matches(match, '\{file\:"([^"]+)",label:"([^"]+)"')
     subtitle = ""
     for media_url, label in media_urls:
-        if media_url.endswith(".srt") and label == "Spanish":
+        if media_url.endswith(".srt") and label == "Italian":
             try:
                 from core import filetools
                 data = scrapertools.downloadpage(media_url)
