@@ -174,15 +174,17 @@ def peliculas(item):
 
 
 def findvideos(item):
-    logger.info("[ilgeniodellostreaming.py] findvideos")
+    logger.info("[streaminglove.py] play")
 
     data = scrapertools.cache_page(item.url, headers=headers)
 
-    url = scrapertools.find_single_match(data, '<td><a class="link_a" href="(.*?)" target="_blank">')
+    patron = '<td><a class="link_a" href="(.*?)" target="_blank">'
+    matches = re.compile(patron, re.DOTALL).findall(data)
+    for url in matches:
+        html = scrapertools.cache_page(url, headers=headers)
+        data += str(scrapertools.find_multiple_matches(html, 'window.location.href=\'(.*?)\''))
 
-    location = scrapertools.cache_page(url, 'window.location.href=\'(.*?)\'')
-
-    itemlist = servertools.find_video_items(data=location)
+    itemlist = servertools.find_video_items(data=data)
 
     for videoitem in itemlist:
         videoitem.title = item.show
