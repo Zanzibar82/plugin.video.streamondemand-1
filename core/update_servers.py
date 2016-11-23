@@ -6,6 +6,7 @@
 # ------------------------------------------------------------
 import glob
 import os
+from multiprocessing.pool import ThreadPool
 from threading import Thread
 
 from core import config
@@ -20,6 +21,8 @@ def update_servers():
 
     server_files = glob.glob(server_path)
 
+    pool = ThreadPool(processes=4)
+
     # ----------------------------
     import xbmcgui
     progress = xbmcgui.DialogProgressBG()
@@ -31,9 +34,7 @@ def update_servers():
         percentage = index * 100 / len(server_files)
         # ----------------------------
         server_name = os.path.basename(server)[:-4]
-        t = Thread(target=updater.updateserver, args=[server_name])
-        t.setDaemon(True)
-        t.start()
+        pool.apply_async(updater.updateserver, (server_name,))
         # ----------------------------
         progress.update(percentage, ' Update server: ' + server_name)
         # ----------------------------
@@ -41,6 +42,9 @@ def update_servers():
     # ----------------------------
     progress.close()
     # ----------------------------
+
+    pool.close()
+    pool.join()
 
 
 ### Run
