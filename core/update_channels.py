@@ -6,6 +6,7 @@
 # ------------------------------------------------------------
 import glob
 import os
+from multiprocessing.pool import ThreadPool
 from threading import Thread
 
 from core import config
@@ -20,6 +21,8 @@ def update_channels():
 
     channel_files = glob.glob(channel_path)
 
+    pool = ThreadPool(processes=4)
+
     # ----------------------------
     import xbmcgui
     progress = xbmcgui.DialogProgressBG()
@@ -31,9 +34,7 @@ def update_channels():
         percentage = index * 100 / len(channel_files)
         # ----------------------------
         channel_id = os.path.basename(channel)[:-4]
-        t = Thread(target=updater.updatechannel, args=[channel_id])
-        t.setDaemon(True)
-        t.start()
+        pool.apply_async(updater.updatechannel, (channel_id,))
         # ----------------------------
         progress.update(percentage, ' Update channel: ' + channel_id)
         # ----------------------------
@@ -41,6 +42,9 @@ def update_channels():
     # ----------------------------
     progress.close()
     # ----------------------------
+
+    pool.close()
+    pool.join()
 
 
 ### Run

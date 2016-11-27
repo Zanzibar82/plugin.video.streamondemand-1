@@ -400,7 +400,7 @@ def episodios_serie(item):
             else:
                 scrapedtitle = ''
             if scrapedtitle == '':
-                patron = '<a\s*href="[^"]+"\s*target="_blank">([^<]+)</a>'
+                patron = '<a[^h]+href="[^"]+"[^>]+>([^<])+<\/a>'
                 scrapedtitle = scrapertools.find_single_match(data, patron).strip()
             title = scrapertools.find_single_match(scrapedtitle, '\d+[^\d]+?\d+')
             if title == '':
@@ -423,16 +423,13 @@ def episodios_serie(item):
 
     # Descarga la página
     data = scrapertools.anti_cloudflare(item.url, headers)
-
-    start = data.find('<td bgcolor="#ECEAE1">')
-    end = data.find('</td>', start)
-
-    data = data[start:end]
+    data = scrapertools.decodeHtmlentities(data)
+    data = scrapertools.get_match(data, '<td bgcolor="#ECEAE1">(.*?)</table>')
 
     lang_titles = []
     starts = []
-    patron = '<div class="sp-head unfolded" title="Expand">\s*(.*?)\s*</div>'
-    matches = re.compile(patron).finditer(data)
+    patron = r"Stagione.*?ITA"
+    matches = re.compile(patron, re.IGNORECASE).finditer(data)
     for match in matches:
         season_title = match.group()
         if season_title != '':
