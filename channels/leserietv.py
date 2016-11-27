@@ -73,7 +73,7 @@ def mainlist(item):
                      fanart=FilmFanart),
                 Item(channel=__channel__,
                      action="info",
-                     title="[COLOR lime][I]Info canale[/I][/COLOR] [COLOR yellow]14/10/2016[/COLOR]",
+                     title="[COLOR lime][I]Info canale[/I][/COLOR] [COLOR yellow]27/11/2016[/COLOR]",
                      thumbnail="http://www.mimediacenter.info/wp-content/uploads/2016/01/newlogo-final.png")]
 
     return itemlist
@@ -261,12 +261,13 @@ def episodios(item):
     itemlist = []
     elenco = []
     data = scrapertools.anti_cloudflare(item.url, headers)
-    #xbmc.log("qua"+data)
+
     patron = '<li id[^<]+<[^<]+<.*?class="serie-title">(.*?)</span>[^>]+>[^<]+<.*?megadrive-(.*?)".*?data-link="([^"]+)">Megadrive</a>'
     matches = re.compile(patron, re.DOTALL).findall(data)
     scrapertools.printMatches(matches)
 
     for scrapedlongtitle,scrapedtitle, scrapedurl in matches:
+        xbmc.log("qua" + scrapedurl)
         scrapedtitle = scrapedtitle.split('_')[0]+"x"+scrapedtitle.split('_')[1].zfill(2)
 
         elenco.append([scrapedtitle,scrapedlongtitle,scrapedurl])
@@ -284,7 +285,7 @@ def episodios(item):
     if config.get_library_support() and len(itemlist) != 0:
         itemlist.append(
             Item(channel=__channel__,
-                 title="Aggiungi alla liberia la serie",
+                 title="("+item.title+") Aggiungi alla liberia",
                  url=item.url,
                  action="add_serie_to_library",
                  extra="episodios" + "###" + item.extra,
@@ -294,11 +295,11 @@ def episodios(item):
 # =================================================================
 
 #------------------------------------------------------------------
-def play(item):
+def findvideos(item):
     itemlist=[]
     data = scrapertools.anti_cloudflare(item.url, headers)
 
-    elemento = scrapertools.find_single_match(data, 'config:{file:\'(.*?)\'')
+    elemento = scrapertools.find_single_match(data, 'file: "(.*?)",')
 
     itemlist.append(Item(channel=__channel__,
                          action="play",
@@ -329,35 +330,5 @@ def HomePage(item):
     xbmc.executebuiltin("ReplaceWindow(10024,plugin://plugin.video.streamondemand)")
 # =================================================================
 
-
-def test(item):
-    itemlist=[]
-
-
-    #for episodio,titolo,url in episodi:
-     #   xbmc.log(titolo)
-     #   downloadtools.downloadtitle(link(url),item.fulltitle + " " + episodio + " " + titolo)
-
-    return itemlist
-
-
-def link(url):
-    data = scrapertools.cache_page(url)
-    url = scrapertools.find_single_match(data, 'config:{file:\'(.*?)\'')
-
-    return url
-
 FilmFanart="https://superrepo.org/static/images/fanart/original/script.artwork.downloader.jpg"
 ThumbnailHome="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Dynamic-blue-up.svg/580px-Dynamic-blue-up.svg.png"
-
-'''
-itemlist.append(Item(channel=__channel__,
-                     action="test",
-                     title="Scarica tutta la serie [COLOR yellow]" + item.fulltitle + "[/COLOR]",
-                     url=scrapedurl,
-                     extra=elenco,
-                     thumbnail=item.thumbnail,
-                     fanart=item.fanart if item.fanart != "" else item.scrapedthumbnail,
-                     fulltitle=item.fulltitle,
-                     show=item.fulltitle))
-'''
