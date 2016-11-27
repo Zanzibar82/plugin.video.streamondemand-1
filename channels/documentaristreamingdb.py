@@ -66,6 +66,11 @@ def categorias(item):
 
     for scrapedurl, scrapedtitle in matches:
         if (DEBUG): logger.info("title=[" + scrapedtitle + "], url=[" + scrapedurl + "]")
+
+        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("Documentari ", ""))
+        if scrapedtitle.startswith(("Tutte")):
+            continue
+
         itemlist.append(
             Item(channel=__channel__,
                  action="peliculas",
@@ -109,6 +114,7 @@ def peliculas(item):
         #scrapedplot = scrapertools.decodeHtmlentities(scrapedplot)
         scrapedplot = ""
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("streaming", " "))
+        scrapedtitle = scrapedtitle.split('"')[0]
         if DEBUG: logger.info(
             "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(
