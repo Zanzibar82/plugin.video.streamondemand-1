@@ -26,9 +26,9 @@ def test_video_exists(page_url):
     data = scrapertools.downloadpageWithoutCookies(page_url)
 
     if 'File Not Found' in data:
-        return False, "[FlashX] El archivo no existe o ha sido borrado"
+        return False, "[FlashX] Il file non esiste o è stato eliminato"
     elif 'Video is processing now' in data:
-        return False, "[FlashX] El archivo se está procesando"
+        return False, "[FlashX] Processando il file"
 
     return True, ""
 
