@@ -135,10 +135,11 @@ def peliculas(item):
                  folder=True), tipo='movie'))
 
     # Extrae el paginador
-    patronvideos = '<li><a href="(.*?)">Next</a></li>'
+    patronvideos = '<li class="active"><a[^>]+><span>[^<]+</span></a></li><li><a href="(.*?)">'
     matches = re.compile(patronvideos, re.DOTALL).findall(data)
 
     if len(matches) > 0:
+        scrapedurl = host + scrapedurl
         scrapedurl = urlparse.urljoin(item.url, matches[0])
         itemlist.append(
             Item(channel=__channel__,
