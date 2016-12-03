@@ -187,7 +187,7 @@ def findvideos(item):
     itemlist = servertools.find_video_items(data=data)
 
     for videoitem in itemlist:
-        videoitem.title = item.show
+        videoitem.title = item.title + videoitem.title
         videoitem.fulltitle = item.fulltitle
         videoitem.show = item.show
         videoitem.thumbnail = item.thumbnail
