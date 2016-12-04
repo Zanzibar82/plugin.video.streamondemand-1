@@ -113,6 +113,9 @@ def peliculas(item):
         #scrapedplot = re.sub(r'<[^>]*>', '', scrapedplot)
         #scrapedplot = scrapertools.decodeHtmlentities(scrapedplot)
         scrapedplot = ""
+        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("Serie Documentari ", ""))
+        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("Documentario ", ""))
+        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("Documentari ", ""))
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("streaming", " "))
         scrapedtitle = scrapedtitle.split('"')[0]
         if DEBUG: logger.info(
