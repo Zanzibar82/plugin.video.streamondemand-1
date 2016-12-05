@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
 # streamondemand - XBMC Plugin
-# Conector para flashx by robalo - pelisalacarta
+# Conector para flashx - by robalo & cmos
 # http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
 # ------------------------------------------------------------
 
@@ -15,6 +15,7 @@ from core import logger
 from core import jsunpack
 from core import scrapertools
 
+
 headers = [['User-Agent', 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0'],
            ['Accept', '*/*'],
            ['Connection', 'keep-alive']]
@@ -26,7 +27,7 @@ def test_video_exists(page_url):
     data = scrapertools.downloadpageWithoutCookies(page_url)
 
     if 'File Not Found' in data:
-        return False, "[FlashX] Il file non esiste o è stato eliminato"
+        return False, "[FlashX] File rimosso o assente"
     elif 'Video is processing now' in data:
         return False, "[FlashX] Processando il file"
 
@@ -49,7 +50,6 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
             pass
 
     matches = scrapertools.find_multiple_matches(data, "<script type='text/javascript'>(.*?)</script>")
-
     for n,m in enumerate(matches):
         if m.startswith("eval"):
             try:
@@ -57,7 +57,8 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
                 fake = (scrapertools.find_single_match(m, "(\w{40,})") == "")
                 if fake:
                     m = ""
-                else: break
+                else:
+                    break
             except:
                 m = ""
     match = m
@@ -88,7 +89,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         data = scrapertools.downloadpage('http://www.flashx.tv/dl', post=post, headers=headers)
 
         matches = scrapertools.find_multiple_matches(data, "(eval\(function\(p,a,c,k.*?)\s+</script>")
-        for n, match in enumerate(matches):
+        for match in matches:
             try:
                 match = jsunpack.unpack(match)
             except:
@@ -114,7 +115,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
             except:
                 import traceback
                 logger.info("streamondemand.servers.flashx Error al descargar el subtítulo: "+traceback.format_exc())
-           
+            
     for media_url, label in media_urls:
         if not media_url.endswith("png") and not media_url.endswith(".srt"):
             video_urls.append(["." + media_url.rsplit('.', 1)[1] + " [flashx]", media_url, 0, subtitle])
@@ -139,7 +140,7 @@ def find_videos(data):
 
     for match in matches:
         titulo = "[flashx]"
-        url = "http://www.flashx.tv/playvid-%s.html" % match
+        url = "https://www.flashx.tv/playvid-%s.html" % match
         if url not in encontrados:
             logger.info("  url=" + url)
             devuelve.append([titulo, url, 'flashx'])
