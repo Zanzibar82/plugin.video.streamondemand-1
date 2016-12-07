@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
 # streamondemand - XBMC Plugin
-# Conector para flashx - by robalo & cmos
+# Conector para flashx fix by cmos & robalo
 # http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
 # ------------------------------------------------------------
 
@@ -27,7 +27,7 @@ def test_video_exists(page_url):
     data = scrapertools.downloadpageWithoutCookies(page_url)
 
     if 'File Not Found' in data:
-        return False, "[FlashX] File rimosso o assente"
+        return False, "[FlashX] File inesistestente o cancellato"
     elif 'Video is processing now' in data:
         return False, "[FlashX] Processando il file"
 
