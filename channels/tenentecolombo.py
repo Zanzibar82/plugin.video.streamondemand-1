@@ -72,8 +72,3 @@ def play(item):
 
     return itemlist
 
-# test old update
-# test old update
-# test old update
-# test old update
-
