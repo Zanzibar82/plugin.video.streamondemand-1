@@ -437,7 +437,6 @@ def findvideos(item):
 
     return itemlist
 
-
 def play(item):
     logger.info("streamondemand.mondolunatico play")
 
