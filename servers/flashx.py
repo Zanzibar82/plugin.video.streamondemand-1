@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
 # streamondemand - XBMC Plugin
-# Conector para flashx fix by cmos & robalo
+# Conector para flashx fix by cmos
 # http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
 # ------------------------------------------------------------
 
@@ -24,12 +24,12 @@ headers = [['User-Agent', 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/2
 def test_video_exists(page_url):
     logger.info("streamondemand.servers.flashx test_video_exists(page_url='%s')" % page_url)
 
-    data = scrapertools.downloadpageWithoutCookies(page_url)
+    data = scrapertools.downloadpageWithoutCookies(page_url.replace("playvid-", ""))
 
     if 'File Not Found' in data:
-        return False, "[FlashX] File inesistestente o cancellato"
+        return False, "[FlashX] File inesistente o eliminato"
     elif 'Video is processing now' in data:
-        return False, "[FlashX] Processando il file"
+        return False, "[FlashX] File processato"
 
     return True, ""
 
@@ -69,10 +69,10 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
 
         file_id = scrapertools.find_single_match(data, "'file_id', '([^']+)'")
         aff = scrapertools.find_single_match(data, "'aff', '([^']+)'")
-        headers_c = [['User-Agent', 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0'],
+        headers_c = [['User-Agent', 'Mozilla/5.0'],
                      ['Referer', page_url],
                      ['Cookie', '; lang=1']]
-        coding_url = scrapertools.find_single_match(data, '(?i)src="(http://www.flashx.tv/\w+.js\?[^"]+)"')
+        coding_url = "https:"+scrapertools.find_single_match(data, '(?i)src="(?:https:|)((?://www.flashx.tv|//files.fx.fastcontentdelivery.com)/\w+.js\?[^"]+)"')
         if coding_url.endswith("="):
             coding_url += file_id
         coding = scrapertools.downloadpage(coding_url, headers=headers_c)
@@ -82,20 +82,28 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         fname = scrapertools.find_single_match(data, 'name="fname" value="([^"]+)"')
         hash_f = scrapertools.find_single_match(data, 'name="hash" value="([^"]+)"')
         post = 'op=download1&usr_login=&id=%s&fname=%s&referer=&hash=%s&imhuman=Proceed+to+video' % (flashx_id, urllib.quote(fname), hash_f)
+        wait_time = scrapertools.find_single_match(data, "<span id='xxc2'>(\d+)")
 
-        time.sleep(6)
-        headers.append(['Referer', page_url])
+        try:
+           time.sleep(int(wait_time)+1)
+        except:
+           time.sleep(6)
+        headers.append(['Referer', "https://www.flashx.tv/"])
         headers.append(['Cookie', 'lang=1; file_id=%s; aff=%s' % (file_id, aff)])
-        data = scrapertools.downloadpage('http://www.flashx.tv/dl', post=post, headers=headers)
+        data = scrapertools.downloadpage('https://www.flashx.tv/dl?playthis', post=post, headers=headers)
 
         matches = scrapertools.find_multiple_matches(data, "(eval\(function\(p,a,c,k.*?)\s+</script>")
         for match in matches:
-            try:
-                match = jsunpack.unpack(match)
-            except:
-                match = ""
-            if "file" in match:
-                break
+            if match.startswith("eval"):
+                try:
+                    match = jsunpack.unpack(match)
+                    fake = (scrapertools.find_single_match(match, "(\w{40,})") == "")
+                    if fake:
+                        match = ""
+                    else:
+                        break
+                except:
+                    match = ""
 
         if not match:
             match = data
