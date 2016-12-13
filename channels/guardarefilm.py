@@ -330,3 +330,4 @@ def findvid_serie(item):
         videoitem.channel = __channel__
 
     return itemlist
+
