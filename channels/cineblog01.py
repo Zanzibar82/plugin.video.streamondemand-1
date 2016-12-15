@@ -580,38 +580,40 @@ def findvid_serie(item):
 def play(item):
     logger.info("[cineblog01.py] play")
 
-    print "##############################################################"
+    logger.debug("##############################################################")
     if "go.php" in item.url:
         data = scrapertools.anti_cloudflare(item.url, headers)
         try:
             data = scrapertools.get_match(data, 'window.location.href = "([^"]+)";')
         except IndexError:
-            #            data = scrapertools.get_match(data, r'<a href="([^"]+)">clicca qui</a>')
-            #   In alternativa, dato che a volte compare "Clicca qui per proseguire":
-            data = scrapertools.get_match(data, r'<a href="([^"]+)".*?class="btn-wrapper">.*?licca.*?</a>')
+            try:
+                # data = scrapertools.get_match(data, r'<a href="([^"]+)">clicca qui</a>')
+                # In alternativa, dato che a volte compare "Clicca qui per proseguire":
+                data = scrapertools.get_match(data, r'<a href="([^"]+)".*?class="btn-wrapper">.*?licca.*?</a>')
+            except IndexError:
+                data = scrapertools.get_header_from_response(item.url, headers=headers, header_to_get="Location")
         if 'vcrypt' in data:
             data = scrapertools.get_header_from_response(data, headers=headers, header_to_get="Location")
-        print "##### play go.php data ##\n%s\n##" % data
+        logger.debug("##### play go.php data ##\n%s\n##" % data)
     elif "/link/" in item.url:
         data = scrapertools.anti_cloudflare(item.url, headers)
         from core import jsunpack
 
         try:
             data = scrapertools.get_match(data, "(eval\(function\(p,a,c,k,e,d.*?)</script>")
-            # data = scrapertools.get_match(data, "(eval.function.p,a,c,k,e,.*?)</script>")
             data = jsunpack.unpack(data)
-            print "##### play /link/ unpack ##\n%s\n##" % data
+            logger.debug("##### play /link/ unpack ##\n%s\n##" % data)
         except IndexError:
-            print "##### The content is yet unpacked"
+            logger.debug("##### The content is yet unpacked")
 
         data = scrapertools.get_match(data, 'var link(?:\s)?=(?:\s)?"([^"]+)";')
         if 'vcrypt' in data:
             data = scrapertools.get_header_from_response(data, headers=headers, header_to_get="Location")
-        print "##### play /link/ data ##\n%s\n##" % data
+        logger.debug("##### play /link/ data ##\n%s\n##" % data)
     else:
         data = item.url
-        print "##### play else data ##\n%s\n##" % data
-    print "##############################################################"
+        logger.debug("##### play else data ##\n%s\n##" % data)
+    logger.debug("##############################################################")
 
     itemlist = servertools.find_video_items(data=data)
 
