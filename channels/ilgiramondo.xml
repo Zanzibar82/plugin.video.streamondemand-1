@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <channel>
-    <id>streamingpopcorn</id>
-    <name>StreamingPopcorn</name>
+    <id>ilgiramondo</id>
+    <name>IlGiramondo</name>
 
     <active>true</active>
     <adult>false</adult>
     <language>it</language>
 
     <fanart></fanart>
-    <thumbnail>http://streamingpopcorn.com/portal/images/logo2.png</thumbnail>
-    <bannermenu>http://streamingpopcorn.com/portal/images/logo2.png</bannermenu>
+    <thumbnail>http://www.ilgiramondo.net/wp-content/uploads/2013/05/logo-fixed.jpg</thumbnail>
+    <bannermenu>http://www.ilgiramondo.net/wp-content/uploads/2013/05/logo-fixed.jpg</bannermenu>
 
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/
     </update_url>
-    <version>7</version>
+    <version>1</version>
     <date>22/06/2016</date>
     <changes>update</changes>
 
     <categories>
-        <category>movie</category>
+        <category>documentary</category>
     </categories>
 
     <settings>
