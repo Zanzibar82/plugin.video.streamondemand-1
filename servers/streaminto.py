@@ -35,7 +35,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
                         )
 
     if media_url.endswith("v.mp4"):
-        media_url_mp42flv = re.sub(r'/v.flv$','/v.mp4',media_url)
+        media_url_mp42flv = re.sub(r'/v.mp4$','/v.flv',media_url)
         video_urls.append([get_filename_from_url(media_url_mp42flv)[-4:] + " [streaminto]", media_url_mp42flv])
     if media_url.endswith("v.flv"):
         media_url_flv2mp4 = re.sub(r'/v.flv$','/v.mp4',media_url)
