@@ -49,7 +49,7 @@ def tutoriales(item):
 
 def force_creation_advancedsettings(item):
     # Ruta del advancedsettings
-    advancedsettings = xbmc.translatePath("special://userdata/advancedsettings.xml")
+    advancedsettings = xbmc.translatePath("special://userdata/addon_data/plugin.video.streamondemand/advancedsettings.xml")
 
     # =======================================================
     # Impostazioni
