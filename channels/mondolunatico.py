@@ -42,7 +42,6 @@ PERPAGE = 25
 def isGeneric():
     return True
 
-
 def mainlist(item):
     logger.info("streamondemand.mondolunatico mainlist")
     itemlist = [Item(channel=__channel__,
