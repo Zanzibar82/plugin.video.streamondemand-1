@@ -20,6 +20,8 @@ __type__ = "generic"
 __title__ = "filmpertutti"
 __language__ = "IT"
 
+DEBUG = config.get_setting("debug")
+
 host = "http://www.filmpertutti.online"
 
 headers = [
@@ -28,9 +30,6 @@ headers = [
     ['Accept-Encoding', 'gzip, deflate'],
     ['Cache-Control', 'max-age=0']
 ]
-
-DEBUG = config.get_setting("debug")
-
 
 def isGeneric():
     return True
