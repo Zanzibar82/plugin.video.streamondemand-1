@@ -9,6 +9,7 @@
 # https://github.com/Eldorados/script.module.urlresolver/blob/master/lib/urlresolver/plugins/nowvideo.py
 
 import re
+import urllib
 
 from core import logger
 from core import scrapertools
@@ -124,7 +125,9 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
                 video_urls.append( [ "[nowvideo]",location ] )
                 '''
 
-        video_urls.append([scrapertools.get_filename_from_url(videourl)[-4:] + " [nowvideo]", videourl])
+        headers = {'User-Agent': USER_AGENT}
+
+        video_urls.append([scrapertools.get_filename_from_url(videourl)[-4:] + " [nowvideo]", videourl + '|' + urllib.urlencode(headers)])
 
     for video_url in video_urls:
         logger.info("[nowvideo.py] %s - %s" % (video_url[0], video_url[1]))
