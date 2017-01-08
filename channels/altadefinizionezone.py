@@ -42,7 +42,6 @@ def mainlist(item):
                      title="[COLOR azure]Ultimi Film Inseriti[/COLOR]",
                      action="peliculas",
                      url="%s/film-streaming/" % host,
-                     extra="movie",
                      thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png"),
                 Item(channel=__channel__,
                      title="[COLOR azure]Film Per Categoria[/COLOR]",
@@ -58,7 +57,6 @@ def mainlist(item):
                      title="[COLOR azure]Serie-TV[/COLOR]",
                      action="peliculas_tv",
                      url="%s/serie-tv/" % host,
-                     extra="serie",
                      thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png"),
                 Item(channel=__channel__,
                      title="[COLOR yellow]Cerca Serie-TV...[/COLOR]",
@@ -98,7 +96,7 @@ def categorias(item):
 
 def search(item, texto):
     logger.info("[altadefinizionezone.py] " + item.url + " search " + texto)
-    item.url = host + "/?do=search&subaction=search&search_start=0&full_search=0&result_from=1&story=" + texto
+    item.url = host + "/?do=search&subaction=search&story=" + texto
     try:
         if item.extra == "movie":
             return peliculas(item)
@@ -117,6 +115,7 @@ def peliculas(item):
 
     # Descarga la pagina
     data = scrapertools.cache_page(item.url, headers=headers)
+    data = scrapertools.get_match(data, '<div id="mainbar" class="container margin-b40">(.*?)<div class="margin-b20 accordion accordion-violet" >')
 
     # Extrae las entradas (carpetas)
     patron = '<div class="short-images">\s*<a href="(.*?)"[^>]+>\s*<img src="(.*?)" alt="(.*?)" />'
@@ -166,6 +165,7 @@ def peliculas_tv(item):
 
     # Descarga la pagina
     data = scrapertools.cache_page(item.url, headers=headers)
+    data = scrapertools.get_match(data, '<div id="mainbar" class="container margin-b40">(.*?)<div class="margin-b20 accordion accordion-violet" >')
 
     # Extrae las entradas (carpetas)
     patron = '<div class="short-images">\s*<a href="(.*?)"[^>]+>\s*<img src="(.*?)" alt="(.*?)" />'
