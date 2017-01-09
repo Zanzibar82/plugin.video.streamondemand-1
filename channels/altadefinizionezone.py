@@ -10,7 +10,6 @@ import urlparse
 from core import config
 from core import logger
 from core import scrapertools
-from core import servertools
 from core.item import Item
 from core.tmdb import infoSod
 
@@ -31,6 +30,7 @@ headers = [
     ['Referer', host],
     ['Cache-Control', 'max-age=0']
 ]
+
 
 def isGeneric():
     return True
@@ -71,7 +71,7 @@ def categorias(item):
 
     # Descarga la pagina
     data = scrapertools.cache_page(item.url, headers=headers)
-    bloque = scrapertools.get_match(data, '<ul class="dropdown-menu">(.*?)</ul>')
+    bloque = scrapertools.find_single_match(data, '<ul class="dropdown-menu">(.*?)</ul>')
 
     # Extrae las entradas (carpetas)
     patron = '<li><a href="(.*?)">(.*?)</a></li>'
@@ -109,13 +109,15 @@ def search(item, texto):
             logger.error("%s" % line)
         return []
 
+
 def peliculas(item):
     logger.info("streamondemand.altadefinizionezone peliculas")
     itemlist = []
 
     # Descarga la pagina
     data = scrapertools.cache_page(item.url, headers=headers)
-    data = scrapertools.get_match(data, '<div id="mainbar" class="container margin-b40">(.*?)<div class="margin-b20 accordion accordion-violet" >')
+    patron = '<div id="mainbar" class="container margin-b40">(.*?)<div class="margin-b20 accordion accordion-violet" >'
+    data = scrapertools.find_single_match(data, patron)
 
     # Extrae las entradas (carpetas)
     patron = '<div class="short-images">\s*<a href="(.*?)"[^>]+>\s*<img src="(.*?)" alt="(.*?)" />'
@@ -159,13 +161,15 @@ def peliculas(item):
 
     return itemlist
 
+
 def peliculas_tv(item):
     logger.info("streamondemand.altadefinizionezone peliculas")
     itemlist = []
 
     # Descarga la pagina
     data = scrapertools.cache_page(item.url, headers=headers)
-    data = scrapertools.get_match(data, '<div id="mainbar" class="container margin-b40">(.*?)<div class="margin-b20 accordion accordion-violet" >')
+    patron = '<div id="mainbar" class="container margin-b40">(.*?)<div class="margin-b20 accordion accordion-violet" >'
+    data = scrapertools.find_single_match(data, patron)
 
     # Extrae las entradas (carpetas)
     patron = '<div class="short-images">\s*<a href="(.*?)"[^>]+>\s*<img src="(.*?)" alt="(.*?)" />'
@@ -220,7 +224,7 @@ def seasons(item):
     patron = '<a href="([^"]+)" role="tab" data-toggle="tab">(.*?)</a>'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
-    for scrapedurl, scrapedseason  in matches:
+    for scrapedurl, scrapedseason in matches:
         scrapedurl = item.url + scrapedurl
         scrapedplot = ""
         scrapedthumbnail = ""
@@ -239,18 +243,20 @@ def seasons(item):
 
     return itemlist
 
+
 def episodios(item):
     logger.info("streamondemand.channels.altadefinizionezone episodios")
 
     itemlist = []
 
     data = scrapertools.cache_page(item.url, headers=headers)
-    bloque = scrapertools.get_match(data, '<ul class="playlist">(.*?)</ul>')
+    patron = '<div class="tab-pane fade" id="%s">(.*?)</ul>' % item.url.split('#')[1]
+    bloque = scrapertools.find_single_match(data, patron)
 
     patron = '<div class="col"> <span class="episode-title"> <small class="epnum">(.*?)<\/span>[^>]+>\s*<div class="col">\s*<a href=[^=]+=[^=]+=[^=]+="([^"]+)">'
     matches = re.compile(patron, re.DOTALL).findall(bloque)
 
-    for scrapedtitle, scrapedurl  in matches:
+    for scrapedtitle, scrapedurl in matches:
         scrapedthumbnail = ""
         scrapedplot = ""
         scrapedtitle = scrapedtitle.replace('</small>', '')
@@ -268,8 +274,9 @@ def episodios(item):
 
     return itemlist
 
+
 def findvideos_tv(item):
-    itemlist=[]
+    itemlist = []
     data = scrapertools.cache_page(item.url)
 
     elemento = scrapertools.find_single_match(data, 'file: "(.*?)",')
@@ -282,6 +289,7 @@ def findvideos_tv(item):
                          fulltitle=item.fulltitle,
                          show=item.fulltitle))
     return itemlist
+
 
 def HomePage(item):
     import xbmc
