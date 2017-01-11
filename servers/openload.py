@@ -16,18 +16,18 @@ headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:47.0) Gecko/20
 
 
 def test_video_exists(page_url):
-    logger.info("streamondemand.servers.openload test_video_exists(page_url='%s')" % page_url)
+    logger.info("(page_url='%s')" % page_url)
 
     data = scrapertools.downloadpageWithoutCookies(page_url)
 
-    if 'We are sorry!' in data:
-        return False, "[Openload] El archivo no existe o ha sido borrado" 
+    if 'We’re Sorry!' in data:
+        return False, "[Openload] File inesistente o eliminato" 
 
     return True, ""
 
 
 def get_video_url(page_url, premium=False, user="", password="", video_password=""):
-    logger.info("streamondemand.servers.openload url=" + page_url)
+    logger.info("url=" + page_url)
     video_urls = []
 
     data = scrapertools.downloadpageWithoutCookies(page_url)
@@ -57,7 +57,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
                 v2 = int(encode[3:5])
                 index = 5
                 while index < len(encode):
-                    text_decode += chr(int(encode[index:index+3]) - v1 - v2 * int(encode[index+3:index+3+2]))
+                    text_decode += chr(int(encode[index:index+3]) + v1 - v2 * int(encode[index+3:index+3+2]))
                     index += 5
             except:
                 continue
