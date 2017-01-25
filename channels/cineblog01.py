@@ -250,7 +250,8 @@ def menuanyos(item):
             Item(channel=__channel__,
                  action="peliculas",
                  title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
-                 url=scrapedurl,
+                 #url=scrapedurl,
+                 url=scrapedurl.split('/')[-1].decode('base64'),
                  thumbnail=scrapedthumbnail,
                  extra=item.extra,
                  plot=scrapedplot))
@@ -461,7 +462,8 @@ def findvid_film(item):
             Item(channel=__channel__,
                  action="play",
                  title=title,
-                 url=scrapedurl,
+                 #url=scrapedurl,
+                 url=scrapedurl.split('/')[-1].decode('base64'),
                  fulltitle=item.fulltitle,
                  thumbnail=item.thumbnail,
                  show=item.show,
@@ -477,7 +479,8 @@ def findvid_film(item):
             Item(channel=__channel__,
                  action="play",
                  title=title,
-                 url=scrapedurl,
+                 #url=scrapedurl,
+                 url=scrapedurl.split('/')[-1].decode('base64'),
                  fulltitle=item.fulltitle,
                  thumbnail=item.thumbnail,
                  show=item.show,
@@ -493,7 +496,8 @@ def findvid_film(item):
             Item(channel=__channel__,
                  action="play",
                  title=title,
-                 url=scrapedurl,
+                 #url=scrapedurl,
+                 url=scrapedurl.split('/')[-1].decode('base64'),
                  fulltitle=item.fulltitle,
                  thumbnail=item.thumbnail,
                  show=item.show,
@@ -509,7 +513,8 @@ def findvid_film(item):
             Item(channel=__channel__,
                  action="play",
                  title=title,
-                 url=scrapedurl,
+                 #url=scrapedurl,
+                 url=scrapedurl.split('/')[-1].decode('base64'),
                  fulltitle=item.fulltitle,
                  thumbnail=item.thumbnail,
                  show=item.show,
@@ -525,7 +530,8 @@ def findvid_film(item):
             Item(channel=__channel__,
                  action="play",
                  title=title,
-                 url=scrapedurl,
+                 #url=scrapedurl,
+                 url=scrapedurl.split('/')[-1].decode('base64'),
                  fulltitle=item.fulltitle,
                  thumbnail=item.thumbnail,
                  show=item.show,
@@ -556,7 +562,8 @@ def findvid_serie(item):
             Item(channel=__channel__,
                  action="play",
                  title=title,
-                 url=scrapedurl,
+                 #url=scrapedurl,
+                 url=scrapedurl.split('/')[-1].decode('base64'),
                  fulltitle=item.fulltitle,
                  show=item.show,
                  folder=False))
@@ -570,7 +577,7 @@ def play(item):
     if '/goto/' in item.url:
         item.url = scrapertools.get_header_from_response(item.url, headers=headers, header_to_get="Location")
 
-    item.url = item.url.replace('http://cineblog01.pw', 'http://k4pp4.pw')
+    #item.url = item.url.replace('http://cineblog01.pw', 'http://k4pp4.pw')
 
     logger.debug("##############################################################")
     if "go.php" in item.url:
