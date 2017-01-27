@@ -570,7 +570,7 @@ def play(item):
     if '/goto/' in item.url:
         item.url = scrapertools.get_header_from_response(item.url, headers=headers, header_to_get="Location")
 
-    #item.url = item.url.replace('http://cineblog01.pw', 'http://k4pp4.pw')
+    item.url = item.url.replace('http://cineblog01.pw', 'http://k4pp4.pw')
 
     logger.debug("##############################################################")
     if "go.php" in item.url:
