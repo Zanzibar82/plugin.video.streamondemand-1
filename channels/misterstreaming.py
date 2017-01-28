@@ -73,7 +73,7 @@ def categorias(item):
     itemlist = []
 
     # Descarga la pagina
-    data = scrapertools.anti_cloudflare(item.url, headers)
+    data = scrapertools.cache_page(item.url, headers=headers)
     bloque = scrapertools.get_match(data, '<div id="categories-2" class="widget widget_categories">(.*?)</ul>')
 
     # Extrae las entradas (carpetas)
@@ -114,7 +114,7 @@ def peliculas(item):
     itemlist = []
 
     # Descarga la pagina
-    data = scrapertools.anti_cloudflare(item.url, headers)
+    data = scrapertools.cache_page(item.url, headers=headers)
 
     # Extrae las entradas (carpetas)
     patron = '<figure class="post-image ">\s*<a href="(.*?)"><img src="(.*?)" class=[^=]+=[^=]+="(.*?)" /></a>'
@@ -161,7 +161,7 @@ def peliculas_tv(item):
     itemlist = []
 
     # Descarga la pagina
-    data = scrapertools.anti_cloudflare(item.url, headers)
+    data = scrapertools.cache_page(item.url, headers=headers)
     bloque = scrapertools.get_match(data, '<div id="text-2" class="widget widget_text">(.*?)</div></div><div class="widgetwrap">')
 
     # Extrae las entradas (carpetas)
@@ -296,7 +296,7 @@ def findvideos_tv(item):
 def findvideos_movie(item):
     logger.info("streamondemand.misterstreaming findvideos_movie")
 
-    data = scrapertools.anti_cloudflare(item.url, headers)
+    data = scrapertools.cache_page(item.url, headers=headers)
 
     itemlist = servertools.find_video_items(data=data)
     for videoitem in itemlist:
