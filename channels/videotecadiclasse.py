@@ -79,12 +79,14 @@ def anno(item):
 
     for scrapedurl, scrapedtitle in matches:
         scrapedurl = scrapedurl.replace("&amp;", "&")
-        scrapedurl = scrapedurl.replace("=50", "=10")
+        scrapedurl = scrapedurl.replace("results=50", "results=10")
+        if scrapedtitle.startswith("2"):
+            scrapedtitle = "[COLOR yellow]" + scrapedtitle + "[/COLOR]"
         if (DEBUG): logger.info("title=[" + scrapedtitle + "], url=[" + scrapedurl + "]")
         itemlist.append(
             Item(channel=__channel__,
                  action="peliculas",
-                 title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
+                 title=scrapedtitle,
                  url=scrapedurl,
                  thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png",
                  folder=True))
@@ -150,10 +152,10 @@ def peliculas_src(item):
     data = scrapertools.cache_page(item.url, headers=headers)
 
     # Extrae las entradas (carpetas)
-    patron = '"name":"(.*?)",\S*url":"(.*?)"'
+    patron = '"ogUrl":"(.*?)","ogTitle":"(.*?)",'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
-    for scrapedtitle, scrapedurl in matches:
+    for scrapedurl, scrapedtitle in matches:
         scrapedthumbnail = ""
         scrapedplot = ""
         scrapedtitle = scrapedtitle.replace("streaming", "")
