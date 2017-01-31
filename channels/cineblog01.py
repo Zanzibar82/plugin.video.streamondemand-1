@@ -556,8 +556,7 @@ def findvid_serie(item):
             Item(channel=__channel__,
                  action="play",
                  title=title,
-                 url=scrapedurl.split('/')[-1].decode('base64'),
-                 #url=scrapedurl,
+                 url=scrapedurl,
                  fulltitle=item.fulltitle,
                  show=item.show,
                  folder=False))
@@ -569,7 +568,7 @@ def play(item):
     logger.info("[cineblog01.py] play")
 
     if '/goto/' in item.url:
-        item.url = scrapertools.get_header_from_response(item.url, headers=headers, header_to_get="Location")
+        item.url = item.url.split('/goto/')[-1].decode('base64')
 
     item.url = item.url.replace('http://cineblog01.pw', 'http://k4pp4.pw')
 
