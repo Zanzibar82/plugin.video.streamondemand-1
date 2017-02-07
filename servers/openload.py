@@ -31,7 +31,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
     video_urls = []
 
     data = scrapertools.downloadpageWithoutCookies(page_url)
-    subtitle = scrapertools.find_single_match(data, '<track kind="captions" src="([^"]+)" srclang="es"')
+    subtitle = scrapertools.find_single_match(data, '<track kind="captions" src="([^"]+)" srclang="it"')
     #Header para la descarga
     header_down = "|User-Agent="+headers['User-Agent']
 
@@ -50,18 +50,22 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         var_encodes = scrapertools.find_multiple_matches(data, 'id="'+var_r+'[^"]*">([^<]+)<')
 
         videourl = ""
-        text_decode = ""
         for encode in var_encodes:
             try:
-                v1 = int(encode[0:3])
-                v2 = int(encode[3:5])
-                index = 5
+                first_two_chars = int(float(encode[0:][:2]))
+
+                tab_code = {}
+                index = 2
                 while index < len(encode):
-                    text_decode += chr(int(encode[index:index+3]) + v1 - v2 * int(encode[index+3:index+3+2]))
+                    key = int(float(encode[index + 3:][:2]))
+                    tab_code[key] = chr(int(float(encode[index:][:3])) - first_two_chars)
                     index += 5
+
+                sorted(tab_code, key=lambda key: tab_code[key])
+                text_decode = ''.join(['%s' % value for (key, value) in tab_code.items()])
             except:
                 continue
-         
+
             videourl = "https://openload.co/stream/%s?mime=true" % text_decode
             resp_headers = scrapertools.get_headers_from_response(videourl)
             extension = ""
