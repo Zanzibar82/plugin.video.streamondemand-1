@@ -215,7 +215,7 @@ def serie(item):
                  url=scrapedurl,
                  thumbnail=scrapedthumbnail,
                  plot=scrapedplot,
-                 folder=True), tipo='movie'))
+                 folder=True), tipo='tv'))
 
     # Extrae el paginador
     patronvideos = '<span class="current">[^<]+<[^>]+><a href=\'(.*?)\''
