@@ -218,3 +218,4 @@ def show_video_info(data, caption="", callback=None, item=None):
     from xbmc_info_window import InfoWindow
     return InfoWindow("InfoWindow.xml", config.get_runtime_path()).Start(data, caption=caption, callback=callback,
                                                                          item=item)
+
