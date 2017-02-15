@@ -42,9 +42,8 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
             data = scrapertools.downloadpageWithoutCookies(url)
 
         text_encode = scrapertools.find_multiple_matches(data, '(ﾟωﾟ.*?\(\'\_\'\));')
-        text_decode = ""
-        for t in text_encode:
-            text_decode += aadecode(t)
+
+        text_decode = ''.join([aadecode(t) for t in text_encode])
 
         var_r = scrapertools.find_single_match(text_decode, "window.r\s*=\s*['\"]([^'\"]+)['\"]")
         var_encodes = scrapertools.find_multiple_matches(data, 'id="'+var_r+'[^"]*">([^<]+)<')
