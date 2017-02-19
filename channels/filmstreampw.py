@@ -207,7 +207,7 @@ def findvideos(item):
     itemlist = servertools.find_video_items(data=data.replace(r'\/', '/'))
 
     for videoitem in itemlist:
-        videoitem.title = videoitem.title
+        videoitem.title = item.title + videoitem.title.replace("-", "|")
         videoitem.fulltitle = item.fulltitle
         videoitem.thumbnail = item.thumbnail
         videoitem.show = item.show
