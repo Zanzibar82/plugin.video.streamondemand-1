@@ -1,4 +1,12 @@
---- sod 17
+v5.4.6
+- wide change: Kodi 17 compatible
+- removed dead channels
+- new channels
+
+v5.4.5
+- transitional release, not yet Kodi 17 dedicated version
+- new channels
+- various fix
 
 v5.4.4
 - fixed dowload options
