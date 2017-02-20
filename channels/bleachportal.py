@@ -125,10 +125,8 @@ def findvideos(item):
         video = scrapertools.find_single_match(data, 'file=(.*?)&')
         video = video.rsplit('/', 1)[-1]
 
-    #newurl = re.sub(r'[^/]+$', video, newurl)
     newurl = newurl.replace(newurl.split("/")[-1], "/" + video)
-    estensionevideo = video.split(".")[1] if item.extra == "bleach" else video.split(".")[2]
-    #estensionevideo = re.sub(r'^[^\d]+[^\.]+', "", video)
+    estensionevideo = video.split(".")[-1]
 
     itemlist.append(Item(channel=__channel__,
                          action="play",

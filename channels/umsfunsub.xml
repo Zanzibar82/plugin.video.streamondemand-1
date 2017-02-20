@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <channel>
-    <id>bleachportal</id>
-    <name>BleachPortal</name>
+    <id>umsfunsub</id>
+    <name>UMSFunSub</name>
 
     <active>true</active>
     <adult>false</adult>
     <language>it</language>
 
-    <fanart>http://i39.tinypic.com/35ibvcx.jpg</fanart>
-    <thumbnail>http://cgi.di.uoa.gr/~std05181/images/bleach.jpg</thumbnail>
-    <bannermenu>http://cgi.di.uoa.gr/~std05181/images/bleach.jpg</bannermenu>
+    <fanart></fanart>
+    <thumbnail>http://www.hiumi.it/public/forum/styles/art_deluxe/imageset/logo.png</thumbnail>
+    <bannermenu>http://www.hiumi.it/public/forum/styles/art_deluxe/imageset/logo.png</bannermenu>
 
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
-    <version>2</version>
-    <date>15/02/2017</date>
-    <changes>update</changes>
+    <version>1</version>
+    <date>20/02/2017</date>
+    <changes>new channel</changes>
 
     <categories>
         <category>anime</category>
