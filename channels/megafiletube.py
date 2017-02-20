@@ -48,21 +48,20 @@ def elenco_film(item):
     logger.info("megafiletube elenco_film")
     itemlist=[]
 
-    patron="href='magnet:?(.*?)'[^>]+>[^>]+>[^>]+>.*?img.*?src=.'(.*?)'.*?target='.*?'>(.*?)</a>"
-    for scrapedurl,scrapedimg,scrapedtitolo in scrapedAll(item.url,patron):
-        scrapedimg = scrapedimg.replace('\\','')
-        base=scrapedtitolo.replace(".","")
-        base=base.replace("(","")
-        titolo=base.split("20")[0]
-
+    patron = "<a onmouseover=\".*?img src=.'(.*?)'.*?href=\"(.*?)\".*?target='.*?'.*?><b>(.*?)</b></a>"
+    for scrapedimg, scrapedurl, scrapedtitolo in scrapedAll(item.url, patron):
+        scrapedimg = scrapedimg.replace('\\', '')
+        base = scrapedtitolo.replace(".", "")
+        base = base.replace("(", "")
+        titolo = base.split("20")[0]
         itemlist.append(infoSod(Item(channel=__channel__,
-                                     action="torrent",
-                                     title="[COLOR darkkhaki].torrent [/COLOR]""[COLOR azure]"+scrapedtitolo+"[/COLOR]",
-                                     fulltitle=scrapedtitolo,
-                                     url=scrapedurl,
-                                     thumbnail=scrapedimg,
-                                     fanart=scrapedimg),
-                                tipo="movie"))
+                             action="torrent",
+                             title="[COLOR darkkhaki].torrent [/COLOR]""[COLOR azure]" + scrapedtitolo + "[/COLOR]",
+                             fulltitle=scrapedtitolo,
+                             url=host + "/" + scrapedurl,
+                             thumbnail=scrapedimg,
+                             fanart=scrapedimg),
+                        tipo="movie"))
 
     # Paginazione
     # ===========================================================
@@ -90,8 +89,22 @@ def search(item,texto):
 def torrent(item):
     logger.info("megafiletube torrent")
     itemlist = []
-    magnet = "magnet:"+item.url
-    itemlist.append( Item(channel=__channel__, action="play", server="torrent", title=item.title , url=magnet , thumbnail=item.thumbnail , plot=item.plot , folder=False) )
+
+    patron = 'href="magnet:?(.*?)&.*?"[^>]+>[^>]+>[^>]+>[^>]+>[^>]+>[^>]+>[^>]+>[^>]+>[^>]+>[^>]+[^>]+>[^>]+>[^>]+>[^>]+>[^>]+>[^>]+><.*?img.*?src=\'(.*?)\'.*?'
+    patrontitle = '<title>(.*?)</title>'
+
+    title = scrapedAll(item.url, patrontitle)
+    for scrapedurl, scrapedimg in scrapedAll(item.url, patron):
+        itemlist.append(Item(channel=__channel__,
+                             action="play",
+                             server="torrent",
+                             title="[COLOR darkkhaki].torrent [/COLOR]""[COLOR azure]" + title[0] + "[/COLOR]",
+                             fulltitle=title[0],
+                             url="magnet:"+scrapedurl,
+                             thumbnail=scrapedimg,
+                             fanart=scrapedimg,
+                             plot=item.plot,
+                             folder=False))
 
     return itemlist
 #=================================================================
