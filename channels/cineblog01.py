@@ -584,7 +584,7 @@ def play(item):
                 data = scrapertools.get_match(data, r'<a href="([^"]+)".*?class="btn-wrapper">.*?licca.*?</a>')
             except IndexError:
                 data = scrapertools.get_header_from_response(item.url, headers=headers, header_to_get="Location")
-        if 'vcrypt' in data:
+        while 'vcrypt' in data:
             data = scrapertools.get_header_from_response(data, headers=headers, header_to_get="Location")
         logger.debug("##### play go.php data ##\n%s\n##" % data)
     elif "/link/" in item.url:
@@ -599,7 +599,7 @@ def play(item):
             logger.debug("##### The content is yet unpacked")
 
         data = scrapertools.get_match(data, 'var link(?:\s)?=(?:\s)?"([^"]+)";')
-        if 'vcrypt' in data:
+        while 'vcrypt' in data:
             data = scrapertools.get_header_from_response(data, headers=headers, header_to_get="Location")
         logger.debug("##### play /link/ data ##\n%s\n##" % data)
     else:
