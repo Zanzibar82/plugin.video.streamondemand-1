@@ -20,7 +20,7 @@ __type__ = "generic"
 __title__ = "CineBlog 01"
 __language__ = "IT"
 
-sito = "http://www.cb01.pw"
+sito = "http://www.cb01.uno"
 
 headers = [
     ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0'],
@@ -265,10 +265,10 @@ def search(item, texto):
     try:
 
         if item.extra == "movie":
-            item.url = "http://www.cb01.pw/?s=" + texto
+            item.url = "http://www.cb01.uno/?s=" + texto
             return peliculas(item)
         if item.extra == "serie":
-            item.url = "http://www.cb01.pw/serietv/?s=" + texto
+            item.url = "http://www.cb01.uno/serietv/?s=" + texto
             return listserie(item)
 
     # Se captura la excepción, para no interrumpir al buscador global si un canal falla
@@ -570,7 +570,7 @@ def play(item):
     if '/goto/' in item.url:
         item.url = item.url.split('/goto/')[-1].decode('base64')
 
-    item.url = item.url.replace('http://cineblog01.pw', 'http://k4pp4.pw')
+    item.url = item.url.replace('http://cineblog01.uno', 'http://k4pp4.pw')
 
     logger.debug("##############################################################")
     if "go.php" in item.url:
