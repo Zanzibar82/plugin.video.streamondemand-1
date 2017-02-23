@@ -72,7 +72,7 @@ def categorias(item):
     itemlist = []
 
     # Descarga la pagina
-    data = scrapertools.cache_page(item.url, headers=headers)
+    data = scrapertools.anti_cloudflare(item.url, headers)
     bloque = scrapertools.get_match(data, '<ul class="genres scrolling">(.*?)</ul>')
 
     # Extrae las entradas (carpetas)
@@ -110,7 +110,7 @@ def peliculas_src(item):
     itemlist = []
 
     # Descarga la pagina
-    data = scrapertools.cache_page(item.url, headers=headers)
+    data = scrapertools.anti_cloudflare(item.url, headers)
 
     patron = '<div class="thumbnail animation-2"><a href="(.*?)"><img src="(.*?)" alt="(.*?)" />[^>]+>(.*?)</span>'
     matches = re.compile(patron, re.DOTALL).findall(data)
@@ -147,7 +147,7 @@ def peliculas(item):
     itemlist = []
 
     # Descarga la pagina
-    data = scrapertools.cache_page(item.url, headers=headers)
+    data = scrapertools.anti_cloudflare(item.url, headers)
 
     # Extrae las entradas (carpetas)
     patron = '<div class="poster">\s*<a href="([^"]+)"><img src="([^"]+)" alt="([^"]+)"></a>'
@@ -195,7 +195,7 @@ def serie(item):
     itemlist = []
 
     # Descarga la pagina
-    data = scrapertools.cache_page(item.url, headers=headers)
+    data = scrapertools.anti_cloudflare(item.url, headers)
 
     # Extrae las entradas (carpetas)
     patron = '<div class="poster">\s*<a href="([^"]+)"><img src="([^"]+)" alt="([^"]+)"></a>'
@@ -245,7 +245,7 @@ def episodios(item):
 
     patron='<ul class="episodios">.*?</ul>'
 
-    data = scrapertools.cache_page(item.url, headers=headers)
+    data = scrapertools.anti_cloudflare(item.url, headers)
     matches = re.compile(patron, re.DOTALL).findall(data)
 
     for match in matches:
@@ -289,7 +289,7 @@ def episodios(item):
 def findvideos(item):
     logger.info("[streaminglove.py] play")
 
-    data = scrapertools.cache_page(item.url, headers=headers)
+    data = scrapertools.anti_cloudflare(item.url, headers)
 
     patron = '<td><a class="link_a" href="(.*?)" target="_blank">'
     matches = re.compile(patron, re.DOTALL).findall(data)
