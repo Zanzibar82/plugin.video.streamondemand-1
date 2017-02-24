@@ -11,6 +11,7 @@ import urlparse
 from core import config
 from core import logger
 from core import scrapertools
+from core import servertools
 from core.item import Item
 from core.tmdb import infoSod
 
@@ -203,48 +204,53 @@ def episodios(item):
 
 
 def findvideos(item):
-    logger.info("[seriehd1.py] findvideos")
+    logger.info("[seriehd.py] findvideos")
+
     itemlist = []
 
+    # Descarga la página
     data = scrapertools.anti_cloudflare(item.url, headers).replace('\n', '')
 
-    patron = '<iframe id="iframeVid" width=".+?" height=".+?" src="([^"]+)" allowfullscreen="">'
+    patron = r'<iframe id="iframeVid" width=".+?" height=".+?" src="([^"]+)" allowfullscreen="">'
     url = scrapertools.find_single_match(data, patron)
 
-    data = scrapertools.cache_page(url, headers=headers).replace('\n', '').replace('> <', '><')
+    if 'hdpass' in url:
+        data = scrapertools.cache_page(url, headers=headers)
 
-    patron_res = '<div class="row mobileRes">(.*?)</div>'
-    patron_mir = '<div class="row mobileMirrs">(.*?)</div>'
-    patron_media = r'<input type="hidden" name="urlEmbed" data-mirror="([^"]+)" id="urlEmbed" value="([^"]+)"/>'
+        start = data.find('<div class="row mobileRes">')
+        end = data.find('<div id="playerFront">', start)
+        data = data[start:end]
 
-    res = scrapertools.find_single_match(data, patron_res)
+        patron_res = '<div class="row mobileRes">(.*?)</div>'
+        patron_mir = '<div class="row mobileMirrs">(.*?)</div>'
+        patron_media = r'<input type="hidden" name="urlEmbed" data-mirror="([^"]+)" id="urlEmbed" value="([^"]+)"/>'
 
-    for res_url, res_video in scrapertools.find_multiple_matches(res, '<option.*?value="([^"]+?)">([^<]+?)</option>'):
+        res = scrapertools.find_single_match(data, patron_res)
 
-        data = scrapertools.cache_page(urlparse.urljoin(item.url, res_url), headers=headers).replace('\n', '').replace('> <', '><')
+        urls = []
+        for res_url, res_video in scrapertools.find_multiple_matches(res, '<option.*?value="([^"]+?)">([^<]+?)</option>'):
 
-        mir = scrapertools.find_single_match(data, patron_mir)
+            data = scrapertools.cache_page(urlparse.urljoin(url, res_url), headers=headers).replace('\n', '')
 
-        for mir_url in scrapertools.find_multiple_matches(mir, '<option.*?value="([^"]+?)">[^<]+?</value>'):
+            mir = scrapertools.find_single_match(data, patron_mir)
 
-            data = scrapertools.cache_page(urlparse.urljoin(item.url, mir_url), headers=headers).replace('\n', '').replace('> <', '><')
+            for mir_url in scrapertools.find_multiple_matches(mir, '<option.*?value="([^"]+?)">[^<]+?</value>'):
 
-            for media_label, media_url in re.compile(patron_media).findall(data):
-                media_label = scrapertools.decodeHtmlentities(media_label)
+                data = scrapertools.cache_page(urlparse.urljoin(url, mir_url), headers=headers).replace('\n', '')
 
-                if media_label == 'videomega':
-                    media_label = 'rapidvideocom'
+                for media_label, media_url in re.compile(patron_media).findall(data):
+                    urls.append(url_decode(media_url))
 
-                itemlist.append(
-                    Item(channel=__channel__,
-                         server=media_label,
-                         action="play",
-                         title=item.title + ' - [%s @%s]' % (media_label, res_video),
-                         url=url_decode(media_url),
-                         folder=False))
+        itemlist = servertools.find_video_items(data='\n'.join(urls))
+        for videoitem in itemlist:
+            videoitem.title = item.title + videoitem.title
+            videoitem.fulltitle = item.fulltitle
+            videoitem.thumbnail = item.thumbnail
+            videoitem.show = item.show
+            videoitem.plot = item.plot
+            videoitem.channel = __channel__
 
     return itemlist
-
 
 def url_decode(url_enc):
     lenght = len(url_enc)
