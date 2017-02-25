@@ -7,6 +7,7 @@
 import re
 import urlparse
 
+import lib.pyaes as aes
 from core import config
 from core import logger
 from core import scrapertools
@@ -15,7 +16,7 @@ from core.item import Item
 from core.tmdb import infoSod
 
 __channel__ = "filmperevolvere"
-__category__ = "F"
+__category__ = "F,C"
 __type__ = "generic"
 __title__ = "filmperevolvere (IT)"
 __language__ = "IT"
@@ -32,8 +33,7 @@ headers = [
     ['Referer', host],
     ['DNT', '1'],
     ['Upgrade-Insecure-Requests', '1'],
-    ['Cache-Control', 'max-age=0'],
-    ['Cookie', '__test=d764c0ee1c67441cb99b6768b6136b77']
+    ['Cache-Control', 'max-age=0']
 ]
 
 
@@ -61,7 +61,6 @@ def mainlist(item):
 
     return itemlist
 
-
 def search(item, texto):
     logger.info("[filmperevolvere.py] " + item.url + " search " + texto)
     item.url = host + "/?s=" + texto
@@ -79,6 +78,9 @@ def search(item, texto):
 
 def categorie(item):
     itemlist = []
+
+    c = get_test_cookie(item.url)
+    if c: headers.append(['Cookie', c])
 
     # Descarga la pagina
     data = scrapertools.cache_page(item.url, headers=headers)
@@ -100,10 +102,12 @@ def categorie(item):
 
     return itemlist
 
-
 def peliculas(item):
     logger.info("streamondemand.filmperevolvere peliculas")
     itemlist = []
+
+    c = get_test_cookie(item.url)
+    if c: headers.append(['Cookie', c])
 
     # Descarga la pagina
     data = scrapertools.cache_page(item.url, headers=headers)
@@ -114,6 +118,7 @@ def peliculas(item):
 
     for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
         scrapedplot = ""
+        scrapedtitle = scrapedtitle.title()
         if DEBUG: logger.info(
             "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(infoSod(
@@ -153,6 +158,9 @@ def peliculas_src(item):
     logger.info("streamondemand.filmperevolvere peliculas")
     itemlist = []
 
+    c = get_test_cookie(item.url)
+    if c: headers.append(['Cookie', c])
+
     # Descarga la pagina
     data = scrapertools.cache_page(item.url, headers=headers)
 
@@ -162,6 +170,7 @@ def peliculas_src(item):
 
     for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
         scrapedplot = ""
+        scrapedtitle = scrapedtitle.title()
         if DEBUG: logger.info(
             "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(infoSod(
@@ -200,6 +209,9 @@ def peliculas_src(item):
 def findvideos(item):
     logger.info("streamondemand.filmperevolvere findvideos")
 
+    c = get_test_cookie(item.url)
+    if c: headers.append(['Cookie', c])
+
     # Descarga la página
     data = scrapertools.cache_page(item.url, headers=headers)
 
@@ -218,3 +230,16 @@ def findvideos(item):
 def HomePage(item):
     import xbmc
     xbmc.executebuiltin("ReplaceWindow(10024,plugin://plugin.video.streamondemand)")
+
+
+def get_test_cookie(url):
+    data = scrapertools.cache_page(url, headers=headers)
+    a = scrapertools.find_single_match(data, 'a=toNumbers\("([^"]+)"\)')
+    if a:
+        b = scrapertools.find_single_match(data, 'b=toNumbers\("([^"]+)"\)')
+        if b:
+            c = scrapertools.find_single_match(data, 'c=toNumbers\("([^"]+)"\)')
+            if c:
+                cookie = aes.AESModeOfOperationCBC(a.decode('hex'), iv=b.decode('hex')).decrypt(c.decode('hex'))
+                return '__test=%s' % cookie.encode('hex')
+    return ''
