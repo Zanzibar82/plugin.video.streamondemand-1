@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<channel>
+    <id>subzero</id>
+    <name>SubZero</name>
+
+    <active>true</active>
+    <adult>false</adult>
+    <language>it</language>
+
+    <fanart></fanart>
+    <thumbnail>https://raw.githubusercontent.com/MrTruth0/imgs/master/SOD/Channels/SubZero.png</thumbnail>
+    <bannermenu>https://raw.githubusercontent.com/MrTruth0/imgs/master/SOD/Channels/SubZero.png</bannermenu>
+
+    <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
+    <version>1</version>
+    <date>25/02/2017</date>
+    <changes>new channel</changes>
+
+    <categories>
+        <category>anime</category>
+        <category>torrent</category>
+    </categories>
+
+ 	<settings>
+		<id>include_in_global_search</id>
+		<type>bool</type>
+		<label>Includi ricerca globale</label>
+		<default>true</default>
+		<enabled>true</enabled>
+		<visible>true</visible>
+	</settings>
+</channel>
