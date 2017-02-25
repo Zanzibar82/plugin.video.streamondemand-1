@@ -16,7 +16,7 @@ from core.item import Item
 from core.tmdb import infoSod
 
 __channel__ = "filmperevolvere"
-__category__ = "F"
+__category__ = "F,C"
 __type__ = "generic"
 __title__ = "filmperevolvere (IT)"
 __language__ = "IT"
@@ -61,7 +61,6 @@ def mainlist(item):
 
     return itemlist
 
-
 def search(item, texto):
     logger.info("[filmperevolvere.py] " + item.url + " search " + texto)
     item.url = host + "/?s=" + texto
@@ -103,7 +102,6 @@ def categorie(item):
 
     return itemlist
 
-
 def peliculas(item):
     logger.info("streamondemand.filmperevolvere peliculas")
     itemlist = []
@@ -120,6 +118,7 @@ def peliculas(item):
 
     for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
         scrapedplot = ""
+        scrapedtitle = scrapedtitle.title()
         if DEBUG: logger.info(
             "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(infoSod(
@@ -171,6 +170,7 @@ def peliculas_src(item):
 
     for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
         scrapedplot = ""
+        scrapedtitle = scrapedtitle.title()
         if DEBUG: logger.info(
             "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
         itemlist.append(infoSod(
