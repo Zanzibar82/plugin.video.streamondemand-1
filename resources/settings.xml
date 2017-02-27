@@ -135,9 +135,9 @@
         <!--<setting label="La 'lista blanca' sólo muestra los enlaces con los servidores que se indiquen, por ejemplo: 'streamcloud, streaminto'" type="lsep"/>-->
         <setting id="blacklist" type="text" label="30070" enable="eq(-3,true)" default=""/>
 
-        <setting label="Info de películas/series en menú contextual" type="lsep"/>
-        <setting id="infoplus" type="bool" label="Mostrar opción Infoplus" default="true"/>
-        <setting id="extended_info" type="bool" label="Mostrar opción ExtendedInfo (Necesario addon externo)" default="false"/>
+        <setting label="Menu contestuale info film/serie" type="lsep"/>
+        <setting id="infoplus" type="bool" label="Mostra opzioni Infoplus" default="true"/>
+        <setting id="extended_info" type="bool" label="Mostra opzioni ExtendedInfo (necessario addon esterno)" default="false"/>
     </category>
 
 </settings>
