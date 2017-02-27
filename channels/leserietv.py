@@ -25,7 +25,7 @@ __language__ = "IT"
 
 DEBUG = config.get_setting("debug")
 
-host = 'http://www.leserie.online'
+host = 'http://www.guardareserie.tv'
 
 headers = [
     ['User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0'],
@@ -208,7 +208,7 @@ def search(item, texto):
     itemlist = []
 
     post = "do=search&subaction=search&story=" + texto
-    data = scrapertools.cache_page(host, post=post, headers=headers)
+    data = scrapertools.cache_page("http://www.guardareserie.tv", post=post, headers=headers)
 
     patron = '<div class="video-item-cover"[^<]+<a href="(.*?)">[^<]+<img src="(.*?)" alt="(.*?)">'
     matches = re.compile(patron, re.DOTALL).findall(data)

@@ -8,13 +8,13 @@
 	<language>it</language>
 
 	<fanart></fanart>
-	<thumbnail>http://www.leserie.online/templates/LeserieTv/images/logo.png</thumbnail>
-	<bannermenu>http://www.leserie.online/templates/LeserieTv/images/logo.png</bannermenu>
+	<thumbnail>http://www.guardareserie.tv/templates/LeserieTv/images/logo3.png</thumbnail>
+	<bannermenu>http://www.guardareserie.tv/templates/LeserieTv/images/logo3.png</bannermenu>
 
 	<update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
-	<version>14</version>
-	<date>27/11/2016</date>
-	<changes>fix findovideos</changes>
+	<version>15</version>
+	<date>25/02/2017</date>
+	<changes>fix host</changes>
 
 	<categories>
 		<category>serie</category>
