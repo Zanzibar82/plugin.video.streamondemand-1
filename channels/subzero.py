@@ -8,7 +8,6 @@
 
 import re
 
-from core import config
 from core import logger
 from core import scrapertools
 from core.item import Item
@@ -36,7 +35,7 @@ def mainlist(item):
                      action="ultimitorrent",
                      title=color("Ultimi torrent", "orange"),
                      url="https://www.nyaa.se/?page=separate&user=97824",
-                     thumbnail="https://raw.githubusercontent.com/MrTruth0/imgs/master/SOD/Channels/SubZero.png",),
+                     thumbnail="https://raw.githubusercontent.com/MrTruth0/imgs/master/SOD/Channels/SubZero.png"),
                 Item(channel=__channel__,
                      action="listacompleta",
                      title=color("Lista completa", "azure"),
@@ -99,7 +98,7 @@ def listacompleta (item):
 
 # ----------------------------------------------------------------------------------------------------------------
 def content(item):
-    logger.info("[SubZero.py]==> episodi")
+    logger.info("[SubZero.py]==> content")
     itemlist = []
 
     data = item.extra
