@@ -22,7 +22,7 @@ __creationdate__ = "20120605"
 
 DEBUG = config.get_setting("debug")
 
-host = "http://www.filmsenzalimiti.click"
+host = "http://www.filmsenzalimiti.cool"
 
 
 def isGeneric():
