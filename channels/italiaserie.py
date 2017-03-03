@@ -168,17 +168,18 @@ def episodios(item):
     if config.get_library_support() and len(itemlist) != 0:
         itemlist.append(
             Item(channel=__channel__,
-                 title="Aggiungi alla libreria " + item.title,
+                 title="Aggiungi alla libreria",
                  url=item.url,
                  action="add_serie_to_library",
-                 extra="episodios" + "###" + item.extra,
+                 extra="episodios",
+                 contentType="episode",
                  show=item.show))
         itemlist.append(
             Item(channel=__channel__,
                  title="Scarica tutti gli episodi della serie",
                  url=item.url,
                  action="download_all_episodes",
-                 extra="episodios" + "###" + item.extra,
+                 extra="episodios",
                  show=item.show))
 
     return itemlist

@@ -156,7 +156,7 @@ def series(item):
                                         "action": "eliminar",
                                         "channel": "biblioteca",
                                         "multicanal": multicanal},
-                                       {"title": "Buscar nuevos episodios ahora",
+                                       {"title": "Download nuovi episodi adesso",
                                         "action": "update_serie",
                                         "channel":"biblioteca"}]
                 # ,{"title": "Cambiar contenido (PENDIENTE)",
