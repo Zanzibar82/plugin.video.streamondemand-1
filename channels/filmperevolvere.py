@@ -133,7 +133,7 @@ def peliculas(item):
                  folder=True), tipo='movie'))
 
     # Extrae el paginador
-    patronvideos = '<link rel=\'next\' href=\'(.*?)\' />'
+    patronvideos = 'rel=\'next\' href=\'(.*?)\' />'
     matches = re.compile(patronvideos, re.DOTALL).findall(data)
 
     if len(matches) > 0:
