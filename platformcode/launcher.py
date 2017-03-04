@@ -421,9 +421,12 @@ def play_from_library(item):
     # modificamos el action (actualmente la biblioteca necesita "findvideos" ya que es donde se buscan las fuentes
     item.action = "findvideos"
 
+    window_type = config.get_setting("window_type", "biblioteca")
+
     # y volvemos a lanzar kodi
-    if xbmc.getCondVisibility('Window.IsMedia'):
-        xbmc.executebuiltin("Container.Update(" + sys.argv[0] + "?" + item.tourl() + ")")
+    if xbmc.getCondVisibility('Window.IsMedia') and not window_type == 1:
+        # Ventana convencional
+		xbmc.executebuiltin("Container.Update(" + sys.argv[0] + "?" + item.tourl() + ")")
 
     else:
         from channels import biblioteca
@@ -433,7 +436,9 @@ def play_from_library(item):
 
         itemlist = biblioteca.findvideos(item)
 
-        p_dialog.update(50, '')
+        p_dialog.update(100, '')
+        xbmc.sleep(500)
+        p_dialog.close()
 
         if len(itemlist) > 0:
             # El usuario elige el mirror
@@ -446,8 +451,6 @@ def play_from_library(item):
                 return
 
             item = biblioteca.play(itemlist[seleccion])[0]
-            p_dialog.update(100, '')
 
             platformtools.play_video(item)
-            p_dialog.close()
             xbmc_library.mark_auto_as_watched(itemlist[seleccion])
