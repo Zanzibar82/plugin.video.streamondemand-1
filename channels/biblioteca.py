@@ -222,7 +222,7 @@ def get_temporadas(item):
             itemlist = sorted(itemlist, key=lambda it: int(it.contentSeason))
 
         if config.get_setting("show_all_seasons", "biblioteca") == True:
-            new_item = item.clone(action="get_episodios", title="*Todas las temporadas")
+            new_item = item.clone(action="get_episodios", title="*Tutte le stagioni")
             new_item.infoLabels["playcount"] = 0
             itemlist.insert(0, new_item)
 
