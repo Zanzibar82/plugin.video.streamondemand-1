@@ -65,6 +65,17 @@
 	</settings>
 
 	<settings>
+		<id>window_type</id>
+		<type>list</type>
+		<label>Mostra collegamenti in</label>
+		<default>0</default>
+		<enabled>true</enabled>
+		<visible>true</visible>
+		<lvalues>Finestra convenzionale</lvalues>
+		<lvalues>Finestra pop-up</lvalues>
+	</settings>
+	
+	<settings>
 		<id>library_mode</id>
 		<type>list</type>
 		<label>Locazione Database</label>
