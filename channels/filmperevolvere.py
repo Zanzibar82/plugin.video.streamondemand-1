@@ -23,7 +23,7 @@ __language__ = "IT"
 
 DEBUG = config.get_setting("debug")
 
-host = "http://filmperevolvere.byethost4.com"
+host = "http://filmperevolvere.ga"
 
 headers = [
     ['User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0'],
@@ -66,7 +66,7 @@ def search(item, texto):
     item.url = host + "/?s=" + texto
 
     try:
-        return peliculas_src(item)
+        return peliculas(item)
 
     except:
         import sys
@@ -79,15 +79,15 @@ def search(item, texto):
 def categorie(item):
     itemlist = []
 
-    c = get_test_cookie(item.url)
-    if c: headers.append(['Cookie', c])
+    #c = get_test_cookie(item.url)
+    #if c: headers.append(['Cookie', c])
 
     # Descarga la pagina
     data = scrapertools.cache_page(item.url, headers=headers)
-    bloque = scrapertools.get_match(data, '<h3>Categorie</h3>(.*?)</ul>')
+    bloque = scrapertools.get_match(data, '<h3>Genres[^>]+></span></h3>(.*?)</ul>')
 
     # Extrae las entradas (carpetas)
-    patron = '<a href="(.*?)" >(.*?)</a>'
+    patron = '<li\s*class=".*?"><a\s*href="([^"]+)" >(.*?)</a>[^>]+>[^>]+></li>'
     matches = re.compile(patron, re.DOTALL).findall(bloque)
 
     for scrapedurl, scrapedtitle in matches:
@@ -106,66 +106,14 @@ def peliculas(item):
     logger.info("streamondemand.filmperevolvere peliculas")
     itemlist = []
 
-    c = get_test_cookie(item.url)
-    if c: headers.append(['Cookie', c])
+    #c = get_test_cookie(item.url)
+    #if c: headers.append(['Cookie', c])
 
     # Descarga la pagina
     data = scrapertools.cache_page(item.url, headers=headers)
 
     # Extrae las entradas (carpetas)
-    patron = '<a href="([^"]+)">\s*<div class="image">\s*<img src="([^"]+)" alt="([^"]+)"[^>]+>'
-    matches = re.compile(patron, re.DOTALL).findall(data)
-
-    for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
-        scrapedplot = ""
-        scrapedtitle = scrapedtitle.title()
-        if DEBUG: logger.info(
-            "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
-        itemlist.append(infoSod(
-            Item(channel=__channel__,
-                 action="findvideos",
-                 fulltitle=scrapedtitle,
-                 show=scrapedtitle,
-                 title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
-                 url=scrapedurl,
-                 thumbnail=scrapedthumbnail,
-                 plot=scrapedplot,
-                 folder=True), tipo='movie'))
-
-    # Extrae el paginador
-    patronvideos = '<link rel=\'next\' href=\'(.*?)\' />'
-    matches = re.compile(patronvideos, re.DOTALL).findall(data)
-
-    if len(matches) > 0:
-        scrapedurl = urlparse.urljoin(item.url, matches[0])
-        itemlist.append(
-            Item(channel=__channel__,
-                 action="HomePage",
-                 title="[COLOR yellow]Torna Home[/COLOR]",
-                 folder=True)),
-        itemlist.append(
-            Item(channel=__channel__,
-                 action="peliculas",
-                 title="[COLOR orange]Successivo >>[/COLOR]",
-                 url=scrapedurl,
-                 thumbnail="http://2.bp.blogspot.com/-fE9tzwmjaeQ/UcM2apxDtjI/AAAAAAAAeeg/WKSGM2TADLM/s1600/pager+old.png",
-                 folder=True))
-
-    return itemlist
-
-
-def peliculas_src(item):
-    logger.info("streamondemand.filmperevolvere peliculas")
-    itemlist = []
-
-    c = get_test_cookie(item.url)
-    if c: headers.append(['Cookie', c])
-
-    # Descarga la pagina
-    data = scrapertools.cache_page(item.url, headers=headers)
-
-    # Extrae las entradas (carpetas)
-    patron = '<a href="([^"]+)">\s*<div class="image">\s*<img src="([^"]+)" alt="([^"]+)"[^>]+>'
+    patron = '<a\s*href="([^"]+)"><img\s*src="([^"]+)" alt="([^"]+)"[^>]+>'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
     for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
@@ -208,8 +156,8 @@ def peliculas_src(item):
 def findvideos(item):
     logger.info("streamondemand.filmperevolvere findvideos")
 
-    c = get_test_cookie(item.url)
-    if c: headers.append(['Cookie', c])
+    #c = get_test_cookie(item.url)
+    #if c: headers.append(['Cookie', c])
 
     # Descarga la página
     data = scrapertools.cache_page(item.url, headers=headers)
@@ -230,7 +178,7 @@ def HomePage(item):
     import xbmc
     xbmc.executebuiltin("ReplaceWindow(10024,plugin://plugin.video.streamondemand)")
 
-
+'''
 def get_test_cookie(url):
     data = scrapertools.cache_page(url, headers=headers)
     a = scrapertools.find_single_match(data, 'a=toNumbers\("([^"]+)"\)')
@@ -242,3 +190,4 @@ def get_test_cookie(url):
                 cookie = aes.AESModeOfOperationCBC(a.decode('hex'), iv=b.decode('hex')).decrypt(c.decode('hex'))
                 return '__test=%s' % cookie.encode('hex')
     return ''
+'''
