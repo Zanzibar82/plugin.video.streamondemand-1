@@ -95,7 +95,7 @@ def mainlist(item):
             if i.contentType == "episode" and i.contentSerieName == item.contentSerieName and i.contentChannel == item.contentChannel:
             
                   i.title = TITLE_FILE % (STATUS_COLORS[i.downloadStatus], i.downloadProgress, 
-                                          "%dx%0.2d: %s" % (i.contentSeason, i.contentEpisodeNumber,i.contentTitle))
+                                          "%dx%0.2d: %s" % (i.contentSeason, i.contentEpisodeNumber, i.contentTitle))
                   itemlist.append(i)  
 
                     
@@ -109,7 +109,7 @@ def mainlist(item):
 
     # Si hay alguno con error
     if 3 in estados:
-        itemlist.insert(0, Item(channel=item.channel, action="restart_error", title="Reinizzializza download con errore",
+        itemlist.insert(0, Item(channel=item.channel, action="restart_error", title="Reinizializza download con errore",
                                 contentType = item.contentType, contentChannel=item.contentChannel, contentSerieName = item.contentSerieName))
 
     # Si hay alguno pendiente

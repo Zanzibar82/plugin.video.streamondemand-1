@@ -180,6 +180,7 @@ def episodios(item):
                  url=item.url,
                  action="download_all_episodes",
                  extra="episodios",
+                 contentType="episode",
                  show=item.show))
 
     return itemlist
