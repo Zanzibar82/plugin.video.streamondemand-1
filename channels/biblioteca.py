@@ -191,7 +191,7 @@ def get_temporadas(item):
     for f in ficheros:
         if f.endswith('.json'):
             season = f.split('x')[0]
-            dict_temp[season] = "Temporada %s" % season
+            dict_temp[season] = "Stagione %s" % season
 
     if config.get_setting("no_pile_on_seasons", "biblioteca") == 1 and len(dict_temp) == 1: # Sólo si hay una temporada
         return get_episodios(item)
