@@ -518,14 +518,21 @@ def listdir(path):
 def join(*paths):
     """
     Junta varios directorios
+    Corrige las barras "/" o "\" segun el sistema operativo y si es o no smaba
     @rytpe: str
     @return: la ruta concatenada
     """
-    paths = [p for p in paths if p] 
-    if paths[0].lower().startswith("smb://"):
-        return paths[0].strip("/") + "/" + "/".join(paths[1:])
+    list_path = []
+    if paths[0].startswith("/"): list_path.append("")
+    
+    for path in paths:
+      if path:
+        list_path += path.replace("\\", "/").strip("/").split("/")
+        
+    if list_path[0].lower() == "smb:":
+        return "/".join(list_path)
     else:
-        return os.path.join(*paths)
+        return os.sep.join(list_path)
         
         
 def split(path):

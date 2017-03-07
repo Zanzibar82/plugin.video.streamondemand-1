@@ -95,7 +95,7 @@ def mainlist(item):
             if i.contentType == "episode" and i.contentSerieName == item.contentSerieName and i.contentChannel == item.contentChannel:
             
                   i.title = TITLE_FILE % (STATUS_COLORS[i.downloadStatus], i.downloadProgress, 
-                                          "%dx%0.2d: %s" % (i.contentSeason, i.contentEpisodeNumber, i.contentTitle))
+                                          "%dx%0.2d: %s" % (i.contentSeason, i.contentEpisodeNumber,i.contentTitle))
                   itemlist.append(i)  
 
                     

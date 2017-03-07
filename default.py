@@ -27,7 +27,6 @@
 
 import os
 import sys
-import xbmc
 
 from core import config
 from core import logger
@@ -39,7 +38,8 @@ sys.path.append(librerias)
 
 from platformcode import launcher
 
-if sys.argv[1] == "1":
+if sys.argv[2] == "":
     launcher.start()
-
-launcher.run()
+    launcher.run()
+else:
+  launcher.run()

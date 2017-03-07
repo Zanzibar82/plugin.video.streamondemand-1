@@ -35,6 +35,7 @@ from core import jsontools
 from core import logger
 from core.library import TVSHOWS_PATH, FOLDER_TVSHOWS, FOLDER_MOVIES
 from platformcode import platformtools
+from platformcode.xbmc_helpers import execute_sql_kodi
 
 
 addon_name = sys.argv[0].strip()
@@ -66,13 +67,15 @@ def mark_auto_as_watched(item):
 
         xbmc.sleep(5000)
 
-        while xbmc.Player().isPlaying():
+        sync_with_trakt = False
+
+        while platformtools.is_playing():
             tiempo_actual = xbmc.Player().getTime()
             totaltime = xbmc.Player().getTotalTime()
 
             mark_time = 0
             if condicion == 0:  # '5 minutos'
-                mark_time = 300000  # FOR DEBUG = 30
+                mark_time = 300
             elif condicion == 1:  # '30%'
                 mark_time = totaltime * 0.3
             elif condicion == 2:  # '50%'
@@ -85,15 +88,40 @@ def mark_auto_as_watched(item):
 
             if tiempo_actual > mark_time:
                 item.playcount = 1
+                sync_with_trakt = True
                 from channels import biblioteca
                 biblioteca.mark_content_as_watched(item)
                 break
 
             xbmc.sleep(30000)
 
+        # Sincronizacion silenciosa con Trakt
+        if sync_with_trakt:
+            if config.get_setting("sync_trakt_watched", "biblioteca"):
+                sync_trakt()
+
     # Si esta configurado para marcar como visto
-    if config.get_setting("mark_as_watched", "biblioteca") == True:
+    if config.get_setting("mark_as_watched", "biblioteca"):
         Thread(target=mark_as_watched_subThread, args=[item]).start()
+
+
+def sync_trakt(silent=True):
+
+    # Para que la sincronizacion no sea silenciosa vale con silent=False
+    if xbmc.getCondVisibility('System.HasAddon("script.trakt")'):
+        notificacion = True
+        if (not config.get_setting("sync_trakt_notification", "biblioteca") and
+                platformtools.is_playing()):
+            notificacion = False
+
+        xbmc.executebuiltin('RunScript(script.trakt,action=sync,silent=%s)' % silent)
+        logger.info("Sincronizacion con Trakt iniciada")
+
+        if notificacion:
+            platformtools.dialog_notification("streamondemand",
+                                              "Sincronizzazione con Trakt iniziata",
+                                              icon=0,
+                                              time=2000)
 
 
 def mark_content_as_watched_on_kodi(item, value=1):
@@ -197,75 +225,6 @@ def mark_season_as_watched_on_kodi(item, value=1):
 
     execute_sql_kodi(sql)
 
-
-def execute_sql_kodi(sql):
-    """
-    Ejecuta la consulta sql contra la base de datos de kodi
-    @param sql: Consulta sql valida
-    @type sql: str
-    @return: Numero de registros modificados o devueltos por la consulta
-    @rtype nun_records: int
-    @return: lista con el resultado de la consulta
-    @rtype records: list of tuples
-    """
-    logger.info()
-    file_db = ""
-    nun_records = 0
-    records = None
-
-    # Buscamos el nombre de la BBDD de videos segun la version de kodi
-    code_db = {'10': 'MyVideos37.db', '11': 'MyVideos60.db', '12': 'MyVideos75.db', '13': 'MyVideos78.db',
-               '14': 'MyVideos90.db', '15': 'MyVideos93.db', '16': 'MyVideos99.db', '17': 'MyVideos107.db'}
-
-    video_db = code_db.get(xbmc.getInfoLabel("System.BuildVersion").split(".", 1)[0], '')
-    if video_db:
-        file_db = filetools.join(xbmc.translatePath("special://userdata/Database"), video_db)
-
-    # metodo alternativo para localizar la BBDD
-    if not file_db or not filetools.exists(file_db):
-        file_db = ""
-        for f in filetools.listdir(xbmc.translatePath("special://userdata/Database")):
-            path_f = filetools.join(xbmc.translatePath("special://userdata/Database"), f)
-
-            if filetools.isfile(path_f) and f.lower().startswith('myvideos') and f.lower().endswith('.db'):
-                file_db = path_f
-                break
-
-    if file_db:
-        logger.info("Archivo de BD: %s" % file_db)
-        conn = None
-        try:
-            import sqlite3
-            conn = sqlite3.connect(file_db)
-            cursor = conn.cursor()
-
-            logger.info("Ejecutando sql: %s" % sql)
-            cursor.execute(sql)
-            conn.commit()
-
-            records = cursor.fetchall()
-            if sql.lower().startswith("select"):
-                nun_records = len(records)
-                if nun_records == 1 and records[0][0] is None:
-                    nun_records = 0
-                    records = []
-            else:
-                nun_records = conn.total_changes
-
-            conn.close()
-            logger.info("Consulta ejecutada. Registros: %s" % nun_records)
-
-        except:
-            logger.error("Error al ejecutar la consulta sql")
-            if conn:
-                conn.close()
-
-    else:
-        logger.debug("Base de datos no encontrada")
-
-    return nun_records, records
-
-
 def get_data(payload):
     """
     obtiene la información de la llamada JSON-RPC con la información pasada en payload
@@ -317,10 +276,7 @@ def update(content_type=FOLDER_TVSHOWS, folder=""):
     """
     logger.info()
 
-    librarypath = config.get_setting("librarypath")
-    if librarypath == "":
-        librarypath = "special://home/userdata/addon_data/plugin.video." + config.PLUGIN_NAME + "/library/" + \
-                      content_type + "/"
+    librarypath = config.get_library_config_path()
 
     # Si termina en "/" lo eliminamos
     if librarypath.endswith("/"):
@@ -370,7 +326,7 @@ def establecer_contenido(content_type, silent=False):
         msg_text = "Cartella Libreria personalizzata"
 
         librarypath = config.get_setting("librarypath")
-        if librarypath == "":
+        if librarypath == "special://profile/addon_data/plugin.video.streamondemand/library":
             continuar = True
             if content_type == FOLDER_MOVIES:
                 if not xbmc.getCondVisibility('System.HasAddon(metadata.themoviedb.org)'):
@@ -414,7 +370,6 @@ def establecer_contenido(content_type, silent=False):
                             pass
 
                     continuar = (install and xbmc.getCondVisibility('System.HasAddon(metadata.tvdb.com)'))
-
                     if not continuar:
                         msg_text = "The TVDB non installato."
 
@@ -449,7 +404,7 @@ def establecer_contenido(content_type, silent=False):
                                     downloadtools.downloadfile(url, path_down, continuar=True, headers=[header])
                                     unzipper = ziptools.ziptools()
                                     unzipper.extract(path_down, path_unzip)
-                                    xbmc.executebuiltin('xbmc.UpdateLocalAddons')
+                                    xbmc.executebuiltin('UpdateLocalAddons')
 
                             strSettings = '<settings>\n' \
                                           '    <setting id="fanart" value="true" />\n' \
@@ -462,6 +417,7 @@ def establecer_contenido(content_type, silent=False):
                                 filetools.mkdir(tv_themoviedb_addon_path)
                             if filetools.write(path_settings,strSettings):
                                 continuar = True
+
                         except:
                             pass
 
@@ -474,7 +430,9 @@ def establecer_contenido(content_type, silent=False):
             strPath = ""
             if continuar:
                 continuar = False
-                librarypath = "special://home/userdata/addon_data/plugin.video." + config.PLUGIN_NAME + "/library/"
+                librarypath = config.get_library_config_path()
+                if not librarypath.endswith("/"):
+                    librarypath = librarypath + "/"
 
                 # Buscamos el idPath
                 sql = 'SELECT MAX(idPath) FROM path'
@@ -563,6 +521,7 @@ def establecer_contenido(content_type, silent=False):
 
                 if not continuar:
                     msg_text = "Error al configurar el scraper en la BD."
+
 
         if not continuar:
             heading = "Libreria non %s configurata" % content_type
