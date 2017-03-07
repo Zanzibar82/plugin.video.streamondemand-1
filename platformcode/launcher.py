@@ -253,27 +253,17 @@ def run():
                 descargas.save_download(item)
 
             # Special action for searching, first asks for the words then call the "search" function
-            elif item.action == "search":
+            elif item.action=="search":
                 logger.info("streamondemand.platformcode.launcher search")
-
-                last_search = ""
-                last_search_active = config.get_setting("last_search", "buscador")
-                if last_search_active:
-                    try:
-                        current_saved_searches_list = list(config.get_setting("saved_searches_list", "buscador"))
-                        last_search = current_saved_searches_list[0]
-                    except:
-                        pass
-
-                tecleado = platformtools.dialog_input(last_search)
-                if tecleado is not None:
-                    if last_search_active:
-                        from channels import buscador
-                        buscador.save_search(tecleado)
-
-                    # TODO revisar 'personal.py' porque no tiene función search y daría problemas
-                    # DrZ3r0
-                    itemlist = channel.search(item, tecleado.replace(" ", "+"))
+                
+                import xbmc
+                keyboard = xbmc.Keyboard("")
+                keyboard.doModal()
+                
+                if (keyboard.isConfirmed()):
+                    tecleado = keyboard.getText()
+                    tecleado = tecleado.replace(" ", "+")
+                    itemlist = channel.search(item,tecleado)
                 else:
                     itemlist = []
                 

@@ -55,9 +55,9 @@
         <id>last_search</id>
         <type>bool</type>
         <label>Ricorda ultima ricerca</label>
-        <default>true</default>
-        <enabled>true</enabled>
-        <visible>true</visible>
+        <default>false</default>
+        <enabled>false</enabled>
+        <visible>false</visible>
     </settings>
 
 </channel>
