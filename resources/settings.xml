@@ -115,10 +115,14 @@
         <setting type="sep"/-->
 
         <setting id="path_selection" type="enum" values="Manuale|Ricerca" default="0" label="Modalità inserimento percorso"/>
-        <setting id="downloadpath" type="text" label="30017" default=""/>
-        <setting id="downloadlistpath" type="text" label="30018" default=""/>
-        <setting id="bookmarkpath" type="text" source="video" option="writeable" label="30030" default=""/>
-        <setting id="librarypath" type="text" label="30067" default=""/>
+        <setting id="downloadpath" type="text" label="30017" default="" visible="eq(-1,0)"/>
+        <setting id="downloadpath" type="folder" label="30017" default="" visible="eq(-2,1)"/>
+        <setting id="downloadlistpath" type="text" label="30018" default="" visible="eq(-3,0)"/>
+        <setting id="downloadlistpath" type="folder" label="30018" default="" visible="eq(-4,1)"/>
+        <setting id="bookmarkpath" type="text" source="video" option="writeable" label="30030" default="" visible="eq(-5,0)"/>
+        <setting id="bookmarkpath" type="folder" source="video" option="writeable" label="30030" default="" visible="eq(-6,1)"/>
+        <setting id="librarypath" type="text" label="30067" default="" visible="eq(-7,0)"/>        
+        <setting id="librarypath" type="folder" label="30067" default="" visible="eq(-8,1)"/>
 
         <setting type="sep"/>
         <setting label="Nomi cartelle" type="lsep"/>
