@@ -43,7 +43,7 @@ HOST = "https://api.thetvdb.com"
 HOST_IMAGE = "http://thetvdb.com/banners/"
 TOKEN = config.get_setting("tvdb_token")
 
-DEFAULT_LANG = "es"
+DEFAULT_LANG = "it"
 DEFAULT_HEADERS = {
         'Content-Type': 'application/json',
         'Accept': 'application/json, application/vnd.thetvdb.v2.1.1',
