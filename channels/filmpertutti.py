@@ -5,6 +5,7 @@
 # http://www.mimediacenter.info/foro/viewforum.php?f=36&sid=2e761b3d716d9f7dc625f6edc0a40f86
 # ------------------------------------------------------------
 import re
+
 import urlparse
 
 from core import config
@@ -237,6 +238,7 @@ def episodios(item):
                 itemlist.append(
                     Item(channel=__channel__,
                          action="findvideos",
+                         contentType="episode",
                          title="[COLOR azure]%s[/COLOR]" % (scrapedtitle + " (" + lang_title + ")"),
                          url=data,
                          thumbnail=item.thumbnail,
@@ -282,16 +284,14 @@ def episodios(item):
                  title="Aggiungi alla libreria",
                  url=item.url,
                  action="add_serie_to_library",
-                 extra="episodios",
-                 contentType="episode",
+                 extra="episodios" + "###" + item.extra,
                  show=item.show))
         itemlist.append(
             Item(channel=__channel__,
                  title="Scarica tutti gli episodi della serie",
                  url=item.url,
                  action="download_all_episodes",
-                 extra="episodios",
-                 contentType="episode",
+                 extra="episodios" + "###" + item.extra,
                  show=item.show))
 
     return itemlist

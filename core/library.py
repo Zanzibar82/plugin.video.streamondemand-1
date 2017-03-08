@@ -47,6 +47,7 @@ else:
     FOLDER_TVSHOWS = "SERIES"  # config.get_localized_string(30073)
 MOVIES_PATH = filetools.join(LIBRARY_PATH, FOLDER_MOVIES)
 TVSHOWS_PATH = filetools.join(LIBRARY_PATH, FOLDER_TVSHOWS)
+
 logger.info("LIBRARY_PATH (RAW): " + LIBRARY_PATH)
 # logger.info("MOVIES_PATH (RAW): " + MOVIES_PATH)
 # logger.info("TVSHOWS_PATH (RAW): " + TVSHOWS_PATH)
@@ -65,7 +66,6 @@ if not filetools.exists(MOVIES_PATH):
     if filetools.mkdir(MOVIES_PATH) and config.is_xbmc():
         if config.is_xbmc():
             from platformcode import xbmc_library
-
             xbmc_library.establecer_contenido(FOLDER_MOVIES)
 
 if not filetools.exists(TVSHOWS_PATH):
@@ -73,7 +73,6 @@ if not filetools.exists(TVSHOWS_PATH):
     if filetools.mkdir(TVSHOWS_PATH) and config.is_xbmc():
         if config.is_xbmc():
             from platformcode import xbmc_library
-
             xbmc_library.establecer_contenido(FOLDER_TVSHOWS)
 
 
@@ -98,13 +97,6 @@ def read_nfo(path_nfo, item=None):
     if data:
         head_nfo = data.splitlines()[0] + "\n"
         data = "\n".join(data.splitlines()[1:])
-
-        if not head_nfo.startswith('http'):
-            # url_scraper no valida, xml presente
-            head_nfo = ''  # TODO devolver el xml en head_nfo
-            import re
-            data = re.sub(r"\n|\r|\t|\s{2}|&nbsp;", "", data)
-            data = re.sub("(<tvshow>|<movie>)(.*?)(</tvshow>|</movie>)", "", data)
 
         it_nfo = Item().fromjson(data)
 
@@ -159,7 +151,6 @@ def save_library_movie(item):
         logger.debug("NO ENCONTRADO contentTitle")
         return 0, 0, -1  # Salimos sin guardar
 
-    # TODO configurar para segun el scraper se llamara a uno u otro
     scraper_return = scraper.find_and_set_infoLabels(item)
 
     # Llegados a este punto podemos tener:
@@ -169,20 +160,27 @@ def save_library_movie(item):
     if not scraper_return or not item.infoLabels['code']:
         # TODO de momento si no hay resultado no añadimos nada,
         # aunq podriamos abrir un cuadro para introducir el identificador/nombre a mano
-        logger.debug("NO ENCONTRADO EN SCRAPER O NO TIENE IMDB_ID")
+        logger.debug("NO ENCONTRADO EN SCRAPER O NO TIENE code")
         return 0, 0, -1
 
-    _id = item.infoLabels['code']
+    _id = item.infoLabels['code'][0]
 
     # progress dialog
     p_dialog = platformtools.dialog_progress('streamondemand', 'Aggiunta film...')
 
-    base_name = filetools.validate_path(item.contentTitle).lower()
+    if config.get_setting("original_title_folder", "biblioteca") == 1 and item.infoLabels['originaltitle']:
+        base_name = item.infoLabels['originaltitle']
+    else:
+        base_name = item.contentTitle
+
+    base_name = unicode(filetools.validate_path(base_name.replace('/', '-')), "utf8").lower().encode("utf8")
 
     for raiz, subcarpetas, ficheros in filetools.walk(MOVIES_PATH):
         for c in subcarpetas:
-            if c.endswith("[%s]" % _id):
+            code = scrapertools.find_single_match(c, '\[(.*?)\]')
+            if code and code in item.infoLabels['code']:
                 path = filetools.join(raiz, c)
+                _id = code
                 break
 
     if not path:
@@ -204,10 +202,7 @@ def save_library_movie(item):
     if not nfo_exists:
         # Creamos .nfo si no existe
         logger.info("Creando .nfo: " + nfo_path)
-        if item.infoLabels['tmdb_id']:
-            head_nfo = "https://www.themoviedb.org/movie/%s\n" % item.infoLabels['tmdb_id']
-        else:
-            head_nfo = "Aqui ira el xml"  # TODO
+        head_nfo = scraper.get_nfo(item)
 
         item_nfo = Item(title=item.contentTitle, channel="biblioteca", action='findvideos',
                         library_playcounts={"%s [%s]" % (base_name, _id): 0}, infoLabels=item.infoLabels,
@@ -251,7 +246,6 @@ def save_library_movie(item):
     logger.error("No se ha podido guardar %s en la biblioteca" % item.contentTitle)
     p_dialog.update(100, 'Fallo al añadir...', item.contentTitle)
     p_dialog.close()
-    # TODO habria q poner otra advertencia?
     return 0, 0, -1
 
 
@@ -273,12 +267,11 @@ def save_library_tvshow(item, episodelist):
     # logger.debug(item.tostring('\n'))
     path = ""
 
-    # Si llegados a este punto no tenemos titulo o tmdb_id, salimos
-    if not (item.contentSerieName or item.infoLabels['tmdb_id']) or not item.channel:
-        logger.debug("NO ENCONTRADO contentSerieName NI tmdb_id")
+    # Si llegados a este punto no tenemos titulo o code, salimos
+    if not (item.contentSerieName or item.infoLabels['code']) or not item.channel:
+        logger.debug("NO ENCONTRADO contentSerieName NI code")
         return 0, 0, -1  # Salimos sin guardar
 
-    # TODO configurar para segun el scraper se llame a uno u otro
     scraper_return = scraper.find_and_set_infoLabels(item)
 
     # Llegados a este punto podemos tener:
@@ -288,10 +281,11 @@ def save_library_tvshow(item, episodelist):
     if not scraper_return or not item.infoLabels['code']:
         # TODO de momento si no hay resultado no añadimos nada,
         # aunq podriamos abrir un cuadro para introducir el identificador/nombre a mano
-        logger.debug("NO ENCONTRADO EN SCRAPER O NO TIENE IMDB_ID")
+        logger.debug("NO ENCONTRADO EN SCRAPER O NO TIENE code")
         return 0, 0, -1
 
-    _id = item.infoLabels['code']
+    _id = item.infoLabels['code'][0]
+
     if config.get_setting("original_title_folder", "biblioteca") == 1 and item.infoLabels['originaltitle']:
         base_name = item.infoLabels['originaltitle']
     elif item.infoLabels['title']:
@@ -299,12 +293,14 @@ def save_library_tvshow(item, episodelist):
     else:
         base_name = item.contentSerieName
 
-    base_name = filetools.validate_path(base_name.replace('/', '-')).lower()
+    base_name = unicode(filetools.validate_path(base_name.replace('/', '-')), "utf8").lower().encode("utf8")
 
     for raiz, subcarpetas, ficheros in filetools.walk(TVSHOWS_PATH):
         for c in subcarpetas:
-            if c.endswith("[%s]" % _id):
+            code = scrapertools.find_single_match(c, '\[(.*?)\]')
+            if code and code in item.infoLabels['code']:
                 path = filetools.join(raiz, c)
+                _id = code
                 break
 
     if not path:
@@ -325,11 +321,7 @@ def save_library_tvshow(item, episodelist):
     if not filetools.exists(tvshow_path):
         # Creamos tvshow.nfo, si no existe, con la head_nfo, info de la serie y marcas de episodios vistos
         logger.info("Creando tvshow.nfo: " + tvshow_path)
-        if item.infoLabels['url_scraper']:
-            # head_nfo = "https://www.themoviedb.org/tv/%s\n" % item.infoLabels['tmdb_id']
-            head_nfo = item.infoLabels['url_scraper'] + "\n"
-        else:
-            head_nfo = "Aqui ira el xml"  # TODO
+        head_nfo = scraper.get_nfo(item)
 
         item_tvshow = Item(title=item.contentTitle, channel="biblioteca", action="get_temporadas",
                            fanart=item.infoLabels['fanart'], thumbnail=item.infoLabels['thumbnail'],
@@ -365,8 +357,6 @@ def save_library_tvshow(item, episodelist):
 
     # Guardar los episodios
     insertados, sobreescritos, fallidos = save_library_episodes(path, episodelist, item)
-
-    # TODO si fallidos == -1 podriamos comprobar si es necesario eliminar la serie
 
     return insertados, sobreescritos, fallidos
 
@@ -473,22 +463,13 @@ def save_library_episodes(path, episodelist, serie, silent=False, overwrite=True
             strm_exists = filetools.write(strm_path, '%s?%s' % (addon_name, item_strm.tourl()))
 
         item_nfo = None
-        if (not nfo_exists or overwrite_everything) and e.infoLabels.get("imdb_id"):
+        if (not nfo_exists or overwrite_everything) and e.infoLabels["code"]:
             if not overwrite_everything:
                 nfo_exists_before = False
 
             # Si no existe season_episode.nfo añadirlo
-            if e.infoLabels["tmdb_id"]:
-                scraper.find_and_set_infoLabels(e)
-                head_nfo = "https://www.themoviedb.org/tv/%s/season/%s/episode/%s\n" % (e.infoLabels['tmdb_id'],
-                                                                                        e.contentSeason,
-                                                                                        e.contentEpisodeNumber)
-
-            elif e.infoLabels["tvdb_id"]:
-                head_nfo = e.url_scraper
-
-            else:
-                head_nfo = "Aqui ira el xml"  # TODO
+            scraper.find_and_set_infoLabels(e)
+            head_nfo = scraper.get_nfo(e)
 
             item_nfo = e.clone(channel="biblioteca", url="", action='findvideos',
                                strm_path=strm_path.replace(TVSHOWS_PATH, ""))
@@ -512,6 +493,7 @@ def save_library_episodes(path, episodelist, serie, silent=False, overwrite=True
                             logger.info("Insertado: %s" % json_path)
                         else:
                             logger.info("Sobreescritos todos los archivos!")
+
                         # Marcamos episodio como no visto
                         news_in_playcounts[season_episode] = 0
                         # Marcamos la temporada como no vista
@@ -519,7 +501,7 @@ def save_library_episodes(path, episodelist, serie, silent=False, overwrite=True
                         # Marcamos la serie como no vista
                         # logger.debug("serie " + serie.tostring('\n'))
                         news_in_playcounts[serie.contentTitle] = 0
-                        if (not overwrite_everything and not json_exists):
+                        if not overwrite_everything and not json_exists:
                             json_exists = True
                     else:
                         logger.info("Sobreescrito: %s" % json_path)
@@ -532,8 +514,8 @@ def save_library_episodes(path, episodelist, serie, silent=False, overwrite=True
             logger.info("Fallido: %s" % json_path)
             fallidos += 1
 
-        if (not strm_exists_before or not nfo_exists_before or not json_exists_before):
-            if (strm_exists and nfo_exists and json_exists):
+        if not strm_exists_before or not nfo_exists_before or not json_exists_before:
+            if strm_exists and nfo_exists and json_exists:
                 insertados += 1
             else:
                 logger.error("El archivo strm, nfo o json no existe")
@@ -563,11 +545,11 @@ def save_library_episodes(path, episodelist, serie, silent=False, overwrite=True
         except:
             logger.error("Error al actualizar tvshow.nfo")
             fallidos = -1
-
-        # ... y actualizamos la biblioteca de Kodi
-        if config.is_xbmc() and not silent:
-            from platformcode import xbmc_library
-            xbmc_library.update(FOLDER_TVSHOWS, filetools.basename(path))
+        else:
+            # ... si ha sido correcto actualizamos la biblioteca de Kodi
+            if config.is_xbmc() and not silent:
+                from platformcode import xbmc_library
+                xbmc_library.update(FOLDER_TVSHOWS, filetools.basename(path))
 
     if fallidos == len(episodelist):
         fallidos = -1
@@ -680,3 +662,13 @@ def add_serie_to_library(item, channel=None):
         platformtools.dialog_ok("Libreria", "La serie è stata aggiunta alla libreria")
         logger.info("[launcher.py] Se han añadido %s episodios de la serie %s a la biblioteca" %
                     (insertados, item.show))
+        if config.is_xbmc():
+            if config.get_setting("sync_trakt_new_tvshow", "biblioteca"):
+                import xbmc
+                from platformcode import xbmc_library
+                if config.get_setting("sync_trakt_new_tvshow_wait", "biblioteca"):
+                    # Comprobar que no se esta buscando contenido en la biblioteca de Kodi
+                    while xbmc.getCondVisibility('Library.IsScanningVideo()'):
+                        xbmc.sleep(1000)
+                # Se lanza la sincronizacion
+                xbmc_library.sync_trakt()

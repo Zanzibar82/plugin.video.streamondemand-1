@@ -5,6 +5,7 @@
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import re
+
 import urlparse
 
 from core import config
@@ -259,6 +260,7 @@ def episodios(item):
 
             itemlist.append(Item(channel=__channel__,
                                  action="findvideos",
+                                 contentType="episode",
                                  fulltitle=n1 + " " + scrapedtitle,
                                  show=n1 + " " + scrapedtitle,
                                  title= n1 + " [COLOR orange] " + scrapedtitle + "[/COLOR]",
@@ -270,7 +272,7 @@ def episodios(item):
     if config.get_library_support() and len(itemlist) != 0:
         itemlist.append(
             Item(channel=__channel__,
-                 title=item.title + " [COLOR yellow] Aggiungi alla liberia [/COLOR]",
+                 title="Aggiungi alla liberia",
                  url=item.url,
                  action="add_serie_to_library",
                  extra="episodios",

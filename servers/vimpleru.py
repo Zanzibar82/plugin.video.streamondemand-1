@@ -26,7 +26,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
 
     media_url += "|Cookie=" + \
                  scrapertools.get_match(
-                     config.get_cookie_data(page_url),
+                     config.get_cookie_data(),
                      '.vimple.ru.*?(UniversalUserID\t[a-f0-9]+)'
                  ).replace('\t', '=')
 

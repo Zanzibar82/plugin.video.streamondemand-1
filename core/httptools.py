@@ -208,6 +208,7 @@ def downloadpage(url, post=None, headers=None, timeout=None, follow_redirects=Tr
         else:
           response["code"] = e.reason[0][0]
           response["error"] = e.reason[0][1]
+        
         response["headers"] = {}
         response["data"] = ""
         response["time"] = time.time() - inicio
@@ -267,7 +268,7 @@ def downloadpage(url, post=None, headers=None, timeout=None, follow_redirects=Tr
             response["url"] = resp.url
         else:
             logger.info("No se ha podido autorizar")
-
+            
     return type('HTTPResponse', (), response)
 
 

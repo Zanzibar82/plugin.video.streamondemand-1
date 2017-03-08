@@ -4,11 +4,13 @@
 # Canal para seriehd - based on guardaserie channel
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
-import base64
 import re
+
+import base64
 import urlparse
 
 from core import config
+from core import httptools
 from core import logger
 from core import scrapertools
 from core import servertools
@@ -104,18 +106,6 @@ def fichas(item):
 
     data = scrapertools.anti_cloudflare(item.url, headers)
 
-    # ------------------------------------------------
-    cookies = ""
-    matches = config.get_cookie_data(item.url).splitlines()[4:]
-    for cookie in matches:
-        name = cookie.split('\t')[5]
-        value = cookie.split('\t')[6]
-        cookies += name + "=" + value + ";"
-    headers.append(['Cookie', cookies[:-1]])
-    import urllib
-    _headers = urllib.urlencode(dict(headers))
-    # ------------------------------------------------
-
     patron = '<h2>(.*?)</h2>\s*'
     patron += '<img src="([^"]+)" alt="[^"]*" />\s*'
     patron += '<A HREF="([^"]+)">'
@@ -123,7 +113,7 @@ def fichas(item):
     matches = re.compile(patron, re.DOTALL).findall(data)
 
     for scrapedtitle, scrapedthumbnail, scrapedurl in matches:
-        scrapedthumbnail += "|" + _headers
+        scrapedthumbnail = httptools.get_url_headers(scrapedthumbnail)
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle).strip()
         itemlist.append(infoSod(
             Item(channel=__channel__,
@@ -178,6 +168,7 @@ def episodios(item):
             itemlist.append(
                 Item(channel=__channel__,
                      action="findvideos",
+                     contentType="episode",
                      title=title,
                      url=episode_url,
                      fulltitle=title + ' - ' + item.show,
@@ -191,7 +182,6 @@ def episodios(item):
                  url=item.url,
                  action="add_serie_to_library",
                  extra="episodios",
-                 contentType="episode",
                  show=item.show))
         itemlist.append(
             Item(channel=__channel__,
@@ -199,7 +189,6 @@ def episodios(item):
                  url=item.url,
                  action="download_all_episodes",
                  extra="episodios",
-                 contentType="episode",
                  show=item.show))
 
     return itemlist

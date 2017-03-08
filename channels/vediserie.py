@@ -6,7 +6,7 @@
 # ------------------------------------------------------------
 import re
 
-from core import config
+from core import config, httptools
 from core import logger
 from core import scrapertools
 from core import servertools
@@ -26,6 +26,7 @@ headers = [['Upgrade-Insecure-Requests', '1'],
            ['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'],
            ['Accept-Encoding', 'gzip, deflate'],
            ['Accept-Language', 'en-US,en;q=0.8']]
+
 
 def isGeneric():
     return True
@@ -94,18 +95,6 @@ def fichas(item):
 
     data = scrapertools.anti_cloudflare(item.url, headers)
 
-    # ------------------------------------------------
-    cookies = ""
-    matches = config.get_cookie_data(item.url).splitlines()[4:]
-    for cookie in matches:
-        name = cookie.split('\t')[5]
-        value = cookie.split('\t')[6]
-        cookies += name + "=" + value + ";"
-    headers.append(['Cookie', cookies[:-1]])
-    import urllib
-    _headers = urllib.urlencode(dict(headers))
-    # ------------------------------------------------
-
     patron = '<h2>[^>]+>\s*'
     patron += '<img[^=]+=[^=]+=[^=]+="([^"]+)"[^>]+>\s*'
     patron += '<A HREF=([^>]+)>[^>]+>[^>]+>[^>]+>\s*'
@@ -114,7 +103,7 @@ def fichas(item):
     matches = re.compile(patron, re.DOTALL).findall(data)
 
     for scrapedthumbnail, scrapedurl, scrapedtitle in matches:
-        scrapedthumbnail += "|" + _headers
+        scrapedthumbnail = httptools.get_url_headers(scrapedthumbnail)
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle)
         if scrapedtitle.startswith('<span class="year">'):
             scrapedtitle = scrapedtitle[19:]
@@ -162,6 +151,7 @@ def episodios(item):
         itemlist.append(
             Item(channel=__channel__,
                  action="findvideos",
+                 contentType="episode",
                  title=title,
                  url=item.url,
                  thumbnail=item.thumbnail,
@@ -176,7 +166,6 @@ def episodios(item):
                  url=item.url,
                  action="add_serie_to_library",
                  extra="episodios",
-                 contentType="episode",
                  show=item.show))
         itemlist.append(
             Item(channel=__channel__,
@@ -184,7 +173,6 @@ def episodios(item):
                  url=item.url,
                  action="download_all_episodes",
                  extra="episodios",
-                 contentType="episode",
                  show=item.show))
 
     return itemlist

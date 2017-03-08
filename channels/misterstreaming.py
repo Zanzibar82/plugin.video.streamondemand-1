@@ -5,6 +5,7 @@
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import re
+
 import urlparse
 
 from core import config
@@ -13,7 +14,6 @@ from core import scrapertools
 from core import servertools
 from core.item import Item
 from core.tmdb import infoSod
-
 
 __channel__ = "misterstreaming"
 __category__ = "F,S"
@@ -33,8 +33,10 @@ headers = [
     ['Cache-Control', 'max-age=0']
 ]
 
+
 def isGeneric():
     return True
+
 
 def mainlist(item):
     logger.info("streamondemand.istreaming mainlist")
@@ -120,7 +122,7 @@ def peliculas(item):
     patron = '<figure class="post-image ">\s*<a href="(.*?)"><img src="(.*?)" class=[^=]+=[^=]+="(.*?)" /></a>'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
-    for scrapedurl, scrapedthumbnail, scrapedtitle  in matches:
+    for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
         scrapedplot = ""
         if DEBUG: logger.info(
             "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
@@ -156,6 +158,7 @@ def peliculas(item):
 
     return itemlist
 
+
 def peliculas_tv(item):
     logger.info("streamondemand.misterstreaming peliculas")
     itemlist = []
@@ -168,7 +171,7 @@ def peliculas_tv(item):
     patron = '<a href="(.*?)">(.*?)</a>'
     matches = re.compile(patron, re.DOTALL).findall(bloque)
 
-    for scrapedurl, scrapedtitle  in matches:
+    for scrapedurl, scrapedtitle in matches:
         scrapedplot = ""
         scrapedthumbnail = ""
         if DEBUG: logger.info(
@@ -183,7 +186,6 @@ def peliculas_tv(item):
                  thumbnail=scrapedthumbnail,
                  plot=scrapedplot,
                  folder=True), tipo='tv'))
-
 
     # Extrae el paginador
     patronvideos = '<span class="number current">[^<]+</span>[^<]+<a href="(.*?)" class="number">'
@@ -206,6 +208,7 @@ def peliculas_tv(item):
 
     return itemlist
 
+
 def episodios(item):
     def load_episodios(html, item, itemlist, lang_title):
         patron = '.*?<a href="[^"]+"[^o]+ofollow[^>]+>[^<]+<\/a><(?:b|\/)[^>]+>'
@@ -219,6 +222,7 @@ def episodios(item):
                 itemlist.append(
                     Item(channel=__channel__,
                          action="findvideos_tv",
+                         contentType="episode",
                          title="[COLOR azure]%s[/COLOR]" % (scrapedtitle + " (" + lang_title + ")"),
                          url=data,
                          thumbnail=item.thumbnail,
@@ -266,7 +270,6 @@ def episodios(item):
                  url=item.url,
                  action="add_serie_to_library",
                  extra="episodios",
-                 contentType="episode",
                  show=item.show))
         itemlist.append(
             Item(channel=__channel__,
@@ -274,10 +277,10 @@ def episodios(item):
                  url=item.url,
                  action="download_all_episodes",
                  extra="episodios",
-                 contentType="episode",
                  show=item.show))
 
     return itemlist
+
 
 def findvideos_tv(item):
     logger.info("streamondemand.misterstreaming findvideos_tv")
@@ -295,6 +298,7 @@ def findvideos_tv(item):
 
     return itemlist
 
+
 def findvideos_movie(item):
     logger.info("streamondemand.misterstreaming findvideos_movie")
 
@@ -311,7 +315,7 @@ def findvideos_movie(item):
 
     return itemlist
 
+
 def HomePage(item):
     import xbmc
     xbmc.executebuiltin("ReplaceWindow(10024,plugin://plugin.video.streamondemand)")
-

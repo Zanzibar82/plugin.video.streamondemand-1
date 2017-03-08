@@ -62,7 +62,7 @@ def buscartrailer(item, trailers=[]):
             item.context = item.context.replace("buscar_trailer", "")
         elif type(item.context) is list and "buscar_trailer" in item.context:
             item.context.remove("buscar_trailer")
-
+        
         item.text_color = ""
 
         itemlist = []
@@ -105,7 +105,7 @@ def buscartrailer(item, trailers=[]):
         except:
             import traceback
             logger.error(traceback.format_exc())
-        
+            
         if item.contextual:
             title = "[COLOR green]%s[/COLOR]"
         else:
@@ -416,7 +416,7 @@ def search_links_filmaff(item):
             scrapedtitle = scrapertools.htmlclean(scrapedtitle)
             scrapedtitle += "  [" + server + "]"
             if item.contextual:
-                scrapedtitle = "[COLOR white]%s[/COLOR]" % scrapedtitle            
+                scrapedtitle = "[COLOR white]%s[/COLOR]" % scrapedtitle
             itemlist.append(item.clone(title=scrapedtitle, url=trailer_url, server=server, action="play",
                                        thumbnail=thumbnail, text_color="white"))
 
@@ -427,6 +427,7 @@ def search_links_filmaff(item):
             title = "%s"
         itemlist.append(item.clone(title=title % "Búsqueda Manual en Filmaffinity",
                                    action="manual_search", thumbnail="", text_color="green", extra="filmaffinity"))
+
     return itemlist
 
 

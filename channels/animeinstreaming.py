@@ -5,16 +5,16 @@
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import re
-import urllib
 
+import urllib
 import xbmc
+from servers import adfly
 
 from core import config
 from core import logger
 from core import scrapertools
-from core.item import Item
-from servers import adfly
 from core import servertools
+from core.item import Item
 
 __channel__ = "animeinstreaming"
 __category__ = "A"
@@ -366,6 +366,7 @@ def episodios(item):
         itemlist.append(
             Item(channel=__channel__,
                  action="findvideo",
+                 contentType="episode",
                  title=scrapedtitle,
                  url=scrapedurl,
                  fulltitle=scrapedtitle,
@@ -382,7 +383,6 @@ def episodios(item):
                  url=item.url,
                  action="add_serie_to_library",
                  extra="episodios",
-                 contentType="episode",
                  show=item.show))
         itemlist.append(
             Item(channel=__channel__,
@@ -390,7 +390,6 @@ def episodios(item):
                  url=item.url,
                  action="download_all_episodes",
                  extra="episodios",
-                 contentType="episode",
                  show=item.show))
 
     return itemlist

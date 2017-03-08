@@ -103,8 +103,8 @@ def peliculas(item):
     matches = re.compile(patronvideos, re.DOTALL).findall(data)
 
     if len(matches) > 0:
-        scrapedurl = scrapedurl.replace("&amp;", "&")
         scrapedurl = urlparse.urljoin(item.url, matches[0])
+        scrapedurl = scrapedurl.replace("&amp;", "&")
         itemlist.append(
             Item(channel=__channel__,
                  action="HomePage",

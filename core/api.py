@@ -38,7 +38,7 @@ from item import Item
 
 MAIN_URL = "https://api.tvalacarta.info/v2"
 API_KEY = "nzgJy84P9w54H2w"
-DEFAULT_HEADERS = [ ["User-Agent",config.PLUGIN_NAME+" "+config.PLATFORM_NAME] ]
+DEFAULT_HEADERS = [ ["User-Agent",config.PLUGIN_NAME+" "+config.get_platform()] ]
 
 # ---------------------------------------------------------------------------------------------------------
 #  Common function for API calls
@@ -72,11 +72,11 @@ def remote_call(url,parameters={},require_session=True):
 def plugins_get_all_packages():
     logger.info("streamondemand.core.api.plugins.get_all_packages")
 
-    parameters = { "plugin" : config.PLUGIN_NAME , "platform" : config.PLATFORM_NAME }
+    parameters = { "plugin" : config.PLUGIN_NAME , "platform" : config.get_platform() }
     return remote_call( "plugins/get_all_packages.php" , parameters )
 
 def plugins_get_latest_packages():
     logger.info("streamondemand.core.api.plugins.get_latest_packages")
 
-    parameters = { "plugin" : config.PLUGIN_NAME , "platform" : config.PLATFORM_NAME }
+    parameters = { "plugin" : config.PLUGIN_NAME , "platform" : config.get_platform() }
     return remote_call( "plugins/get_latest_packages.php" , parameters )

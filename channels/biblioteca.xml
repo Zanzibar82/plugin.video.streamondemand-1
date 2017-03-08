@@ -12,7 +12,7 @@
 	<bannermenu></bannermenu>
 
 	<update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
-	<version>4</version>
+    <version>7</version>
 
 	<changes>
 		<change>
@@ -54,16 +54,43 @@
 		<lvalues>60 sec</lvalues>
 	</settings>
 	<settings>
+		<id>everyday_delay</id>
+		<type>list</type>
+		<label>    Iniciar actualización programada a partir de las</label>
+		<default>1</default>
+		<visible>true</visible>
+		<enabled>eq(-2,Una sola vez al día)|eq(-2,Al iniciar Kodi y al menos una vez al día)</enabled>
+		<lvalues>00:00</lvalues>
+		<lvalues>04:00</lvalues>
+		<lvalues>08:00</lvalues>
+		<lvalues>12:00</lvalues>
+	</settings>
+	<settings>
 		<id>updatetvshows_interval</id>
 		<type>list</type>
 		<label>    Cercare nuovi episodi nella serie attiva</label>
 		<default>0</default>
-		<enabled>!eq(-2,Mai)</enabled>
 		<visible>true</visible>
+		<enabled>!eq(-3,Mai)</enabled>
 		<lvalues>Sempre</lvalues>
 		<lvalues>Secondo emissione</lvalues>
 	</settings>
-
+	<settings>
+		<id>search_new_content</id>
+		<type>list</type>
+		<label>    Realizar búsqueda de contenido en</label>
+		<default>0</default>
+		<enabled>!eq(-4,Nunca)</enabled>
+		<lvalues>La carpeta de cada serie</lvalues>
+		<lvalues>Toda la biblioteca</lvalues>
+	</settings>
+	<settings>
+		<id>clean_after_update</id>
+		<type>bool</type>
+		<label>    Limpiar la biblioteca después de actualizar</label>
+		<enabled>!eq(-5,Nunca)</enabled>
+		<default>false</default>
+	</settings>
 	<settings>
 		<id>window_type</id>
 		<type>list</type>
@@ -74,7 +101,48 @@
 		<lvalues>Finestra convenzionale</lvalues>
 		<lvalues>Finestra pop-up</lvalues>
 	</settings>
-	
+	<settings>
+		<id>max_links</id>
+		<type>list</type>
+		<label>    Numero máximo de enlaces a mostrar (recomendable para equipos lentos)</label>
+		<default>0</default>
+		<enabled>true</enabled>
+		<visible>true</visible>
+		<lvalues>Todos</lvalues>
+		<lvalues>30</lvalues>
+		<lvalues>60</lvalues>
+		<lvalues>90</lvalues>
+		<lvalues>120</lvalues>
+		<lvalues>150</lvalues>
+		<lvalues>180</lvalues>
+		<lvalues>210</lvalues>
+	</settings>
+	<settings>
+		<id>white_list_order</id>
+		<type>bool</type>
+		<label>    Ordenar segun el orden de la lista blanca</label>
+		<enabled>true</enabled>
+		<visible>true</visible>
+		<default>false</default>
+	</settings>
+	<settings>
+		<id>quit_channel_name</id>
+		<type>bool</type>
+		<label>    Quitar el nombre del canal del principio</label>
+		<enabled>true</enabled>
+		<visible>true</visible>
+		<default>false</default>
+	</settings>
+	<settings>
+		<id>replace_VD</id>
+		<type>bool</type>
+		<label>    Ventana emergente: Reemplazar "Ver en" por "[V]" y "Descargar en" por "[D]"</label>
+		<enabled>true</enabled>
+		<visible>true</visible>
+		<default>false</default>
+	</settings>
+
+
 	<settings>
 		<id>library_mode</id>
 		<type>list</type>
@@ -89,9 +157,8 @@
 		<id>xbmc_host</id>
 		<type>text</type>
 		<label>    Nome server</label>
-		<enabled>eq(-1,Remota)</enabled>
 		<visible>true</visible>
-		<default></default>
+		<enabled>eq(-1,Remota)</enabled>
 	</settings>
 	<settings>
 		<id>xbmc_puerto</id>
@@ -99,7 +166,6 @@
 		<label>    Porta server</label>
 		<enabled>!eq(-1,'')</enabled>
 		<visible>true</visible>
-		<default></default>
 	</settings>
 
 	<settings>
@@ -115,13 +181,53 @@
 		<type>list</type>
 		<label>    Tempo di visione del video</label>
 		<default>3</default>
-		<enabled>eq(-1,true)</enabled>
 		<visible>true</visible>
-		<lvalues>5 Min</lvalues>
+		<enabled>eq(-1,true)</enabled>
+		<lvalues>5 min</lvalues>
 		<lvalues>30%</lvalues>
 		<lvalues>50%</lvalues>
 		<lvalues>80%</lvalues>
 	</settings>
+	<settings>
+		<id>sync_trakt</id>
+		<type>label</type>
+		<label>Sincronización con Trakt</label>
+		<enabled>true</enabled>
+		<visible>true</visible>
+	</settings>
+	<settings>
+		<id>sync_trakt_watched</id>
+		<type>bool</type>
+		<label>    Tras marcar como visto el episodio</label>
+		<default>false</default>
+		<visible>true</visible>
+		<enabled>eq(-3,true)</enabled>
+	</settings>
+	<settings>
+		<id>sync_trakt_notification</id>
+		<type>bool</type>
+		<label>        Mostrar notificación</label>
+		<default>true</default>
+		<visible>true</visible>
+		<enabled>eq(-1,true)</enabled>
+	</settings>
+	<settings>
+		<id>sync_trakt_new_tvshow</id>
+		<type>bool</type>
+		<label>    Al añadir una serie a la biblioteca</label>
+		<default>false</default>
+		<enabled>true</enabled>
+		<visible>true</visible>
+	</settings>
+	<settings>
+		<id>sync_trakt_new_tvshow_wait</id>
+		<type>bool</type>
+		<label>        Esperar a que se añada la serie a la biblioteca</label>
+		<default>true</default>
+		<visible>true</visible>
+		<enabled>eq(-1,true)</enabled>
+	</settings>
+
 	<settings>
 		<id>show_all_seasons</id>
 		<type>bool</type>
@@ -150,5 +256,37 @@
 		<default>0</default>
 		<lvalues>Titolo in italiano</lvalues>
 		<lvalues>Titolo originale</lvalues>
+	</settings>
+	<settings>
+		<id>lab_1</id>
+		<type>label</type>
+		<label>Al añadir contenido, obtener información de:</label>
+		<enabled>true</enabled>
+		<visible>true</visible>
+	</settings>
+    <settings>
+		<id>scraper_movies</id>
+		<type>list</type>
+		<label>    Peliculas:</label>
+        <enabled>false</enabled>
+		<default>0</default>
+		<lvalues>TheMovieDB.org</lvalues>
+        <lvalues>None</lvalues>
+	</settings>
+    <settings>
+		<id>scraper_tvshows</id>
+		<type>list</type>
+		<label>    Series:</label>
+		<default>0</default>
+		<lvalues>TheMovieDB.org</lvalues>
+        <lvalues>TheTvDB.com</lvalues>
+	</settings>
+	<settings>
+		<id>tvdb_retry_eng</id>
+		<type>bool</type>
+		<label>        Si no hay resultados buscar también en Inglés</label>
+		<default>true</default>
+		<enabled>eq(-1,TheTvDB.com)</enabled>
+		<visible>true</visible>
 	</settings>
 </channel>

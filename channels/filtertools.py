@@ -389,7 +389,6 @@ def config_item(item):
         # concatenamos list_controls con list_controls_calidad
         list_controls.extend(list_controls_calidad)
 
-
     platformtools.show_channel_settings(list_controls=list_controls, callback='guardar_valores', item=item,
                                         caption="Filtrado de enlaces para: [COLOR blue]{0}[/COLOR]".format(item.show),
                                         custom_button=custom_button)
@@ -409,6 +408,7 @@ def borrar_filtro(item):
         if platformtools.dialog_yesno(heading, line1) == 1:
             lang_selected = dict_series.get(tvshow, {}).get(TAG_LANGUAGE, "")
             dict_series.pop(tvshow, None)
+
             fname, json_data = update_json_data(dict_series, item.from_channel)
             result = filetools.write(fname, json_data)
 
@@ -416,6 +416,7 @@ def borrar_filtro(item):
                 message = "FILTRO ELIMINADO"
             else:
                 message = "Error al guardar en disco"
+
             heading = "{0} [{1}]".format(item.show.strip(), lang_selected)
             platformtools.dialog_notification(heading, message)
 

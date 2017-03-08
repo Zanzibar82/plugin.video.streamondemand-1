@@ -35,7 +35,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         scrapertools.cache_page(url, post=post)
         # logger.info("streamondemand.servers.onefichier data="+data)
 
-        cookies = config.get_cookie_data(page_url)
+        cookies = config.get_cookie_data()
         logger.info("streamondemand.servers.onefichier cookies=" + cookies)
 
         # 1fichier.com   TRUE    /   FALSE   1443553315  SID imC3q8MQ7cARw5tkXeWvKyrH493rR=1yvrjhxDAA0T0iEmqRfNF9GXwjrwPHssAQ

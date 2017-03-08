@@ -5,6 +5,7 @@
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import re
+
 import urlparse
 
 from core import config
@@ -23,6 +24,7 @@ __language__ = "IT"
 DEBUG = config.get_setting("debug")
 
 host = "http://www.italiaserie.click"
+
 
 def isGeneric():
     return True
@@ -97,7 +99,6 @@ def HomePage(item):
     xbmc.executebuiltin("ReplaceWindow(10024,plugin://plugin.video.streamondemand)")
 
 
-
 def search(item, texto):
     logger.info("[italiaserienews.py] " + item.url + " search " + texto)
     item.url = host + "/?s=" + texto
@@ -109,6 +110,7 @@ def search(item, texto):
         for line in sys.exc_info():
             logger.error("%s" % line)
         return []
+
 
 def episodios(item):
     logger.info("[italiaserienews.py] episodios")
@@ -151,7 +153,6 @@ def episodios(item):
                  url=item.url,
                  action="add_serie_to_library",
                  extra="episodios",
-                 contentType="episode",
                  show=item.show))
         itemlist.append(
             Item(channel=__channel__,
@@ -159,10 +160,10 @@ def episodios(item):
                  url=item.url,
                  action="download_all_episodes",
                  extra="episodios",
-                 contentType="episode",
                  show=item.show))
 
     return itemlist
+
 
 def load_episodios(html, item, itemlist, lang_title):
     patron = '((?:.*?<a[^h]+href="[^"]+"[^>]+>[^<][^<]+<(?:b|\/)[^>]+>)+)'
@@ -177,6 +178,7 @@ def load_episodios(html, item, itemlist, lang_title):
             itemlist.append(
                 Item(channel=__channel__,
                      action="findvideos",
+                     contentType="episode",
                      title="[COLOR azure]%s[/COLOR]" % (scrapedtitle + " (" + lang_title + ")"),
                      url=data,
                      thumbnail=item.thumbnail,
@@ -184,11 +186,12 @@ def load_episodios(html, item, itemlist, lang_title):
                      fulltitle=scrapedtitle + " (" + lang_title + ")" + ' - ' + item.show,
                      show=item.show))
 
+
 def findvideos(item):
     logger.info("streamondemand.italiaserienews findvideos")
 
     # Descarga la página
-    data = item.url 
+    data = item.url
 
     itemlist = servertools.find_video_items(data=data)
 
@@ -201,4 +204,3 @@ def findvideos(item):
         videoitem.channel = __channel__
 
     return itemlist
-

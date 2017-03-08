@@ -1,3 +1,12 @@
+v5.4.7
+- fix library, download, favorites
+- removed dead channels
+- added new channels
+- removed last_search
+- special thanks coding: MrTruth0, axlt2002
+- special thanks sharing ideas: Scruffy3000, thehutt61
+- International Women's Day (IWD) release :-)
+
 v5.4.6
 - wide change: Kodi 17 compatible
 - removed dead channels

@@ -23,10 +23,11 @@ def test_video_exists(page_url):
     if "|" in page_url:
         page_url, referer = page_url.split("|", 1)
         header = {'Referer': referer}
-    data = httptools.downloadpage(page_url.replace("/embed/", "/f/"), headers=header, cookies=False).data
-
+    data = httptools.downloadpage(page_url, headers=header, cookies=False).data
     if 'We’re Sorry!' in data:
-        return False, "[Openload] File inesistente o eliminato" 
+        data = httptools.downloadpage(page_url.replace("/embed/", "/f/"), headers=header, cookies=False).data
+        if 'We’re Sorry!' in data:
+            return False, "[Openload] File eliminato o inesistente" 
 
     return True, ""
 
@@ -40,7 +41,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         page_url, referer = page_url.split("|", 1)
         header = {'Referer': referer}
     data = httptools.downloadpage(page_url, headers=header, cookies=False).data
-    subtitle = scrapertools.find_single_match(data, '<track kind="captions" src="([^"]+)" srclang="es"')
+    subtitle = scrapertools.find_single_match(data, '<track kind="captions" src="([^"]+)" srclang="it"')
     #Header para la descarga
     header_down = "|User-Agent=" + headers['User-Agent']
 
@@ -62,15 +63,15 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         for encode in var_encodes:
             text_decode = []
             try:
-                idx1 = max(2, ord(encode[0]) - 55)
-                idx2 = min(idx1, len(encode) - 10)
-                idx3 = encode[idx2:idx2+12]
+                idx1 = max(2, ord(encode[0]) - 50)
+                idx2 = min(idx1, len(encode) - 18)
+                idx3 = encode[idx2:idx2+20]
                 decode1 = []
                 for i in range(0, len(idx3), 2):
                     decode1.append(int(idx3[i:i+2], 16))
-                idx4 = encode[0:idx2] + encode[idx2+12:]
+                idx4 = encode[0:idx2] + encode[idx2+20:]
                 for i in range(0, len(idx4), 2):
-                    value = int(idx4[i:i+2], 16) ^ decode1[(i/2) % 6]
+                    value = int(idx4[i:i+2], 16) ^ 137 ^ decode1[(i/2) % 10]
                     text_decode.append(chr(value))
 
                 text_decode = "".join(text_decode)
