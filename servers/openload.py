@@ -41,7 +41,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         page_url, referer = page_url.split("|", 1)
         header = {'Referer': referer}
     data = httptools.downloadpage(page_url, headers=header, cookies=False).data
-    subtitle = scrapertools.find_single_match(data, '<track kind="captions" src="([^"]+)" srclang="es"')
+    subtitle = scrapertools.find_single_match(data, '<track kind="captions" src="([^"]+)" srclang="it"')
     #Header para la descarga
     header_down = "|User-Agent=" + headers['User-Agent']
 
