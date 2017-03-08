@@ -9,7 +9,6 @@ import base64
 import re
 import urlparse
 
-from core import config
 from core import httptools
 from core import logger
 from core import scrapertools
@@ -118,17 +117,6 @@ def searchfilm(item):
         '<fix>IMDB: 0.0</fix>',
         data
     )
-    # ------------------------------------------------
-    cookies = ""
-    matches = config.get_cookie_data(item.url).splitlines()[4:]
-    for cookie in matches:
-        name = cookie.split('\t')[5]
-        value = cookie.split('\t')[6]
-        cookies += name + "=" + value + ";"
-    headers.append(['Cookie', cookies[:-1]])
-    import urllib
-    _headers = urllib.urlencode(dict(headers))
-    # ------------------------------------------------
 
     patron = '<li class="s-item">.*?'
     patron += 'src="([^"]+)".*?'
@@ -141,7 +129,7 @@ def searchfilm(item):
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle)
 
         # ------------------------------------------------
-        scrapedthumbnail += "|" + _headers
+        scrapedthumbnail = httptools.get_url_headers(scrapedthumbnail)
         # ------------------------------------------------
         itemlist.append(infoSod(
             Item(channel=__channel__,

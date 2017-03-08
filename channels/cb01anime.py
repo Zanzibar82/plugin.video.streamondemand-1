@@ -6,7 +6,7 @@
 # ------------------------------------------------------------
 import re
 
-from core import config
+from core import config, httptools
 from core import logger
 from core import scrapertools
 from core import servertools
@@ -78,18 +78,6 @@ def novita(item):
     # Descarga la página
     data = scrapertools.anti_cloudflare(item.url, headers)
 
-    ## ------------------------------------------------
-    cookies = ""
-    matches = config.get_cookie_data(item.url).splitlines()[4:]
-    for cookie in matches:
-        name = cookie.split('\t')[5]
-        value = cookie.split('\t')[6]
-        cookies += name + "=" + value + ";"
-    headers.append(['Cookie', cookies[:-1]])
-    import urllib
-    _headers = urllib.urlencode(dict(headers))
-    ## ------------------------------------------------
-
     # Extrae las entradas (carpetas)
     patronvideos = '<div class="span4"> <a.*?<img src="(.*?)".*?'
     patronvideos += '<div class="span8">.*?<a href="(.*?)">.*?'
@@ -108,7 +96,7 @@ def novita(item):
             "title=[" + scrapedtitle + "], url=[" + scrapedurl + "], thumbnail=[" + scrapedthumbnail + "]")
 
         ## ------------------------------------------------
-        scrapedthumbnail += "|" + _headers
+        scrapedthumbnail = httptools.get_url_headers(scrapedthumbnail)
         ## ------------------------------------------------				
 
         # Añade al listado de XBMC
