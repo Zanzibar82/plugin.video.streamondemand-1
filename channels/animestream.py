@@ -6,8 +6,8 @@
 #  By Costaplus
 # ------------------------------------------------------------
 import re
-import urlparse
 
+import urlparse
 import xbmc
 
 from core import config
@@ -214,6 +214,7 @@ def episodios(item):
             itemlist.append(
                 Item(channel=__channel__,
                      action="findvideos",
+                     contentType="episode",
                      title=scrapedtitle,
                      url=scrapedurl,
                      thumbnail=urlparse.urljoin(host, scrapedthumbnail),
@@ -236,7 +237,6 @@ def episodios(item):
                  url=item.url,
                  action="add_serie_to_library",
                  extra="episodios",
-                 contentType="episode",
                  show=item.show))
         itemlist.append(
             Item(channel=__channel__,
@@ -244,7 +244,6 @@ def episodios(item):
                  url=item.url,
                  action="download_all_episodes",
                  extra="episodios",
-                 contentType="episode",
                  show=item.show))
 
     return itemlist

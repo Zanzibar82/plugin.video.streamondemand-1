@@ -224,7 +224,7 @@ def listacompleta(item):
         if (DEBUG): logger.info("title=[" + scrapedtitle + "], url=[" + scrapedurl + "]")
         itemlist.append(
             Item(channel=__channel__,
-                 action="episodi",
+                 action="episodios",
                  fulltitle=scrapedtitle,
                  show=scrapedtitle,
                  title=scrapedtitle,
@@ -251,7 +251,7 @@ def search(item, texto):
 
 
 # -----------------------------------------------------------------
-def episodi(item):
+def episodios(item):
     logger.info("[cb01anime.py] episodios")
 
     itemlist = []
@@ -278,7 +278,8 @@ def episodi(item):
                     title = item.title + " " + titulo
                     itemlist.append(
                         Item(channel=__channel__,
-                             action="findvideo",
+                             action="findvideos",
+                             contentType="episode",
                              title=title,
                              extra=scrapedurl,
                              fulltitle=item.fulltitle,
@@ -291,7 +292,6 @@ def episodi(item):
                  url=item.url,
                  action="add_serie_to_library",
                  extra="episodios",
-                 contentType="episode",
                  show=item.show))
         itemlist.append(
             Item(channel=__channel__,
@@ -299,7 +299,6 @@ def episodi(item):
                  url=item.url,
                  action="download_all_episodes",
                  extra="episodios",
-                 contentType="episode",
                  show=item.show))
 
     return itemlist
@@ -309,7 +308,7 @@ def episodi(item):
 
 
 # -----------------------------------------------------------------
-def findvideo(item):
+def findvideos(item):
     logger.info("[cb01anime.py] findvideos")
 
     itemlist = []
@@ -391,54 +390,6 @@ def play(item):
     return itemlist
 
 
-# =================================================================
-
-
-# -----------------------------------------------------------------
 def HomePage(item):
     import xbmc
     xbmc.executebuiltin("ReplaceWindow(10024,plugin://plugin.video.streamondemand)")
-
-
-# =================================================================
-
-
-# -----------------------------------------------------------------
-def info(title, year):
-    logger.info("streamondemand.cb01anime info")
-    try:
-        from core.tmdb import Tmdb
-        oTmdb = Tmdb(texto_buscado=title, year=year, tipo="movie", include_adult="false", idioma_busqueda="it")
-        if oTmdb.total_results > 0:
-            extrameta = {"Year": oTmdb.result["release_date"][:4],
-                         "Genre": ", ".join(oTmdb.result["genres"]),
-                         "Rating": float(oTmdb.result["vote_average"])}
-            fanart = oTmdb.get_backdrop()
-            poster = oTmdb.get_poster()
-            plot = oTmdb.get_sinopsis()
-            return plot, fanart, poster, extrameta
-    except:
-        pass
-
-
-# =================================================================
-
-
-# -----------------------------------------------------------------
-def info_tv(title):
-    logger.info("streamondemand.cb01anime info")
-    try:
-        from core.tmdb import Tmdb
-        oTmdb = Tmdb(texto_buscado=title, tipo="tv", include_adult="false", idioma_busqueda="it")
-        if oTmdb.total_results > 0:
-            extrameta = {"Year": oTmdb.result["release_date"][:4],
-                         "Genre": ", ".join(oTmdb.result["genres"]),
-                         "Rating": float(oTmdb.result["vote_average"])}
-            fanart = oTmdb.get_backdrop()
-            poster = oTmdb.get_poster()
-            plot = oTmdb.get_sinopsis()
-            return plot, fanart, poster, extrameta
-    except:
-        pass
-
-# =================================================================
