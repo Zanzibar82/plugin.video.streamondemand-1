@@ -235,7 +235,7 @@ def get_cookie_data():
 
 
 def search_library_path():
-    sql = 'SELECT strPath FROM path WHERE strPath LIKE "special://%/plugin.video.pelisalacarta/library/SERIES/"'
+    sql = 'SELECT strPath FROM path WHERE strPath LIKE "special://%/plugin.video.streamondemand/library/SERIES/"'
     from platformcode.xbmc_helpers import execute_sql_kodi
     nun_records, records = execute_sql_kodi(sql)
     if nun_records >= 1:
