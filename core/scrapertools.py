@@ -90,7 +90,7 @@ def read_body_and_headers(url, post=None, headers=None, follow_redirects=False, 
     return response.data, response.headers
 
 
-def anti_cloudflare(url, host="", headers=None, post=None, location=False):
+def anti_cloudflare(url, headers=None, post=None):
     #anti_cloudfare ya integrado en httptools por defecto
     response = httptools.downloadpage(url, post=post, headers=headers)
     return response.data

@@ -50,4 +50,17 @@
 		<lvalues>Raggruppa per canale</lvalues>
 		<lvalues>Non raggruppare</lvalues>
 	</settings>
+    <settings>
+		<id>perfil</id>
+		<type>list</type>
+		<label>Perfil de color</label>
+		<default>0</default>
+		<enabled>true</enabled>
+		<visible>true</visible>
+		<lvalues>Frio</lvalues>
+		<lvalues>Calido</lvalues>
+		<lvalues>Lila</lvalues>
+        <lvalues>Pastel</lvalues>
+        <lvalues>Vivos</lvalues>
+	</settings>
 </channel>
