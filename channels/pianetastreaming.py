@@ -77,6 +77,7 @@ def peliculas(item):
         itemlist.append(infoSod(
             Item(channel=__channel__,
                  action="findvideos",
+                 contentType="movie",
                  url=scrapedurl,
                  thumbnail=scrapedthumbnail,
                  fulltitle=scrapedtitle,

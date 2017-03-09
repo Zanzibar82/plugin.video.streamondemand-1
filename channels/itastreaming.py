@@ -135,6 +135,7 @@ def searchfilm(item):
             Item(channel=__channel__,
                  action="findvideos",
                  title=scrapedtitle,
+                 contentType="movie",
                  url=scrapedurl,
                  thumbnail=scrapedthumbnail,
                  fulltitle=scrapedtitle,

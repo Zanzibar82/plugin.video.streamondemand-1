@@ -121,6 +121,7 @@ def fichas(item):
         itemlist.append(infoSod(
             Item(channel=__channel__,
                  action=action,
+                 contentType="movie",
                  title=scrapedtitle,
                  url=scrapedurl,
                  thumbnail=urlparse.urljoin(host, scrapedthumbnail),

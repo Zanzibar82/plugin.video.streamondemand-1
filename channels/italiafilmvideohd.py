@@ -136,6 +136,7 @@ def fichas(item):
         itemlist.append(infoSod(
             Item(channel=__channel__,
                  action="findvideos",
+                 contentType="movie",
                  title=title,
                  url=scrapedurl,
                  thumbnail=scrapedthumbnail,

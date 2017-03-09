@@ -156,6 +156,7 @@ def peliculas(item):
             Item(channel=__channel__,
                  extra=item.extra,
                  action='episodios' if item.extra == 'serie' else 'findvid',
+                 contentType="movie",
                  fulltitle=title,
                  show=title,
                  title="[COLOR azure]" + title + "[/COLOR]",

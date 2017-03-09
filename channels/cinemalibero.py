@@ -143,6 +143,7 @@ def peliculas(item):
             Item(channel=__channel__,
                  extra=item.extra,
                  action="findvideos",
+                 contentType="movie",
                  fulltitle=scrapedtitle,
                  show=scrapedtitle,
                  title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
