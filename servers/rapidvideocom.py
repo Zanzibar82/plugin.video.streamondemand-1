@@ -60,7 +60,7 @@ def find_videos(text):
 
     for match in matches:
         titulo = "[rapidvideocom]"
-        url = 'https://www.rapidvideo.com/embed/%s' % match
+        url = 'https://www.raptu.com/embed/%s' % match
         if url not in encontrados:
             logger.info("  url=" + url)
             devuelve.append([titulo, url, 'rapidvideocom'])
