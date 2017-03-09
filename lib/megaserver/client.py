@@ -1,13 +1,14 @@
 import base64
-import json
 import random
 import struct
 import time
 import urllib
-from core import logger
 from threading import Thread
 
+import json
+
 import lib.pyaes as aes
+from core import logger
 from file import File
 from handler import Handler
 from server import Server
@@ -170,7 +171,7 @@ class Client(object):
     def aes_cbc_decrypt(self, data, key):
         # decryptor = AES.new(key, AES.MODE_CBC, '\0' * 16)
         decryptor = aes.AESModeOfOperationCBC(key, iv='\0' * 16)
-        return decryptor.decrypt(data)
+        return ''.join((decryptor.decrypt(data[i:16 + i]) for i in xrange(0, len(data), 16)))
 
     def aes_cbc_decrypt_a32(self, data, key):
         return self.str_to_a32(self.aes_cbc_decrypt(self.a32_to_str(data), self.a32_to_str(key)))
