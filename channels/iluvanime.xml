@@ -3,7 +3,7 @@
 	<id>iluvanime</id>
 	<name>Iluvanime</name>
 
-	<active>true</active>
+	<active>false</active>
 	<adult>false</adult>
 	<language>it</language>
 
@@ -25,7 +25,7 @@
 		<type>bool</type>
 		<label>Includi ricerca globale</label>
 		<default>false</default>
-		<enabled>true</enabled>
-		<visible>true</visible>
+		<enabled>false</enabled>
+		<visible>false</visible>
 	</settings>
 </channel>
