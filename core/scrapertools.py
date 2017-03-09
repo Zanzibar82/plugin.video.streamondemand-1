@@ -25,12 +25,13 @@
 # Scraper tools for reading and processing web elements
 # --------------------------------------------------------------------------------
 
-import os
 import re
+import socket
 import time
-import urlparse
+
 import logger
 from core import httptools
+
 
 def cache_page(url,post=None,headers=None,modo_cache=None, timeout=None):
     return cachePage(url,post,headers,modo_cache,timeout=timeout)
