@@ -52,7 +52,6 @@ default_headers["Accept-Encoding"] = "gzip"
 
 
 def get_url_headers(url):
-  logger.info()
   domain_cookies = cj._cookies.get("."+urlparse.urlparse(url)[1],{}).get("/",{})
   
   if "|" in url or not "cf_clearance" in domain_cookies:
@@ -188,10 +187,7 @@ def downloadpage(url, post=None, headers=None, timeout=None, follow_redirects=Tr
     except urllib2.HTTPError, handle:
         response["sucess"] = False
         response["code"] = handle.code
-        if "reason" in handle:
-          response["error"] = handle.reason
-        else:
-          response["error"] = str(handle)
+        response["error"] = handle.__dict__.get("reason", str(handle))
         response["headers"] = handle.headers.dict
         if not only_headers:
           response["data"] = handle.read()
@@ -202,17 +198,12 @@ def downloadpage(url, post=None, headers=None, timeout=None, follow_redirects=Tr
 
     except Exception, e:
         response["sucess"] = False
-        if "errno" in e:
-          response["code"] = e.errno
-          response["error"] = e.reason
-        else:
-          response["code"] = e.reason[0][0]
-          response["error"] = e.reason[0][1]
-        
+        response["code"] = e.__dict__.get("errno",  e.__dict__.get("code", str(e)))
+        response["error"] = e.__dict__.get("reason", str(e))
         response["headers"] = {}
         response["data"] = ""
         response["time"] = time.time() - inicio
-        response["url"] = handle.geturl()
+        response["url"] = url
 
     else:
         response["sucess"] = True
