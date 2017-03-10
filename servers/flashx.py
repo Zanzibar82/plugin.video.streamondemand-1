@@ -147,7 +147,7 @@ def find_videos(data):
 
     # http://flashx.tv/z3nnqbspjyne
     # http://www.flashx.tv/embed-li5ydvxhg514.html
-    patronvideos = 'flashx.(?:tv|pw)/(?:embed.php\?c=|embed-|playvid-|)([A-z0-9]+)'
+    patronvideos = 'flashx.(?:tv|pw|to)/(?:embed.php\?c=|embed-|playvid-|)([A-z0-9]+)'
     logger.info("streamondemand.servers.flashx find_videos #" + patronvideos + "#")
     matches = re.compile(patronvideos, re.DOTALL).findall(data)
 
