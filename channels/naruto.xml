@@ -12,9 +12,9 @@
 	<bannermenu>http://cdn.zonarutoppuden.com/ns/peliculas-naruto-shippuden.jpg</bannermenu>
 
 	<update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
-	<version>1</version>
+	<version>2</version>
 	<date>07/01/2017</date>
-	<changes>First v.</changes>
+	<changes>Update</changes>
 
 	<categories>
 		<category>anime</category>
