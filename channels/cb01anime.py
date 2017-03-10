@@ -102,7 +102,7 @@ def novita(item):
         # Añade al listado de XBMC
         itemlist.append(
             Item(channel=__channel__,
-                 action="listacompleta" if scrapedtitle == "Lista Alfabetica Completa Anime/Cartoon" else "episodi",
+                 action="listacompleta" if scrapedtitle == "Lista Alfabetica Completa Anime/Cartoon" else "episodios",
                  fulltitle=scrapedtitle,
                  show=scrapedtitle,
                  title=scrapedtitle,
@@ -176,7 +176,7 @@ def alfabetico(item):
     bloque = scrapertools.get_match(data, '<option value=\'-1\'>Anime per Lettera</option>(.*?)</select>')
 
     # The categories are the options for the combo  
-    patron = '<option value="([^"]+)">(\([^<]+)\)</option>'
+    patron = '<option value="([^"]+)">\(([^<]+)\)</option>'
     matches = re.compile(patron, re.DOTALL).findall(bloque)
     scrapertools.printMatches(matches)
 
