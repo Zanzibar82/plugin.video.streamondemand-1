@@ -5,7 +5,6 @@
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import re
-
 import urlparse
 
 from core import config
@@ -599,9 +598,9 @@ def play(item):
             data = jsunpack.unpack(data)
             logger.debug("##### play /link/ unpack ##\n%s\n##" % data)
         except IndexError:
-            logger.debug("##### The content is yet unpacked")
+            logger.debug("##### The content is yet unpacked ##\n%s\n##" % data)
 
-        data = scrapertools.get_match(data, 'var link(?:\s)?=(?:\s)?"([^"]+)";')
+        data = scrapertools.find_single_match(data, 'var link(?:\s)?=(?:\s)?"([^"]+)";')
         while 'vcrypt' in data:
             data = scrapertools.get_header_from_response(data, headers=headers, header_to_get="Location")
         logger.debug("##### play /link/ data ##\n%s\n##" % data)
