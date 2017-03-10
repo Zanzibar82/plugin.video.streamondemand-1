@@ -91,7 +91,7 @@ def mainlist(item):
 
 
 def peliculas(item):
-    logger.info("[cineblog01.py] mainlist")
+    logger.info("[cineblog01.py] peliculas")
     itemlist = []
 
     if item.url == "":
@@ -195,7 +195,7 @@ def menugeneros(item):
 
 
 def menuhd(item):
-    logger.info("[cineblog01.py] menugeneros")
+    logger.info("[cineblog01.py] menuhd")
     itemlist = []
 
     data = scrapertools.anti_cloudflare(item.url, headers)
@@ -282,7 +282,7 @@ def search(item, texto):
 
 
 def listserie(item):
-    logger.info("[cineblog01.py] mainlist")
+    logger.info("[cineblog01.py] listaserie")
     itemlist = []
 
     # Descarga la página
@@ -413,7 +413,7 @@ def episodios_serie(item):
         i += 1
 
     if len(itemlist) == 0:
-        patron = r'<div class="sp-head(?: unfolded)?" title="Expand">([^<]+)</div>\s*<div class="sp-body(?: folded)?">(.*?)<div class="spdiv">\[chiudi\]</div>'
+        patron = r'<div class="sp-head(?: unfolded)?" title="Expand">([^<]+)</div>\s*<div class="sp-body(?: folded)?">(.*?)<div class="spdiv">\[collapse\]</div>'
         matches = re.compile(patron, re.DOTALL).findall(data)
         for lang_title, match in matches:
             lang_title = 'SUB ITA' if 'SUB' in lang_title.upper() else 'ITA'
@@ -438,7 +438,7 @@ def findvideos(item):
 
 
 def findvid_film(item):
-    logger.info("[cineblog01.py] findvideos")
+    logger.info("[cineblog01.py] findvid_film")
 
     itemlist = []
 
@@ -541,7 +541,7 @@ def findvid_film(item):
 
 
 def findvid_serie(item):
-    logger.info("[cineblog01.py] findvideos")
+    logger.info("[cineblog01.py] findvid_serie")
 
     itemlist = []
 
