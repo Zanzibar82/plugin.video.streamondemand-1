@@ -38,13 +38,8 @@ def mainlist(item):
     itemlist = [Item(channel=__channel__,
                      action="fichas",
                      title="[COLOR azure]Serie TV[/COLOR]",
-                     url=host,
+                     url="%s/category/serie-tv/" % host,
                      thumbnail="http://i.imgur.com/rO0ggX2.png"),
-                Item(channel=__channel__,
-                     action="list_a_z",
-                     title="[COLOR orange]Ordine Alfabetico A-Z[/COLOR]",
-                     url="%s/lista-completa-serie-tv/" % host,
-                     thumbnail="http://i37.photobucket.com/albums/e88/xzener/NewIcons.png"),
                 Item(channel=__channel__,
                      action="search",
                      extra="serie",
@@ -67,27 +62,6 @@ def search(item, texto):
         for line in sys.exc_info():
             logger.error("%s" % line)
         return []
-
-
-def list_a_z(item):
-    logger.info("[vediserie.py] ordine alfabetico")
-    itemlist = []
-
-    data = scrapertools.anti_cloudflare(item.url, headers)
-
-    patron = '<li><a href="([^"]+)" title="([^"]+)">.*?</a></li>'
-
-    matches = re.compile(patron, re.DOTALL).findall(data)
-
-    for scrapedurl, scrapedtitle in matches:
-        itemlist.append(
-            Item(channel=__channel__,
-                 action="episodios",
-                 title=scrapedtitle,
-                 url=scrapedurl))
-
-    return itemlist
-
 
 def fichas(item):
     logger.info("[vediserie.py] fichas")
