@@ -58,7 +58,7 @@
           <texturenofocus>Controls/KeyboardKeyNF.png</texturenofocus>   
           <align>center</align>
           <aligny>center</aligny> 
-          <label>Cancelar</label>
+          <label>Annulla</label>
         </control>
         <control type="button" id="10006">
           <posx>495</posx>
@@ -70,7 +70,7 @@
           <texturenofocus>Controls/KeyboardKeyNF.png</texturenofocus>    
           <align>center</align>
           <aligny>center</aligny>
-          <label>Por defecto</label>
+          <label>Predefinito</label>
         </control>
           <control type="group" id="10007">
           <posy>45</posy>
