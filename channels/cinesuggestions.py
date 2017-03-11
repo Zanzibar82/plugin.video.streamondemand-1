@@ -65,7 +65,7 @@ def archivio(item):
         if (DEBUG): logger.info("title=[" + scrapedtitle + "], url=[" + scrapedurl + "]")
         itemlist.append(
             Item(channel=__channel__,
-                 action="findvideos",
+                 action="play",
                  title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
                  url=scrapedurl,
                  thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png",
@@ -122,7 +122,7 @@ def peliculas(item):
     return itemlist
 
 def play(item):
-    logger.info("streamondemand.streamblog findvideos_tv")
+    logger.info("streamondemand.cinesuggestions play")
 
     data = scrapertools.cache_page(item.url, headers=headers)
     path = scrapertools.find_single_match(data, '<a href="([^"]+)" target="_blank">https[^<]+<')
