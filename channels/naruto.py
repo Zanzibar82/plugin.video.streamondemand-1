@@ -24,8 +24,8 @@ __language__ = "IT"
 
 DEBUG = config.get_setting("debug")
 
-host = "http://manganimenod.altervista.org/"
-home = "http://manganimenod.altervista.org/episodi.php?a=NARUTO1"
+host = "http://manganimenod.it/"
+home = "http://manganimenod.it/episodi.php?a=NARUTO1"
 
 def isGeneric():
     return True
