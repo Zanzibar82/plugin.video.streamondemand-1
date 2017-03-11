@@ -131,6 +131,7 @@ def peliculasx(item):
             Item(channel=__channel__,
                  extra=item.extra,
                  action="episodios" if item.extra == "serie" else "findvideos",
+                 contentType="movie",
                  fulltitle=scrapedtitle,
                  show=scrapedtitle,
                  title=scrapedtitle,

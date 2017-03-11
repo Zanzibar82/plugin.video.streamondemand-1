@@ -115,6 +115,7 @@ def peliculas(item):
             Item(channel=__channel__,
                  extra=item.extra,
                  action="findvideos",
+                 contentType="movie",
                  title=title,
                  url=scrapedurl,
                  thumbnail=scrapedthumbnail,

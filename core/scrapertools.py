@@ -25,12 +25,13 @@
 # Scraper tools for reading and processing web elements
 # --------------------------------------------------------------------------------
 
-import os
 import re
+import socket
 import time
-import urlparse
+
 import logger
 from core import httptools
+
 
 def cache_page(url,post=None,headers=None,modo_cache=None, timeout=None):
     return cachePage(url,post,headers,modo_cache,timeout=timeout)
@@ -70,18 +71,20 @@ def downloadpageGzip(url):
 
 
 def getLocationHeaderFromResponse(url):
-    response = httptools.downloadpage(url, only_headers=True)
+    response = httptools.downloadpage(url, only_headers=True, follow_redirects=False)
     return response.headers.get("location")
 
 
-def get_header_from_response(url,header_to_get="",post=None,headers=None):
+def get_header_from_response(url, header_to_get="", post=None, headers=None, follow_redirects=False):
     header_to_get = header_to_get.lower()
-    response = httptools.downloadpage(url, post=post, headers=headers, only_headers=True)
+    response = httptools.downloadpage(url, post=post, headers=headers, only_headers=True,
+                                      follow_redirects=follow_redirects)
     return response.headers.get(header_to_get)
 
 
-def get_headers_from_response(url,post=None,headers=None):
-    response = httptools.downloadpage(url, post=post, headers=headers, only_headers=True)
+def get_headers_from_response(url, post=None, headers=None, follow_redirects=False):
+    response = httptools.downloadpage(url, post=post, headers=headers, only_headers=True,
+                                      follow_redirects=follow_redirects)
     return response.headers.items()
     
 
@@ -520,12 +523,14 @@ def internet(host="8.8.8.8", port=53, timeout=3):
 
 
 def wait_for_internet(wait=30, retry=5):
+    import xbmc
+
+    monitor = xbmc.Monitor()
     count = 0
     while True:
         if internet():
             return True
         count += 1
-        if count >= retry:
+        if count >= retry or monitor.abortRequested():
             return False
-        time.sleep(wait)
-
+        monitor.waitForAbort(wait)

@@ -90,6 +90,7 @@ def peliculas(item):
         itemlist.append(infoSod(
             Item(channel=__channel__,
                  action="play",
+                 contentType="movie",
                  fulltitle=scrapedtitle,
                  show=scrapedtitle,
                  title="[COLOR azure]" + scrapedtitle + "[/COLOR]",

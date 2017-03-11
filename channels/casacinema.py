@@ -118,6 +118,7 @@ def peliculas(item):
         itemlist.append(infoSod(
             Item(channel=__channel__,
                  action="episodios" if item.extra == "serie" else "findvideos",
+                 contentType="movie",
                  title=title,
                  url=scrapedurl,
                  thumbnail=scrapedthumbnail,

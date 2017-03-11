@@ -134,6 +134,7 @@ def peliculas_src(item):
             itemlist.append(infoSod(
                 Item(channel=__channel__,
                      action="findvideos",
+                     contentType="movie",
                      fulltitle=scrapedtitle,
                      show=scrapedtitle,
                      title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
@@ -162,6 +163,7 @@ def peliculas(item):
         itemlist.append(infoSod(
             Item(channel=__channel__,
                  action="findvideos",
+                 contentType="movie",
                  fulltitle=scrapedtitle,
                  show=scrapedtitle,
                  title="[COLOR azure]" + scrapedtitle + "[/COLOR]",

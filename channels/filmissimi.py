@@ -127,6 +127,7 @@ def elenco(item):
         itemlist.append(infoSod(
             Item(channel=__channel__,
                  action="findvideos",
+                 contentType="movie",
                  title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
                  fulltitle=scrapedtitle,
                  url=scrapedurl,
