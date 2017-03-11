@@ -185,7 +185,11 @@ def channel_search(queue, channel_parameters, category, tecleado):
 def do_search(item):
     logger.info("streamondemand.channels.buscador do_search")
 
-    tecleado, category = item.extra.split('{}')
+    if '{}' in item.extra:
+        tecleado, category = item.extra.split('{}')
+    else:
+        tecleado = item.extra
+        category = ""
 
     itemlist = []
 
@@ -198,8 +202,8 @@ def do_search(item):
         channel_language = "all"
         logger.info("streamondemand.channels.buscador channel_language=" + channel_language)
 
-    progreso = platformtools.dialog_progress_bg("Cercando " + tecleado, "")
-    channel_files = glob.glob(channels_path)
+    progreso = platformtools.dialog_progress_bg("Cercando " + urllib.unquote_plus(tecleado), "")
+    channel_files = sorted(glob.glob(channels_path))
 
     number_of_channels = 0
     search_results = Queue.Queue()

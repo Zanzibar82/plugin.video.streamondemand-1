@@ -635,9 +635,9 @@ def do_channels_search(item):
         channel_language = "all"
         logger.info("streamondemand.channels.buscador channel_language=" + channel_language)
 
-    progreso = platformtools.dialog_progress_bg(NLS_Looking_For % tecleado)
+    progreso = platformtools.dialog_progress_bg(NLS_Looking_For % urllib.unquote_plus(tecleado))
 
-    channel_files = glob.glob(channels_path)
+    channel_files = sorted(glob.glob(channels_path))
 
     search_results = Queue.Queue()
     number_of_channels = 0
