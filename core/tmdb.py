@@ -754,9 +754,9 @@ class Tmdb(object):
             self.result = ResultDictDefault(resultado)
         else:
             # No hay resultados de la busqueda
-            msg = "La busqueda de %s no dio resultados." % buscando
+            msg = "Nessun risultato per la ricerca: %s" % buscando
             if "status_code" in resultado:
-                msg += "\nError de tmdb: %s %s" % (resultado["status_code"], resultado["status_message"])
+                msg += "\nErrore di tmdb: %s %s" % (resultado["status_code"], resultado["status_message"])
             logger.debug(msg)
 
     def __search(self, index_results=0, page=1):
@@ -817,7 +817,7 @@ class Tmdb(object):
 
         else:
             # No hay resultados de la busqueda
-            msg = "La busqueda de '%s' no dio resultados para la pagina %s" % (buscando, page)
+            msg = "Nessun risultato della ricerca '%s' per la pagina %s" % (buscando, page)
             if "status_code" in resultado:
                 msg += "\nError de tmdb: %s %s" % (resultado["status_code"], resultado["status_message"])
             logger.error(msg)
@@ -1010,7 +1010,7 @@ class Tmdb(object):
                     ret = self.result['overview']
 
                 if "status_code" in resultado:
-                    msg = "Error de tmdb: %s %s" % (resultado["status_code"], resultado["status_message"])
+                    msg = "Error di tmdb: %s %s" % (resultado["status_code"], resultado["status_message"])
                     logger.debug(msg)
 
         return ret
@@ -1145,8 +1145,8 @@ class Tmdb(object):
 
             if "status_code" in self.temporada[numtemporada]:
                 # Se ha producido un error
-                msg = "La busqueda de " + buscando + " no dio resultados."
-                msg += "\nError de tmdb: %s %s" % (self.temporada[numtemporada]["status_code"], self.temporada[numtemporada]["status_message"])
+                msg = "Nessun risultato per la ricerca: %s" % buscando
+                msg += "\nErrore di tmdb: %s %s" % (self.temporada[numtemporada]["status_code"], self.temporada[numtemporada]["status_message"])
                 logger.debug(msg)
                 self.temporada[numtemporada] = {"episodes": {}}
 

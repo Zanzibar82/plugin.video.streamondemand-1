@@ -149,7 +149,7 @@ def convert_old_to_v4():
                         insertados, sobreescritos, fallidos = library.save_library_tvshow(serie, list())
                         if fallidos == 0:
                             series_insertadas += 1
-                            platformtools.dialog_notification("Serie actualizada", serie.infoLabels['title'])
+                            platformtools.dialog_notification("Serie aggiornata", serie.infoLabels['title'])
                         else:
                             series_fallidas += 1
                     except:
@@ -165,7 +165,7 @@ def convert_old_to_v4():
                         insertados, sobreescritos, fallidos = library.save_library_movie(movie)
                         if fallidos == 0:
                             movies_insertadas += 1
-                            platformtools.dialog_notification("Película actualizada", movie.infoLabels['title'])
+                            platformtools.dialog_notification("Film aggiornato", movie.infoLabels['title'])
                         else:
                             movies_fallidas += 1
                     except:

@@ -230,7 +230,7 @@ def save_library_movie(item):
             insertados += 1
 
         if filetools.write(json_path, item.tojson()):
-            p_dialog.update(100, 'Añadiendo película...', item.contentTitle)
+            p_dialog.update(100, 'Aggiungendo il film...', item.contentTitle)
             item_nfo.library_urls[item.channel] = item.url
 
             if filetools.write(nfo_path, head_nfo + item_nfo.tojson()):
@@ -244,7 +244,7 @@ def save_library_movie(item):
 
     # Si llegamos a este punto es por q algo ha fallado
     logger.error("No se ha podido guardar %s en la biblioteca" % item.contentTitle)
-    p_dialog.update(100, 'Fallo al añadir...', item.contentTitle)
+    p_dialog.update(100, 'Impossibile aggiungere...', item.contentTitle)
     p_dialog.close()
     return 0, 0, -1
 
@@ -585,7 +585,7 @@ def add_pelicula_to_library(item):
                                 config.get_localized_string(30135))  # 'se ha añadido a la biblioteca'
     else:
         platformtools.dialog_ok(config.get_localized_string(30131),
-                                "ERRORE, il film non è stato aggiunta alla libreria")
+                                "ERRORE, il film non è stato aggiunto alla libreria")
 
 
 def add_serie_to_library(item, channel=None):

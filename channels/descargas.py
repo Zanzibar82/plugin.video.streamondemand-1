@@ -280,12 +280,12 @@ def move_to_libray(item):
     
     if filetools.isfile(destino):
       if item.contentType == "movie" and item.infoLabels["tmdb_id"]:
-        library_item = Item(title="Descargado: %s" % item.downloadFilename, channel= "descargas", action="findvideos", infoLabels=item.infoLabels, url=item.downloadFilename)
+        library_item = Item(title="Scaricato: %s" % item.downloadFilename, channel= "descargas", action="findvideos", infoLabels=item.infoLabels, url=item.downloadFilename)
         
         library.save_library_movie(library_item)
         
       elif item.contentType == "episode" and item.infoLabels["tmdb_id"]:
-        library_item = Item(title="Descargado: %s" % item.downloadFilename, channel= "descargas", action="findvideos", infoLabels=item.infoLabels, url=item.downloadFilename)
+        library_item = Item(title="Scaricato: %s" % item.downloadFilename, channel= "descargas", action="findvideos", infoLabels=item.infoLabels, url=item.downloadFilename)
         
         tvshow = Item(channel= "descargas", contentType="tvshow", infoLabels = {"tmdb_id": item.infoLabels["tmdb_id"]})
         library.save_library_tvshow(tvshow, [library_item])
@@ -440,7 +440,7 @@ def download_from_url(url, item):
     while d.state == d.states.downloading and not progreso.iscanceled():
         time.sleep(0.1)
         line1 = "%s" % (d.filename)
-        line2 = "%.2f%% - %.2f %s de %.2f %s a %.2f %s/s (%d/%d)" % (
+        line2 = "%.2f%% - %.2f %s di %.2f %s a %.2f %s/s (%d/%d)" % (
         d.progress, d.downloaded[1], d.downloaded[2], d.size[1], d.size[2], d.speed[1], d.speed[2], d.connections[0],
         d.connections[1])
         line3 = "Tempo rimanente: %s" % (d.remaining_time)
