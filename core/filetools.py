@@ -217,7 +217,7 @@ def rename(path, new_name):
     except:
         logger.error("ERROR al renombrar el archivo: %s" %(path))
         logger.error(traceback.format_exc())
-        platformtools.dialog_notification("Error al renombrar", path)
+        platformtools.dialog_notification("Errore durante la rinominazione della cartella.", path)
         return False
     else:
         return True
@@ -388,7 +388,7 @@ def remove(path):
     except:
         logger.error("ERROR al eliminar el archivo: %s" %(path))
         logger.error(traceback.format_exc())
-        platformtools.dialog_notification("Error al eliminar el archivo", path)
+        platformtools.dialog_notification("Errore durante l'eliminazione del file.", path)
         return False
     else:
         return True
@@ -417,7 +417,7 @@ def rmdirtree(path):
     except:
         logger.error("ERROR al eliminar el directorio: %s" %(path))
         logger.error(traceback.format_exc())
-        platformtools.dialog_notification("Error al eliminar el directorio", path)
+        platformtools.dialog_notification("Impossibile rimuovere la directory.", path)
         return False
     else:
         return not exists(path)
@@ -440,7 +440,7 @@ def rmdir(path):
     except:
         logger.error("ERROR al eliminar el directorio: %s" %(path))
         logger.error(traceback.format_exc())
-        platformtools.dialog_notification("Error al eliminar el directorio", path)
+        platformtools.dialog_notification("Impossibile rimuovere la directory.", path)
         return False
     else:
         return True
@@ -463,7 +463,7 @@ def mkdir(path):
     except:
         logger.error("ERROR al crear el directorio: %s" %(path))
         logger.error(traceback.format_exc())
-        platformtools.dialog_notification("Error al crear el directorio", path)
+        platformtools.dialog_notification("Impossibile creare la directory", path)
         return False
     else:
         return True
