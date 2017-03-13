@@ -52,13 +52,14 @@ def find_videos(text):
     devuelve = []
 
     # http://www.rapidvideo.org/ttsvqng2qp2v/Scooby-Doo_e_la_Maschera_di_Blue_Falcon_720p.mp4.html
-    patronvideos = 'rapidvideo.org/([A-Za-z0-9]+)/'
+    # http://www.rapidvideo.cool/3zed9xr3yeoo/The.Flash.1x01.Una.Citta.Di.Eroi.ITA.DLMux.x264-UBi.mkv.html
+    patronvideos = 'rapidvideo\.([org|cool]+)/([A-Za-z0-9]+)/'
     logger.info("[rapidvideo.py] find_videos #" + patronvideos + "#")
     matches = re.compile(patronvideos, re.DOTALL).findall(text)
 
-    for match in matches:
+    for domain, match in matches:
         titulo = "[rapidvideo]"
-        url = "http://www.rapidvideo.org/" + match
+        url = ("http://www.rapidvideo.%s/" + match) % domain
         d = scrapertools.cache_page(url)
         ma = scrapertools.find_single_match(d, '"fname" value="([^<]+)"')
         ma = titulo + " " + ma
