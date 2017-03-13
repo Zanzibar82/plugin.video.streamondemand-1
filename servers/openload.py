@@ -27,7 +27,7 @@ def test_video_exists(page_url):
     if 'We’re Sorry!' in data:
         data = httptools.downloadpage(page_url.replace("/embed/", "/f/"), headers=header, cookies=False).data
         if 'We’re Sorry!' in data:
-            return False, "[Openload] File eliminato o inesistente" 
+            return False, "[Openload] File non presente" 
 
     return True, ""
 
@@ -41,7 +41,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         page_url, referer = page_url.split("|", 1)
         header = {'Referer': referer}
     data = httptools.downloadpage(page_url, headers=header, cookies=False).data
-    subtitle = scrapertools.find_single_match(data, '<track kind="captions" src="([^"]+)" srclang="it"')
+    subtitle = scrapertools.find_single_match(data, '<track kind="captions" src="([^"]+)" srclang="es"')
     #Header para la descarga
     header_down = "|User-Agent=" + headers['User-Agent']
 
@@ -71,7 +71,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
                     decode1.append(int(idx3[i:i+2], 16))
                 idx4 = encode[0:idx2] + encode[idx2+20:]
                 for i in range(0, len(idx4), 2):
-                    value = int(idx4[i:i+2], 16) ^ 137 ^ decode1[(i/2) % 10]
+                    value = int(idx4[i:i+2], 16) ^ 96 ^ decode1[(i/2) % 10]
                     text_decode.append(chr(value))
 
                 text_decode = "".join(text_decode)
