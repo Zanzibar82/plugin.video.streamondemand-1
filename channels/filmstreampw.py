@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
 # streamondemand.- XBMC Plugin
-# Canal para piratestreaming
+# Canal para streamingita.com
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import re
@@ -25,7 +25,7 @@ headers = [
     ['Accept-Encoding', 'gzip, deflate']
 ]
 
-host = 'http://filmstreamita.com'
+host = 'http://beststreaming.info'
 
 DEBUG = config.get_setting("debug")
 

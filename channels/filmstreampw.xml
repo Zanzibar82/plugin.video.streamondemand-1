@@ -3,7 +3,7 @@
 	<id>filmstreampw</id>
 	<name>Filmstreampw</name>
 
-	<active>false</active>
+	<active>true</active>
 	<adult>false</adult>
 	<language>it</language>
 
@@ -12,7 +12,7 @@
 	<bannermenu>https://raw.githubusercontent.com/Zanzibar82/images/master/posters/filmstreampw.png</bannermenu>
 
 	<update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
-	<version>6</version>
+	<version>7</version>
 	<date>16/06/2016</date>
 	<changes>update</changes>
 
@@ -24,8 +24,8 @@
 		<id>include_in_global_search</id>
 		<type>bool</type>
 		<label>Includi ricerca globale</label>
-		<default>false</default>
-		<enabled>false</enabled>
-		<visible>false</visible>
+		<default>true</default>
+		<enabled>true</enabled>
+		<visible>true</visible>
 	</settings>
 </channel>
