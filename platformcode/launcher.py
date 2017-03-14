@@ -256,20 +256,8 @@ def run():
             elif item.action == "search":
                 logger.info("streamondemand.platformcode.launcher search")
 
-                last_search = ""
-                last_search_active = config.get_setting("last_search", "buscador")
-                if last_search_active:
-                    try:
-                        current_saved_searches_list = list(config.get_setting("saved_searches_list", "buscador"))
-                        last_search = current_saved_searches_list[0]
-                    except:
-                        pass
-
-                tecleado = platformtools.dialog_input(last_search)
+                tecleado = platformtools.dialog_input('')
                 if tecleado is not None:
-                    if last_search_active:
-                        from channels import buscador
-                        buscador.save_search(tecleado)
 
                     # TODO revisar 'personal.py' porque no tiene función search y daría problemas
                     # DrZ3r0

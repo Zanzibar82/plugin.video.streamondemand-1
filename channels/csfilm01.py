@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
 # streamondemand.- XBMC Plugin
-# Canal para cinesuggestions
+# Canal para csfilm01
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
 import re
@@ -14,15 +14,15 @@ from core import servertools
 from core.item import Item
 from core.tmdb import infoSod
 
-__channel__ = "cinesuggestions"
+__channel__ = "csfilm01"
 __category__ = "F,C"
 __type__ = "generic"
-__title__ = "cinesuggestions (IT)"
+__title__ = "csfilm01 (IT)"
 __language__ = "IT"
 
 DEBUG = config.get_setting("debug")
 
-host = "http://csarchiviofilm.blogfree.net/?f=1105944"
+host = "http://csfilm01.blogspot.com"
 
 headers = [
     ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0'],
@@ -36,36 +36,37 @@ def isGeneric():
 
 
 def mainlist(item):
-    logger.info("streamondemand.cinesuggestions mainlist")
+    logger.info("streamondemand.csfilm01 mainlist")
     itemlist = [Item(channel=__channel__,
                      title="[COLOR azure]Ultimi Film Inseriti[/COLOR]",
                      action="peliculas",
                      url=host,
                      thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png"),
                 Item(channel=__channel__,
-                     title="[COLOR azure]Archivio Film[/COLOR] [COLOR red][slow][/COLOR]",
-                     action="archivio",
-                     url="http://csarchiviofilm.blogfree.net/?t=5309224",
+                     title="[COLOR azure]Categorie[/COLOR]",
+                     action="categorie",
+                     url=host,
                      thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png")]
 
     return itemlist
 
-def archivio(item):
+def categorie(item):
     itemlist = []
 
     # Descarga la pagina
     data = scrapertools.cache_page(item.url, headers=headers)
+    bloque = scrapertools.get_match(data, '<div class=\'widget-content list-label-widget-content\'>(.*?)</ul>')
 
     # Extrae las entradas (carpetas)
-    patron = '<br>(.*?)<a href="([^"]+)" target="_blank">'
-    matches = re.compile(patron, re.DOTALL).findall(data)
+    patron = '<a dir=\'ltr\' href=\'(.*?)\'>(.*?)</a>'
+    matches = re.compile(patron, re.DOTALL).findall(bloque)
 
-    for scrapedtitle, scrapedurl in matches:
+    for scrapedurl, scrapedtitle in matches:
 
         if (DEBUG): logger.info("title=[" + scrapedtitle + "], url=[" + scrapedurl + "]")
         itemlist.append(
             Item(channel=__channel__,
-                 action="play",
+                 action="peliculas",
                  title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
                  url=scrapedurl,
                  thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png",
@@ -74,15 +75,16 @@ def archivio(item):
     return itemlist
 
 def peliculas(item):
-    logger.info("streamondemand.cinesuggestions peliculas")
+    logger.info("streamondemand.csfilm01 peliculas")
     itemlist = []
 
     # Descarga la pagina
     data = scrapertools.cache_page(item.url, headers=headers)
+    bloque = scrapertools.get_match(data, '<div class=\'hupso-share-buttons\'>(.*?)<div class=\'blog-pager\' id=\'blog-pager\'>')
 
     # Extrae las entradas (carpetas)
-    patron = '<h3 class="web"><a HREF="(.*?)" title[^>]+>(.*?)<'
-    matches = re.compile(patron, re.DOTALL).findall(data)
+    patron = '<h2 class=\'post-title entry-title\'>\s*<a href=\'(.*?)\'>(.*?)</a>'
+    matches = re.compile(patron, re.DOTALL).findall(bloque)
 
     for scrapedurl, scrapedtitle in matches:
         scrapedthumbnail = ""
@@ -100,7 +102,7 @@ def peliculas(item):
                  folder=True), tipo='movie'))
 
     # Extrae el paginador
-    patronvideos = '<li class="current">[^<]+<li><a href="(.*?)">'
+    patronvideos = '<a class=\'blog-pager-older-link\' href=\'(.*?)\' id=\'Blog1_blog-pager-older-link\' title=\'Next Product\'>'
     matches = re.compile(patronvideos, re.DOTALL).findall(data)
 
     if len(matches) > 0:
@@ -122,10 +124,10 @@ def peliculas(item):
     return itemlist
 
 def play(item):
-    logger.info("streamondemand.cinesuggestions play")
+    logger.info("streamondemand.csfilm01 play")
 
     data = scrapertools.cache_page(item.url, headers=headers)
-    path = scrapertools.find_single_match(data, '<a href="([^"]+)" target="_blank">https[^<]+<')
+    path = scrapertools.find_single_match(data, '<a href="([^"]+)" target="_blank">MEGA')
     from lib import requests
     url = path
     redir = requests.get(url)

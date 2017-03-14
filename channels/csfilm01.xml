@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <channel>
-    <id>cinesuggestions</id>
-    <name>CineSuggestions</name>
+    <id>csfilm01</id>
+    <name>CSFilm01</name>
 
     <active>true</active>
     <adult>false</adult>
     <language>it</language>
 
     <fanart></fanart>
-    <thumbnail>https://i.imgsafe.org/f81830a643.png</thumbnail>
-    <bannermenu>https://i.imgsafe.org/f81830a643.png</bannermenu>
+    <thumbnail>https://s16.postimg.org/bym06851x/video_play_2_xxl.png</thumbnail>
+    <bannermenu>https://s16.postimg.org/bym06851x/video_play_2_xxl.png</bannermenu>
 
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
-    <version>3</version>
+    <version>1</version>
     <date>22/10/2016</date>
     <changes>update</changes>
 

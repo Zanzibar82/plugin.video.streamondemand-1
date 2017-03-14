@@ -29,18 +29,21 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
 
     time.sleep(9)
 
-    post_url = re.findall('Form method="POST" action=\'(.*)\'', data)[0]
-    post_selected = re.findall('Form method="POST" action=(.*)</Form>', data, re.DOTALL)[0]
+    try:
+        post_url = re.findall('Form method="POST" action=\'(.*)\'', data)[0]
+        post_selected = re.findall('Form method="POST" action=(.*)</Form>', data, re.DOTALL)[0]
 
-    post_data = 'op=%s&usr_login=%s&id=%s&referer=%s&hash=%s&imhuman=Proceed+to+video' % (
-        re.findall('input type="hidden" name="op" value="(.*)"', post_selected)[0],
-        re.findall('input type="hidden" name="usr_login" value="(.*)"', post_selected)[0],
-        re.findall('input type="hidden" name="id" value="(.*)"', post_selected)[0],
-        re.findall('input type="hidden" name="referer" value="(.*)"', post_selected)[0],
-        re.findall('input type="hidden" name="hash" value="(.*)"', post_selected)[0])
+        post_data = 'op=%s&usr_login=%s&id=%s&referer=%s&hash=%s&imhuman=Proceed+to+video' % (
+            re.findall('input type="hidden" name="op" value="(.*)"', post_selected)[0],
+            re.findall('input type="hidden" name="usr_login" value="(.*)"', post_selected)[0],
+            re.findall('input type="hidden" name="id" value="(.*)"', post_selected)[0],
+            re.findall('input type="hidden" name="referer" value="(.*)"', post_selected)[0],
+            re.findall('input type="hidden" name="hash" value="(.*)"', post_selected)[0])
 
-    headers.append(['Referer', post_url])
-    data = scrapertools.cache_page(post_url, post=post_data, headers=headers)
+        headers.append(['Referer', post_url])
+        data = scrapertools.cache_page(post_url, post=post_data, headers=headers)
+    except:
+        pass
 
     data_pack = scrapertools.find_single_match(data, "(eval.function.p,a,c,k,e,.*?)\s*</script>")
 
