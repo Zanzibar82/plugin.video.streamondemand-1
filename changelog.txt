@@ -1,3 +1,6 @@
+v5.4.9
+- major upstreams fix
+
 v5.4.8
 - fix mega connector multi-platform
 - fix erratic search
