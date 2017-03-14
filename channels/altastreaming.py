@@ -22,10 +22,10 @@ __language__ = "IT"
 
 DEBUG = config.get_setting("debug")
 
-host = "http://www.altastreaming.tv/"
+host = "http://www.altastreaming.me/"
 
 headers = [
-    ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0'],
+    ['User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:52.0) Gecko/20100101 Firefox/52.0'],
     ['Accept-Encoding', 'gzip, deflate'],
     ['Referer', host]
 ]
