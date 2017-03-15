@@ -38,12 +38,12 @@ def mainlist(item):
     itemlist = [Item(channel=__channel__,
                      title="[COLOR azure]Aggiornamenti[/COLOR]",
                      action="peliculas",
-                     url="%s/?searchtype=movie&post_type=movie&s=" % host,
+                     url="http://www.documentari-streaming-db.com/?searchtype=movie&post_type=movie&sl=lasts&s=",
                      thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png"),
                 Item(channel=__channel__,
                      title="[COLOR azure]Categorie[/COLOR]",
                      action="categorias",
-                     url=host,
+                     url="http://www.documentari-streaming-db.com/documentari-streaming-database/",
                      thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png"),
                 Item(channel=__channel__,
                      title="[COLOR yellow]Cerca...[/COLOR]",
@@ -61,21 +61,27 @@ def categorias(item):
     bloque = scrapertools.get_match(data, '<ul role="menu" class="collapse collapse-1156 ">(.*?)</ul>')
 
     # Extrae las entradas (carpetas)
-    patron = '<li[^>]+><a[^h]+href="([^"]+)">(.*?)<\/a>'
+    patron = '<a href="(.*?)">(.*?)</a></li>'
     matches = re.compile(patron, re.DOTALL).findall(bloque)
 
     for scrapedurl, scrapedtitle in matches:
         if (DEBUG): logger.info("title=[" + scrapedtitle + "], url=[" + scrapedurl + "]")
 
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("Documentari ", ""))
-        if scrapedtitle.startswith(("Tutte")):
+        if scrapedtitle.startswith("Tutte"):
             continue
+
+        strip = scrapedtitle
+        strip = strip.replace(" ", "")
+        from unidecode import unidecode
+        strip = unidecode(strip)
+        url = host + "/?searchtype=movie&post_type=movie&sl=lasts&cat=" +  strip.encode("ascii").lower() + "&s="
 
         itemlist.append(
             Item(channel=__channel__,
                  action="peliculas",
                  title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
-                 url=scrapedurl,
+                 url=url,
                  thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png",
                  folder=True))
 
@@ -139,6 +145,7 @@ def peliculas(item):
 
     if len(matches) > 0:
         scrapedurl = urlparse.urljoin(item.url, matches[0])
+        scrapedurl = scrapedurl.replace("&#038;", "&")
         itemlist.append(
             Item(channel=__channel__,
                  action="HomePage",
