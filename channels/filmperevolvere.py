@@ -84,21 +84,22 @@ def categorie(item):
 
     # Descarga la pagina
     data = scrapertools.cache_page(item.url, headers=headers)
-    bloque = scrapertools.get_match(data, '<h3>Genres[^>]+></span></h3>(.*?)</ul>')
+    bloque = scrapertools.get_match(data, '<ul class="sub-menu">(.*?)</ul>')
 
     # Extrae las entradas (carpetas)
-    patron = '<li\s*class=".*?"><a\s*href="([^"]+)" >(.*?)</a>[^>]+>[^>]+></li>'
+    patron = '<li.*?class=".*?"><a href="([^"]+)".*?>[^>]+>([^<]+)<[^>]+>[^>]+></li>'
     matches = re.compile(patron, re.DOTALL).findall(bloque)
 
     for scrapedurl, scrapedtitle in matches:
         if (DEBUG): logger.info("title=[" + scrapedtitle + "], url=[" + scrapedurl + "]")
-        itemlist.append(
-            Item(channel=__channel__,
-                 action="peliculas",
-                 title=scrapedtitle,
-                 url=scrapedurl,
-                 thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png",
-                 folder=True))
+        if "Serie TV" not in scrapedtitle: # Ha poche serie TV.
+            itemlist.append(
+                Item(channel=__channel__,
+                     action="peliculas",
+                     title=scrapedtitle,
+                     url=scrapedurl,
+                     thumbnail="http://orig03.deviantart.net/6889/f/2014/079/7/b/movies_and_popcorn_folder_icon_by_matheusgrilo-d7ay4tw.png",
+                     folder=True))
 
     return itemlist
 
@@ -113,10 +114,10 @@ def peliculas(item):
     data = scrapertools.cache_page(item.url, headers=headers)
 
     # Extrae las entradas (carpetas)
-    patron = '<a\s*href="([^"]+)"><img\s*src="([^"]+)" alt="([^"]+)"[^>]+>'
+    patron = '<div class=".*?col-md-12">\s*<a href="([^"]+)" title="([^"]+)"><img.*?src="([^"]+)".*?>'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
-    for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
+    for scrapedurl, scrapedtitle, scrapedthumbnail in matches:
         scrapedplot = ""
         scrapedtitle = scrapedtitle.title()
         if DEBUG: logger.info(
