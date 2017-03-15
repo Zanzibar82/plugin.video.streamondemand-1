@@ -8,13 +8,13 @@
     <language>it</language>
 
     <fanart></fanart>
-    <thumbnail>http://altadefinizione.zone/templates/altadefinizione10/images/logo2.png</thumbnail>
-    <bannermenu>http://altadefinizione.zone/templates/altadefinizione10/images/logo2.png</bannermenu>
+    <thumbnail>http://altadefinizione.movie/templates/altadefinizione13/images/logo2.png</thumbnail>
+    <bannermenu>http://altadefinizione.movie/templates/altadefinizione13/images/logo2.png</bannermenu>
 
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
-    <version>5</version>
-    <date>22/06/2016</date>
-    <changes>update</changes>
+    <version>6</version>
+    <date>15/03/2017</date>
+    <changes>fix thumbnail</changes>
 
     <categories>
         <category>movie</category>
