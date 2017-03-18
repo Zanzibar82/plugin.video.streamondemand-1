@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<channel>
+    <id>guardaserieonline</id>
+    <name>GuardaSerie.online</name>
+
+    <active>true</active>
+    <adult>false</adult>
+    <language>it</language>
+
+    <thumbnail>http://www.guardaserie.online/wp-content/themes/guardaserie/images/logogd.png</thumbnail>
+    <bannermenu>http://www.guardaserie.online/wp-content/themes/guardaserie/images/logogd.png</bannermenu>
+
+    <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
+    <version>1</version>
+    <date>18/03/2017</date>
+    <changes>new channel</changes>
+
+    <categories>
+        <category>serie</category>
+        <category>anime</category>
+    </categories>
+
+ 	<settings>
+		<id>include_in_global_search</id>
+		<type>bool</type>
+		<label>Includi ricerca globale</label>
+		<default>true</default>
+		<enabled>true</enabled>
+		<visible>true</visible>
+	</settings>
+</channel>
