@@ -85,10 +85,13 @@ def episodios(item):
 
     data = scrapertools.cache_page(item.url)
 
-    patron = '<td style="[^"]*?">\s*<strong>(.*?)</strong>\s*</td>\s*<td style="[^"]*?">\s*<a href="([^"]+?)"\s*target="_blank">\s*<img.*?/>\s*</a>\s*</td>'
+    patron = '<td style="[^"]*?">\s*<strong>(.*?)</strong>\s*</td>\s*<td style="[^"]*?">\s*<a href="([^"]+?)"\s*target="_blank">\s*<img.*?src="([^"]+?)".*?/>\s*</a>\s*</td>'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
-    for scrapedtitle, scrapedurl in matches:
+    for scrapedtitle, scrapedurl, scrapedimg in matches:
+        if 'nodownload' in scrapedimg or 'nostreaming' in scrapedimg:
+            continue
+
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle)
         scrapedtitle = re.sub(r'<[^>]*?>', '', scrapedtitle)
         scrapedtitle = '[COLOR azure][B]' + scrapedtitle + '[/B][/COLOR]'
