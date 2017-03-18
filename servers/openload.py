@@ -12,8 +12,7 @@ from core import httptools
 from core import logger
 from core import scrapertools
 
-
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0'}
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0'}
 
 
 def test_video_exists(page_url):
@@ -27,7 +26,7 @@ def test_video_exists(page_url):
     if 'We’re Sorry!' in data:
         data = httptools.downloadpage(page_url.replace("/embed/", "/f/"), headers=header, cookies=False).data
         if 'We’re Sorry!' in data:
-            return False, "[Openload] Nessun file" 
+            return False, "[Openload] Nessun file"
 
     return True, ""
 
@@ -42,7 +41,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         header = {'Referer': referer}
     data = httptools.downloadpage(page_url, headers=header, cookies=False).data
     subtitle = scrapertools.find_single_match(data, '<track kind="captions" src="([^"]+)" srclang="es"')
-    #Header para la descarga
+    # Header para la descarga
     header_down = "|User-Agent=" + headers['User-Agent']
 
     try:
@@ -61,20 +60,8 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
 
         videourl = ""
         for encode in var_encodes:
-            text_decode = []
             try:
-                idx1 = max(2, ord(encode[0]) - 50)
-                idx2 = min(idx1, len(encode) - 18)
-                idx3 = encode[idx2:idx2+20]
-                decode1 = []
-                for i in range(0, len(idx3), 2):
-                    decode1.append(int(idx3[i:i+2], 16))
-                idx4 = encode[0:idx2] + encode[idx2+20:]
-                for i in range(0, len(idx4), 2):
-                    value = int(idx4[i:i+2], 16) ^ 137 ^ decode1[(i/2) % 10]
-                    text_decode.append(chr(value))
-
-                text_decode = "".join(text_decode)
+                text_decode = decodek(encode)
             except:
                 continue
 
@@ -119,7 +106,7 @@ def find_videos(text):
 
     referer = ""
     if "|Referer=" in text:
-        referer = "|"+text.split("|Referer=", 1)[1]
+        referer = "|" + text.split("|Referer=", 1)[1]
     patronvideos = '(?:openload|oload).../(?:embed|f)/([0-9a-zA-Z-_]+)'
     logger.info("#" + patronvideos + "#")
 
@@ -142,7 +129,8 @@ def get_link_api(page_url):
     file_id = scrapertools.find_single_match(page_url, '(?:embed|f)/([0-9a-zA-Z-_]+)')
     login = "97b2326d7db81f0f"
     key = "AQFO3QJQ"
-    data = httptools.downloadpage("https://api.openload.co/1/file/dlticket?file=%s&login=%s&key=%s" % (file_id, login, key)).data
+    data = httptools.downloadpage(
+        "https://api.openload.co/1/file/dlticket?file=%s&login=%s&key=%s" % (file_id, login, key)).data
     data = jsontools.load_json(data)
 
     if data["status"] == 200:
@@ -156,3 +144,40 @@ def get_link_api(page_url):
 
     return "", ""
 
+
+def decodek(k):
+    y = ord(k[0])
+    e = y - 0x37
+    d = max(2, e)
+    e = min(d, len(k) - 0x24 - 2)
+    t = k[e:e + 0x24]
+    h = 0
+    g = []
+    while h < len(t):
+        f = t[h:h + 3]
+        g.append(int(f, 0x8))
+        h += 3
+    v = k[0:e] + k[e + 0x24:]
+    p = []
+    i = 0
+    h = 0
+    while h < len(v):
+        B = v[h:h + 2]
+        C = v[h:h + 3]
+        f = int(B, 0x10)
+        h += 0x2
+
+        if (i % 3) == 0:
+            f = int(C, 8)
+            h += 1
+        elif i % 2 == 0 and i != 0 and ord(v[i - 1]) < 0x3c:
+            f = int(C, 0xa)
+            h += 1
+
+        A = g[i % 0xc]
+        f ^= 0xd5
+        f = f ^ A
+        p.append(chr(f))
+        i += 1
+
+    return "".join(p)
