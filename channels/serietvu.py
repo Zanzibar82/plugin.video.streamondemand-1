@@ -146,6 +146,7 @@ def lista_serie(item):
                  fulltitle=scrapedtitle,
                  url=scrapedurl,
                  thumbnail=scrapedimg,
+                 show=scrapedtitle,
                  folder=True), tipo="tv"))
     return itemlist
 
@@ -179,6 +180,22 @@ def episodi(item):
                      thumbnail=scrapedimg,
                      extra=scrapedextra,
                      folder=True))
+        
+    if config.get_library_support() and len(itemlist) != 0:
+        itemlist.append(
+            Item(channel=__channel__,
+                 title="Aggiungi alla libreria",
+                 url=item.url,
+                 action="add_serie_to_library",
+                 extra="episodi",
+                 show=item.show))
+        itemlist.append(
+            Item(channel=__channel__,
+                 title="Scarica tutti gli episodi della serie",
+                 url=item.url,
+                 action="download_all_episodes",
+                 extra="episodi",
+                 show=item.show))
     return itemlist
 
 # ================================================================================================================
