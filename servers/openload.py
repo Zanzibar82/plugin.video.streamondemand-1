@@ -12,7 +12,7 @@ from core import httptools
 from core import logger
 from core import scrapertools
 
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0'}
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0'}
 
 
 def test_video_exists(page_url):
@@ -26,7 +26,7 @@ def test_video_exists(page_url):
     if 'We’re Sorry!' in data:
         data = httptools.downloadpage(page_url.replace("/embed/", "/f/"), headers=header, cookies=False).data
         if 'We’re Sorry!' in data:
-            return False, "[Openload] Nessun file"
+            return False, "[Openload] Il file non esiste o è stato cancellato"
 
     return True, ""
 
@@ -60,12 +60,42 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
 
         videourl = ""
         for encode in var_encodes:
+            text_decode = []
             try:
-                text_decode = decodek(encode)
+                idx1 = max(2, ord(encode[0]) - 55)
+                idx2 = min(idx1, len(encode) - 38)
+                idx3 = encode[idx2:idx2 + 36]
+                decode1 = []
+                for i in range(0, len(idx3), 3):
+                    decode1.append(int(idx3[i:i + 3], 8))
+                v = encode[0:idx2] + encode[idx2 + 36:]
+                i = 0
+                h = 0
+                while h < len(v):
+                    B = v[h:h + 2]
+                    C = v[h:h + 3]
+                    f = int(B, 16)
+                    h += 2
+
+                    if (i % 3) == 0:
+                        f = int(C, 8)
+                        h += 1
+                    elif i % 2 == 0 and i != 0 and ord(v[i - 1]) < 60:
+                        f = int(C, 10)
+                        h += 1
+
+                    A = decode1[i % 7]
+                    f = f ^ 213;
+                    f = f ^ A;
+                    text_decode.append(chr(f))
+                    i += 1
+
+                text_decode = "".join(text_decode)
             except:
                 continue
 
             videourl = "https://openload.co/stream/%s?mime=true" % text_decode
+            logger.info("Video URL: " + videourl)
             resp_headers = httptools.downloadpage(videourl, follow_redirects=False, only_headers=True)
             videourl = resp_headers.headers["location"].replace("https", "http").replace("?mime=true", "")
             extension = resp_headers.headers["content-type"]
@@ -143,41 +173,3 @@ def get_link_api(page_url):
         return videourl, extension
 
     return "", ""
-
-
-def decodek(k):
-    y = ord(k[0])
-    e = y - 0x37
-    d = max(2, e)
-    e = min(d, len(k) - 0x24 - 2)
-    t = k[e:e + 0x24]
-    h = 0
-    g = []
-    while h < len(t):
-        f = t[h:h + 3]
-        g.append(int(f, 0x8))
-        h += 3
-    v = k[0:e] + k[e + 0x24:]
-    p = []
-    i = 0
-    h = 0
-    while h < len(v):
-        B = v[h:h + 2]
-        C = v[h:h + 3]
-        f = int(B, 0x10)
-        h += 0x2
-
-        if (i % 3) == 0:
-            f = int(C, 8)
-            h += 1
-        elif i % 2 == 0 and i != 0 and ord(v[i - 1]) < 0x3c:
-            f = int(C, 0xa)
-            h += 1
-
-        A = g[i % 0xc]
-        f ^= 0xd5
-        f = f ^ A
-        p.append(chr(f))
-        i += 1
-
-    return "".join(p)

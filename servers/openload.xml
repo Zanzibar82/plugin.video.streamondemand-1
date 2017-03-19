@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 <server>
 	<active>true</active>
-	<changes>Reparado por cambios en el servidor</changes>
-	<date>06/06/2016</date>
+	<changes>Fix</changes>
+	<date>20/03/2017</date>
 	<free>true</free>
 	<id>openload</id>
 	<name>openload</name>
@@ -11,5 +11,5 @@
 	</premium>
 	<thumbnail>http://media.tvalacarta.info/servers/server_openload.png</thumbnail>
 	<update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/</update_url>
-	<version>19</version>
+	<version>20</version>
 </server>
