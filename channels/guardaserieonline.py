@@ -103,6 +103,7 @@ def nuoveserie(item):
                  fulltitle=scrapedtitle,
                  url=scrapedurl,
                  extra="tv",
+                 show=scrapedtitle,
                  thumbnail=scrapedthumbnail,
                  folder=True), tipo="tv"))
 
@@ -134,6 +135,7 @@ def serietvaggiornate(item):
                  fulltitle=scrapedtitle,
                  url=scrapedurl,
                  extra="tv",
+                 show=scrapedtitle,
                  thumbnail=scrapedthumbnail,
                  folder=True), tipo="tv"))
 
@@ -176,9 +178,9 @@ def lista_serie(item):
     patron = '<a\s*href="([^"]+)".*?>\s*<img\s*.*?src="([^"]+)" />[^>]+>[^>]+>[^>]+>[^>]+>[^>]+>([^<]+)</p></div>'
     blocco = scrapertools.get_match(data, '<div\s*class="col-xs-\d+ col-sm-\d+-\d+">(.*?)<div\s*class="container-fluid whitebg" style="">')
     matches = re.compile(patron, re.DOTALL).findall(blocco)
-
+    
     for scrapedurl, scrapedimg, scrapedtitle in matches:
-        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.strip())
+        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle).strip()
         itemlist.append(infoSod(
             Item(channel=__channel__,
                  action="episodi",

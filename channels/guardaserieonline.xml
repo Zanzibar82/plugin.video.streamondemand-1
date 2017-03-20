@@ -11,9 +11,9 @@
     <bannermenu>http://www.guardaserie.online/wp-content/themes/guardaserie/images/logogd.png</bannermenu>
 
     <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
-    <version>1</version>
-    <date>18/03/2017</date>
-    <changes>new channel</changes>
+    <version>2</version>
+    <date>20/03/2017</date>
+    <changes>fix library</changes>
 
     <categories>
         <category>serie</category>
