@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<server>
+	<active>true</active>
+	<changes>Versione iniziale</changes>
+	<date>22/03/2017</date>
+	<free>true</free>
+	<id>vidlox</id>
+	<name>vidloxtv</name>
+	<premium></premium>
+	<thumbnail>https://vidlox.tv/imgs/vidlox_white_colored.svg</thumbnail>
+	<update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/</update_url>
+	<version>1</version>
+</server>
