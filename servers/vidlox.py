@@ -41,10 +41,7 @@ def find_videos(text):
 
     for match in matches:
         titulo = "[vidloxtv]"
-        if "embed" not in match:
-            url = "https://vidlox.tv/embed-%s" % match.split('/')[-1]
-        else:
-            url = 'https://vidlox.tv/embed-%s' % match
+        url = "https://vidlox.tv/embed-%s" % match
         if url not in encontrados:
             logger.info("  url=" + url)
             devuelve.append([titulo, url, 'vidlox'])
