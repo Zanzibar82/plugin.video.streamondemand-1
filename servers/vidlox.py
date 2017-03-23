@@ -1,6 +1,7 @@
 # -*- coding: iso-8859-1 -*-
 # ------------------------------------------------------------
 # streamondemand - XBMC Plugin
+# Connettore per https://vidlox.tv/
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # By MrTruth
 # ------------------------------------------------------------
@@ -10,7 +11,6 @@ import urllib
 
 from core import logger
 from core import scrapertools
-from lib.aadecode import decode as aadecode
 
 # Prendo l'url del video dal sito
 def get_video_url(page_url, premium=False, user="", password="", video_password=""):
@@ -41,10 +41,7 @@ def find_videos(text):
 
     for match in matches:
         titulo = "[vidloxtv]"
-        if "embed" not in match:
-            url = "https://vidlox.tv/embed-%s" % match.split('/')[-1]
-        else:
-            url = 'https://vidlox.tv/embed-%s' % match
+        url = "https://vidlox.tv/embed-%s" % match
         if url not in encontrados:
             logger.info("  url=" + url)
             devuelve.append([titulo, url, 'vidlox'])
