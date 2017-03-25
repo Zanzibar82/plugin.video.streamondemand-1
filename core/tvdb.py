@@ -38,6 +38,8 @@ from core import jsontools
 from core import logger
 from core import scrapertools
 from core.item import InfoLabels
+from platformcode import platformtools
+
 
 HOST = "https://api.thetvdb.com"
 HOST_IMAGE = "http://thetvdb.com/banners/"
@@ -94,9 +96,9 @@ def find_and_set_infoLabels(item):
     logger.info()
     # logger.info("item es %s" % item)
 
+    p_dialog = None
     if not item.contentSeason:
-        from platformcode import platformtools
-        p_dialog = platformtools.dialog_progress_bg("Cercando informazioni della serie", "Attendere prego...")
+	        p_dialog = platformtools.dialog_progress_bg("Cercando informazioni della serie", "Attendere prego...")
 
     global otvdb_global
     tvdb_result = None
