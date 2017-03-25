@@ -254,20 +254,44 @@ def verify_directories_created():
 
     for path, default in config_paths:
         saved_path = get_setting(path)
-        if not saved_path and path == "librarypath":
-            saved_path = search_library_path()
-            if saved_path:
-                set_setting(path, saved_path)
+
+        # Biblioteca
+        if path == "librarypath":
+            set_setting("library_version", "v4")
+            if not saved_path:
+                saved_path = xbmc_library.search_library_path()
+                if saved_path:
+                    set_setting(path, saved_path)
 
         if not saved_path:
             saved_path = "special://profile/addon_data/plugin.video." + PLUGIN_NAME + "/" + default
             set_setting(path, saved_path)
+
+
+        if get_setting("library_set_content")== "true" and path in ["librarypath","downloadpath"]:
+            xbmc_library.add_sources(saved_path)
 
         saved_path = xbmc.translatePath(saved_path)
         if not filetools.exists(saved_path):
             logger.debug("Creating %s: %s" % (path, saved_path))
             filetools.mkdir(saved_path)
 
-        # Biblioteca
-        if path == "librarypath":
-            set_setting("library_version", "v4")
+
+    config_paths = [["folder_movies", "CINE"],
+                    ["folder_tvshows", "SERIES"]]
+
+    for path, default in config_paths:
+        saved_path = get_setting(path)
+
+        if not saved_path:
+            saved_path = default
+            set_setting(path, saved_path)
+
+        content_path = filetools.join(get_library_path(), saved_path)
+        if not filetools.exists(content_path):
+            logger.debug("Creating %s: %s" % (path, content_path))
+            if filetools.mkdir(content_path) and get_setting("library_set_content")== "true":
+                xbmc_library.set_content(default)
+
+        elif get_setting("library_ask_set_content") == "active":
+            xbmc_library.set_content(default)
