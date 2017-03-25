@@ -232,6 +232,8 @@ def filterchannels(category,preferred_thumb=""):
             channel_parameters["thumbnail"] = channel_parameters["bannermenu"]
 
         channelslist.insert( 0 , Item( title="[COLOR gray]Inserisci un URL[/COLOR]"  ,action="mainlist", channel="tengourl" , thumbnail=channel_parameters["thumbnail"], type="generic" ,viewmode="movie" ))
+        channel_parameters = channeltools.get_channel_parameters("searchchannel")
+        channelslist.insert(0, Item(title="[COLOR gray]Cerca canale[/COLOR]", action="search", channel="searchchannel", thumbnail=channel_parameters["thumbnail"], type="generic", viewmode="movie"))
 
     return channelslist
 
