@@ -36,44 +36,18 @@ from core import scraper
 from core.item import Item
 from platformcode import platformtools
 
+
+FOLDER_MOVIES = config.get_setting("folder_movies")
+FOLDER_TVSHOWS = config.get_setting("folder_tvshows")
 LIBRARY_PATH = config.get_library_path()
-if config.get_setting("folder_movies") != "":
-    FOLDER_MOVIES = config.get_setting("folder_movies")
-else:
-    FOLDER_MOVIES = "CINE"  # config.get_localized_string(30072)
-if config.get_setting("folder_tvshows") != "":
-    FOLDER_TVSHOWS = config.get_setting("folder_tvshows")
-else:
-    FOLDER_TVSHOWS = "SERIES"  # config.get_localized_string(30073)
 MOVIES_PATH = filetools.join(LIBRARY_PATH, FOLDER_MOVIES)
 TVSHOWS_PATH = filetools.join(LIBRARY_PATH, FOLDER_TVSHOWS)
 
-logger.info("LIBRARY_PATH (RAW): " + LIBRARY_PATH)
-# logger.info("MOVIES_PATH (RAW): " + MOVIES_PATH)
-# logger.info("TVSHOWS_PATH (RAW): " + TVSHOWS_PATH)
-logger.info("FOLDER_MOVIES (RAW): " + FOLDER_MOVIES)
-logger.info("FOLDER_TVSHOWS (RAW): " + FOLDER_TVSHOWS)
-
-addon_name = "plugin://plugin.video.streamondemand/"
-
-# TODO: mover todo esto a config.verify_directories_created()
-if not filetools.exists(LIBRARY_PATH):
-    logger.info("Library path doesn't exist:" + LIBRARY_PATH)
+if not FOLDER_MOVIES or not FOLDER_TVSHOWS or not LIBRARY_PATH \
+        or not filetools.exists(MOVIES_PATH) or not filetools.exists(TVSHOWS_PATH):
     config.verify_directories_created()
 
-if not filetools.exists(MOVIES_PATH):
-    logger.info("Movies path doesn't exist:" + MOVIES_PATH)
-    if filetools.mkdir(MOVIES_PATH) and config.is_xbmc():
-        if config.is_xbmc():
-            from platformcode import xbmc_library
-            xbmc_library.establecer_contenido(FOLDER_MOVIES)
-
-if not filetools.exists(TVSHOWS_PATH):
-    logger.info("Tvshows path doesn't exist:" + TVSHOWS_PATH)
-    if filetools.mkdir(TVSHOWS_PATH) and config.is_xbmc():
-        if config.is_xbmc():
-            from platformcode import xbmc_library
-            xbmc_library.establecer_contenido(FOLDER_TVSHOWS)
+addon_name = "plugin://plugin.video.streamondemand/"
 
 
 def read_nfo(path_nfo, item=None):
@@ -214,9 +188,9 @@ def save_library_movie(item):
 
     if not strm_exists:
         # Crear base_name.strm si no existe
-        item_strm = item.clone(channel='biblioteca', action='play_from_library',
+        item_strm = Item(channel='biblioteca', action='play_from_library',
                                strm_path=strm_path.replace(MOVIES_PATH, ""), contentType='movie',
-                               infoLabels={'title': item.contentTitle})
+                               contentTitle = item.contentTitle)
         strm_exists = filetools.write(strm_path, '%s?%s' % (addon_name, item_strm.tourl()))
         item_nfo.strm_path = strm_path.replace(MOVIES_PATH, "")
 
@@ -230,7 +204,7 @@ def save_library_movie(item):
             insertados += 1
 
         if filetools.write(json_path, item.tojson()):
-            p_dialog.update(100, 'Aggiungendo il film...', item.contentTitle)
+            p_dialog.update(100, 'Aggiunta film...', item.contentTitle)
             item_nfo.library_urls[item.channel] = item.url
 
             if filetools.write(nfo_path, head_nfo + item_nfo.tojson()):
@@ -244,7 +218,7 @@ def save_library_movie(item):
 
     # Si llegamos a este punto es por q algo ha fallado
     logger.error("No se ha podido guardar %s en la biblioteca" % item.contentTitle)
-    p_dialog.update(100, 'Impossibile aggiungere...', item.contentTitle)
+    p_dialog.update(100, 'Aggiunta fallita...', item.contentTitle)
     p_dialog.close()
     return 0, 0, -1
 
@@ -312,10 +286,6 @@ def save_library_tvshow(item, episodelist):
             if exception.errno != errno.EEXIST:
                 raise
 
-    # Eliminamos de la lista lo que no sean episodios
-    for it in episodelist:
-        if not scrapertools.get_season_and_episode(it.title):
-            episodelist.remove(it)
 
     tvshow_path = filetools.join(path, "tvshow.nfo")
     if not filetools.exists(tvshow_path):
@@ -355,8 +325,14 @@ def save_library_tvshow(item, episodelist):
         # La lista de episodios esta vacia
         return 0, 0, 0
 
+
     # Guardar los episodios
+    '''import time
+    start_time = time.time()'''
     insertados, sobreescritos, fallidos = save_library_episodes(path, episodelist, item)
+    '''msg = "Insertados: %d | Sobreescritos: %d | Fallidos: %d | Tiempo: %2.2f segundos" % \
+          (insertados, sobreescritos, fallidos, time.time() - start_time)
+    logger.debug(msg)'''
 
     return insertados, sobreescritos, fallidos
 
@@ -393,12 +369,6 @@ def save_library_episodes(path, episodelist, serie, silent=False, overwrite=True
     fallidos = 0
     news_in_playcounts = {}
 
-    if overwrite == "everything":
-        overwrite = True
-        overwrite_everything = True
-    else:
-        overwrite_everything = False
-
     # Listamos todos los ficheros de la serie, asi evitamos tener que comprobar si existe uno por uno
     raiz, carpetas_series, ficheros = filetools.walk(path).next()
     ficheros = [filetools.join(path, f) for f in ficheros]
@@ -409,22 +379,32 @@ def save_library_episodes(path, episodelist, serie, silent=False, overwrite=True
         p_dialog = platformtools.dialog_progress('streamondemand', 'Aggiunta episodi...')
         p_dialog.update(0, 'Aggiunta episodio...')
 
-    # fix float porque la division se hace mal en python 2.x
-    t = float(100) / len(episodelist)
-
-    for i, e in enumerate(episodelist):
-        if not silent:
-            p_dialog.update(int(math.ceil((i + 1) * t)), 'Aggiunta episodio...', e.title)
-
+    new_episodelist =[]
+    # Obtenemos el numero de temporada y episodio y descartamos los q no lo sean
+    for e in episodelist:
         try:
-            season_episode = scrapertools.get_season_and_episode(e.title.lower())
+            season_episode = scrapertools.get_season_and_episode(e.title)
 
             e.infoLabels = serie.infoLabels
             e.contentSeason, e.contentEpisodeNumber = season_episode.split("x")
-            season_episode = "%sx%s" % (e.contentSeason, str(e.contentEpisodeNumber).zfill(2))
+            new_episodelist.append(e)
         except:
             continue
 
+    # No hay lista de episodios, no hay nada que guardar
+    if not len(new_episodelist):
+        logger.info("No hay lista de episodios, salimos sin crear strm")
+        return 0, 0, 0
+
+    # fix float porque la division se hace mal en python 2.x
+    t = float(100) / len(new_episodelist)
+
+    for i, e in enumerate(scraper.sort_episode_list(new_episodelist)):
+        if not silent:
+            p_dialog.update(int(math.ceil((i + 1) * t)), 'Aggiunta episodio...', e.title)
+
+
+        season_episode = "%sx%s" % (e.contentSeason, str(e.contentEpisodeNumber).zfill(2))
         strm_path = filetools.join(path, "%s.strm" % season_episode)
         nfo_path = filetools.join(path, "%s.nfo" % season_episode)
         json_path = filetools.join(path, ("%s [%s].json" % (season_episode, e.channel)).lower())
@@ -433,14 +413,7 @@ def save_library_episodes(path, episodelist, serie, silent=False, overwrite=True
         nfo_exists = nfo_path in ficheros
         json_exists = json_path in ficheros
 
-        strm_exists_before = True
-        nfo_exists_before = True
-        json_exists_before = True
-
-        if not strm_exists or overwrite_everything:
-            if not overwrite_everything:
-                strm_exists_before = False
-
+        if not strm_exists:
             # Si no existe season_episode.strm añadirlo
             item_strm = Item(action='play_from_library', channel='biblioteca',
                              strm_path=strm_path.replace(TVSHOWS_PATH, ""), infoLabels={})
@@ -463,10 +436,7 @@ def save_library_episodes(path, episodelist, serie, silent=False, overwrite=True
             strm_exists = filetools.write(strm_path, '%s?%s' % (addon_name, item_strm.tourl()))
 
         item_nfo = None
-        if (not nfo_exists or overwrite_everything) and e.infoLabels["code"]:
-            if not overwrite_everything:
-                nfo_exists_before = False
-
+        if not nfo_exists and e.infoLabels["code"]:
             # Si no existe season_episode.nfo añadirlo
             scraper.find_and_set_infoLabels(e)
             head_nfo = scraper.get_nfo(e)
@@ -476,9 +446,9 @@ def save_library_episodes(path, episodelist, serie, silent=False, overwrite=True
 
             nfo_exists = filetools.write(nfo_path, head_nfo + item_nfo.tojson())
 
+
         # Solo si existen season_episode.nfo y season_episode.strm continuamos
         if nfo_exists and strm_exists:
-
             if not json_exists or overwrite:
                 # Obtenemos infoLabel del episodio
                 if not item_nfo:
@@ -487,13 +457,9 @@ def save_library_episodes(path, episodelist, serie, silent=False, overwrite=True
                 e.infoLabels = item_nfo.infoLabels
 
                 if filetools.write(json_path, e.tojson()):
-                    if not json_exists or overwrite_everything:
-                        if not overwrite_everything:
-                            json_exists_before = False
-                            logger.info("Insertado: %s" % json_path)
-                        else:
-                            logger.info("Sobreescritos todos los archivos!")
-
+                    if not json_exists:
+                        logger.info("Insertado: %s" % json_path)
+                        insertados += 1
                         # Marcamos episodio como no visto
                         news_in_playcounts[season_episode] = 0
                         # Marcamos la temporada como no vista
@@ -501,8 +467,7 @@ def save_library_episodes(path, episodelist, serie, silent=False, overwrite=True
                         # Marcamos la serie como no vista
                         # logger.debug("serie " + serie.tostring('\n'))
                         news_in_playcounts[serie.contentTitle] = 0
-                        if not overwrite_everything and not json_exists:
-                            json_exists = True
+
                     else:
                         logger.info("Sobreescrito: %s" % json_path)
                         sobreescritos += 1
@@ -514,11 +479,6 @@ def save_library_episodes(path, episodelist, serie, silent=False, overwrite=True
             logger.info("Fallido: %s" % json_path)
             fallidos += 1
 
-        if not strm_exists_before or not nfo_exists_before or not json_exists_before:
-            if strm_exists and nfo_exists and json_exists:
-                insertados += 1
-            else:
-                logger.error("El archivo strm, nfo o json no existe")
 
         if not silent and p_dialog.iscanceled():
             break
@@ -576,6 +536,9 @@ def add_pelicula_to_library(item):
         @param item: elemento que se va a guardar.
     """
     logger.info()
+    if config.is_xbmc():
+        from platformcode import xbmc_library
+        xbmc_library.ask_set_content()
 
     new_item = item.clone(action="findvideos")
     insertados, sobreescritos, fallidos = save_library_movie(new_item)
@@ -585,7 +548,7 @@ def add_pelicula_to_library(item):
                                 config.get_localized_string(30135))  # 'se ha añadido a la biblioteca'
     else:
         platformtools.dialog_ok(config.get_localized_string(30131),
-                                "ERRORE, il film non è stato aggiunto alla libreria")
+                                "ERRORE, il contenuto non è stato aggiunto alla libreria")
 
 
 def add_serie_to_library(item, channel=None):
@@ -611,7 +574,9 @@ def add_serie_to_library(item, channel=None):
 
     """
     logger.info("show=#" + item.show + "#")
-    # logger.debug(item.tostring('\n'))
+    if config.is_xbmc():
+        from platformcode import xbmc_library
+        xbmc_library.ask_set_content()
 
     if item.channel == "descargas":
         itemlist = [item.clone()]
@@ -637,29 +602,26 @@ def add_serie_to_library(item, channel=None):
         # Obtiene el listado de episodios
         itemlist = getattr(channel, item.action)(item)
 
-    # Eliminamos de la lista lo q no sean episodios
-    for it in itemlist:
-        if not scrapertools.get_season_and_episode(it.title):
-            itemlist.remove(it)
 
-    if not itemlist:
-        platformtools.dialog_ok("Libreria", "ERRORE, la serie non è stata aggiunta alla libreria",
-                                "Impossibile ottenere qualsiasi episodio")
-        logger.error("La serie %s no se ha podido añadir a la biblioteca. No se ha podido obtener ningun episodio"
-                     % item.show)
-        return
 
     insertados, sobreescritos, fallidos = save_library_tvshow(item, itemlist)
 
-    if fallidos == -1:
-        platformtools.dialog_ok("Libreria", "ERRORE, la serie non è stata aggiunta alla libreria")
+    if not insertados and not sobreescritos and not fallidos:
+        platformtools.dialog_ok("Biblioteca", "ERRORE, la serie non è stata aggiunta alla libreria",
+                                "Non è stato aggiunto alcun episodio")
+        logger.error("La serie %s no se ha podido añadir a la biblioteca. No se ha podido obtener ningun episodio"
+                     % item.show)
+
+    elif fallidos == -1:
+        platformtools.dialog_ok("Biblioteca", "ERRORE, la serie non è stata aggiunta alla libreria")
         logger.error("La serie %s no se ha podido añadir a la biblioteca" % item.show)
 
     elif fallidos > 0:
-        platformtools.dialog_ok("Libreria", "ERRORE, la serie non è stata aggiunta completamente alla libreria")
+        platformtools.dialog_ok("Biblioteca", "ERRORE, la serie è stata aggiunta incompleta alla libreria")
         logger.error("No se han podido añadir %s episodios de la serie %s a la biblioteca" % (fallidos, item.show))
+
     else:
-        platformtools.dialog_ok("Libreria", "La serie è stata aggiunta alla libreria")
+        platformtools.dialog_ok("Biblioteca", "La serie è stata aggiunta alla libreria")
         logger.info("[launcher.py] Se han añadido %s episodios de la serie %s a la biblioteca" %
                     (insertados, item.show))
         if config.is_xbmc():
