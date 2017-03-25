@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
-# streamondemand - XBMC Plugin
+# streamondemad - XBMC Plugin
 # Conector for openload.co
 # http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
 # ------------------------------------------------------------
@@ -27,7 +27,7 @@ def test_video_exists(page_url):
     if 'We’re Sorry!' in data:
         data = httptools.downloadpage(page_url.replace("/embed/", "/f/"), headers=header, cookies=False).data
         if 'We’re Sorry!' in data:
-            return False, "[Openload] File non presente" 
+            return False, "[Openload] File inesistente" 
 
     return True, ""
 
@@ -63,15 +63,29 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         for encode in var_encodes:
             text_decode = []
             try:
-                idx1 = max(2, ord(encode[0]) - 50)
-                idx2 = min(idx1, len(encode) - 18)
-                idx3 = encode[idx2:idx2+20]
+                idx1 = max(2, ord(encode[0]) - 52)
+                idx2 = min(idx1, len(encode) - 28)
+                idx3 = encode[idx2:idx2+30]
                 decode1 = []
-                for i in range(0, len(idx3), 2):
-                    decode1.append(int(idx3[i:i+2], 16))
-                idx4 = encode[0:idx2] + encode[idx2+20:]
-                for i in range(0, len(idx4), 2):
-                    value = int(idx4[i:i+2], 16) ^ 96 ^ decode1[(i/2) % 10]
+                for i in range(0, len(idx3), 3):
+                    decode1.append(int(idx3[i:i+3], 8))
+                idx4 = encode[0:idx2] + encode[idx2+30:]
+                j = 0
+                i = 0
+                while i < len(idx4):
+                    data_1 = int(idx4[i:i+2], 16)
+                    data_2 = idx4[i:i+3]
+                    data_3 = idx4[i:i+4]
+                    i += 2
+                    if (j % 3) == 0:
+                        data_1 = int(data_2, 8)
+                        i += 1
+                    elif j % 2 == 0 and j != 0 and ord(idx4[j-1]) < 60:
+                        data_1 = int(data_3, 10)
+                        i += 2
+
+                    value = data_1 ^ 213 ^ decode1[j % 9]
+                    j += 1
                     text_decode.append(chr(value))
 
                 text_decode = "".join(text_decode)

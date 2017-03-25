@@ -1,9 +1,9 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #------------------------------------------------------------
 # streamondemand - XBMC Plugin
 # Conector para speedvideo
 # by be4t5
-# http://www.mimediacenter.info/foro/viewforum.php?f=36
+# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
 #------------------------------------------------------------
 
 import re
@@ -102,3 +102,4 @@ def find_videos(text):
 					
     
     return devuelve
+

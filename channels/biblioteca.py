@@ -325,6 +325,7 @@ def findvideos(item):
     if 'descargas' in list_canales:
         json_path = list_canales['descargas']
         item_json = Item().fromjson(filetools.read(json_path))
+        item_json.contentChannel = "local"
         #Soporte para rutas relativas en descargas
         if filetools.is_relative(item_json.url):
           item_json.url = filetools.join(library.LIBRARY_PATH,item_json.url)
@@ -430,7 +431,8 @@ def play(item):
         else:
             itemlist = [item.clone()]
     else:
-        itemlist = [item.clone(url=item.strm_path, server="local")]
+        #itemlist = [item.clone(url=item.strm_path, server="local")]
+        itemlist = [item.clone(url=item.url, server="local")]
 
     # Esto es necesario por si el play del canal elimina los datos
     for v in itemlist:
