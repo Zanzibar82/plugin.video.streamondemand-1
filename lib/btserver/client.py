@@ -24,7 +24,7 @@
 # ------------------------------------------------------------
 
 try:
-    from python_libtorrent import get_libtorrent
+    from python_libtorrent import get_libtorrent, get_platform
     lt = get_libtorrent()
 except Exception, e:
     import libtorrent as lt
@@ -86,7 +86,6 @@ class Client(object):
         self.last_pieces_priorize = 5
         self.state_file="state"
         self.torrent_paramss={'save_path':self.temp_path,'storage_mode':lt.storage_mode_t.storage_mode_sparse}
-
 
 
         #State

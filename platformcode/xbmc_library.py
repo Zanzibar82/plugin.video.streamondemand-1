@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
-# pelisalacarta 4
+# streamondemand 4
 # Copyright 2015 tvalacarta@gmail.com
 # http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
 #
@@ -25,23 +25,20 @@
 # XBMC Library Tools
 # ------------------------------------------------------------
 
-import sys
+import sys, os
 import urllib2
 import xbmc
-from threading import Thread, Lock
+import threading
 from core import config
 from core import filetools
 from core import jsontools
 from core import logger
-from core.library import TVSHOWS_PATH, FOLDER_TVSHOWS, FOLDER_MOVIES
 from platformcode import platformtools
-from platformcode.xbmc_helpers import execute_sql_kodi
 
 
 addon_name = sys.argv[0].strip()
 if not addon_name or addon_name.startswith("default.py"):
     addon_name = "plugin://plugin.video.streamondemand/"
-
 
 if config.get_setting("folder_movies") != "":
     FOLDER_MOVIES = config.get_setting("folder_movies")
@@ -99,7 +96,7 @@ def mark_auto_as_watched(item):
 
     # Si esta configurado para marcar como visto
     if config.get_setting("mark_as_watched", "biblioteca"):
-        Thread(target=mark_as_watched_subThread, args=[item]).start()
+        threading.Thread(target=mark_as_watched_subThread, args=[item]).start()
 
 
 def sync_trakt(silent=True):
@@ -116,7 +113,7 @@ def sync_trakt(silent=True):
 
         if notificacion:
             platformtools.dialog_notification("streamondemand",
-                                              "Iniziata sincronizzazione con Trakt",
+                                              "Sincronizzazione con trakt iniziata",
                                               icon=0,
                                               time=2000)
 
@@ -316,7 +313,7 @@ def update(folder_content=FOLDER_TVSHOWS, folder=""):
             update_path = filetools.join(librarypath, folder_content, folder) + "/"
 
 
-        t = Thread(target=update_multi_threads, args=[update_path, Lock()])
+        t = threading.Thread(target=update_multi_threads, args=[update_path, threading.Lock()])
         t.setDaemon(True)
         t.start()
 
@@ -333,14 +330,14 @@ def clean(mostrar_dialogo=False):
                "params": {"showdialogs": mostrar_dialogo}}
     data = get_data(payload)
 
-    if data.get('result', False) == 'OK':
+    if data.get('result',False) == 'OK':
         return True
 
     return False
 
 
 def search_library_path():
-    sql = 'SELECT strPath FROM path WHERE strPath LIKE "special://%/plugin.video.pelisalacarta/library/" AND idParentPath ISNULL'
+    sql = 'SELECT strPath FROM path WHERE strPath LIKE "special://%/plugin.video.streamondemand/library/" AND idParentPath ISNULL'
     nun_records, records = execute_sql_kodi(sql)
     if nun_records >= 1:
         logger.debug(records[0][0])
@@ -364,7 +361,7 @@ def set_content(content_type, silent=False):
                 if not silent:
                     # Preguntar si queremos instalar metadata.themoviedb.org
                     install = platformtools.dialog_yesno("The Movie Database",
-                                                         "TheMovieDB non installato.",
+                                                         "TheMovieDB non presente.",
                                                          "Installare ora?")
                 else:
                     install = True
@@ -387,7 +384,7 @@ def set_content(content_type, silent=False):
                 if not silent:
                     # Preguntar si queremos instalar metadata.tvdb.com
                     install = platformtools.dialog_yesno("The TVDB",
-                                                         "The TVDB non installato.",
+                                                         "The TVDB non presente.",
                                                          "Installare ora?")
                 else:
                     install = True
@@ -410,7 +407,7 @@ def set_content(content_type, silent=False):
                 if not silent:
                     # Preguntar si queremos instalar metadata.tvshows.themoviedb.org
                     install = platformtools.dialog_yesno("The Movie Database",
-                                                         "TheMovieDB non installato.",
+                                                         "TheMovieDB non presente.",
                                                          "Installare ora?")
                 else:
                     install = True
@@ -454,7 +451,7 @@ def set_content(content_type, silent=False):
 
                 continuar = (install and continuar)
                 if not continuar:
-                    msg_text = "The Movie Database no instalado."
+                    msg_text = "The Movie Database non installato."
 
         idPath = 0
         idParentPath = 0
@@ -501,7 +498,7 @@ def set_content(content_type, silent=False):
                     idParentPath = idPath
                     idPath += 1
                 else:
-                    msg_text = "Error al fijar librarypath en BD"
+                    msg_text = "Omesso di impostare LibraryPath in BD"
 
         if continuar:
             continuar = False
@@ -564,17 +561,17 @@ def set_content(content_type, silent=False):
                     continuar = True
 
             if not continuar:
-                msg_text = "Error al configurar el scraper en la BD."
+                msg_text = "Omesso impostare LibraryPath in BD"
 
 
         if not continuar:
-            heading = "Libreria %s non configurata" % content_type
+            heading = "Biblioteca %s no configurada" % content_type
         elif content_type == 'SERIES' and not xbmc.getCondVisibility('System.HasAddon(metadata.tvshows.themoviedb.org)'):
-            heading = "Libreria %s configurata" % content_type
-            msg_text = "Riavviare Kodi per utilizzare la libreria"
+            heading = "Biblioteca %s configurata" % content_type
+            msg_text = "Riavviare Kodi per attuare le modifiche."
         else:
             heading = "Biblioteca %s configurata" % content_type
-            msg_text = "Libreria configurata correttamente."
+            msg_text = "Libreria di Kodi configurata correttamente."
         platformtools.dialog_notification(heading, msg_text, icon=1, time=10000)
         logger.info("%s: %s" % (heading,msg_text))
 
@@ -610,7 +607,7 @@ def execute_sql_kodi(sql):
                 break
 
     if file_db:
-        logger.info("Archivo di BD: %s" % file_db)
+        logger.info("Archivo de BD: %s" % file_db)
         conn = None
         try:
             import sqlite3
@@ -644,8 +641,7 @@ def execute_sql_kodi(sql):
     return nun_records, records
 
 def add_sources(path):
-    logger.info(path)
-    # http://elviajedelnavegante.blogspot.com.es/2010/02/xml-y-python-operaciones-basicas-i.html
+    logger.info()
     from xml.dom import minidom
 
     SOURCES_PATH = xbmc.translatePath("special://userdata/sources.xml")
@@ -707,17 +703,18 @@ def add_sources(path):
     nodo_video.appendChild(nodo_source)
 
     # Guardamos los cambios
-    data = xmldoc.toprettyxml()
+    '''data = xmldoc.toprettyxml()
     data = '\n'.join([x for x in data.splitlines() if x.strip()])
-
-    filetools.write(SOURCES_PATH,data)
+    filetools.write(SOURCES_PATH,data)'''
+    fichero = open(SOURCES_PATH, 'w')
+    xmldoc.writexml(fichero)
 
 
 def ask_set_content():
     # Si es la primera vez que se utiliza la biblioteca preguntar si queremos autoconfigurar
     if config.get_setting("library_ask_set_content") == "true" and config.get_setting("library_set_content") == "false":
         heading = "Streamondemand Auto-configurazione"
-        linea1 = "Consenti a Streamondemand di auto-configurare la libreria di Kodi?"
+        linea1 = "Auto-configura la libreria di Kodi tramite Streamondemand?"
         linea2 = "E' possibile modifcare i path nelle Preferenze"
         if platformtools.dialog_yesno(heading, linea1, linea2):
             config.set_setting("library_set_content", "true")
