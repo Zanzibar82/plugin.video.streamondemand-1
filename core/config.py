@@ -246,6 +246,7 @@ def search_library_path():
 def verify_directories_created():
     from core import logger
     from core import filetools
+    from platformcode import xbmc_library
 
     config_paths = [["librarypath",      "library"],
                     ["downloadpath",     "downloads"],
