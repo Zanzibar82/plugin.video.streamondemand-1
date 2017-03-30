@@ -27,7 +27,7 @@ def test_video_exists(page_url):
     if 'We’re Sorry!' in data:
         data = httptools.downloadpage(page_url.replace("/embed/", "/f/"), headers=header, cookies=False).data
         if 'We’re Sorry!' in data:
-            return False, "[Openload] Il file non esiste" 
+            return False, "[Openload] File non presente" 
 
     return True, ""
 
@@ -63,11 +63,12 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         for encode in var_encodes:
             text_decode = ""
             try:
-                rango1 = encode[:24]
+                len_enc = len(encode)
+                rango1 = encode[len_enc-40:(len_enc-40)+len_enc]
                 decode1 = []
                 for i in range(0, len(rango1), 8):
                     decode1.append(int(rango1[i:i+8], 16))
-                rango1 = encode[24:]
+                rango1 = encode[:len_enc-40]
                 j = 0
                 i = 0
                 while i < len(rango1):
@@ -86,7 +87,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
                         if value3 < index1:
                             break
                         
-                    value4 = value2 ^ decode1[j % 3]
+                    value4 = value2 ^ decode1[j % 5]
                     value5 = index1 + 127 
                     for h in range(0, 4):
                         valorfinal = (value4 >> 8 * h) & (value5)
