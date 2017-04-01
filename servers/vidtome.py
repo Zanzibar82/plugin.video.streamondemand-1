@@ -2,74 +2,63 @@
 # ------------------------------------------------------------
 # streamondemand - XBMC Plugin
 # Conector para vidto.me
-# http://www.mimediacenter.info/foro/viewforum.php?f=36
+# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
 # ------------------------------------------------------------
 
 import re
 
-from core import jsunpack
+from core import httptools
 from core import logger
 from core import scrapertools
 
-headers = [
-    ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0'],
-    ['Accept-Encoding', 'gzip, deflate']
-]
+
+def test_video_exists(page_url):
+    logger.info("(page_url='%s')" % page_url)
+
+    data = httptools.downloadpage(page_url).data
+    
+    if "Not Found" in data or "File Does not Exist" in data:
+        return False, "[Vidto.me] El fichero no existe o ha sido borrado"
+
+    return True, ""
 
 
 def get_video_url(page_url, premium=False, user="", password="", video_password=""):
-    logger.info("streamondemand.servers.vidtome url=" + page_url)
+    logger.info("url=" + page_url)
 
-    data = scrapertools.cache_page(page_url, headers=headers)
-    # logger.info("data="+data)
+    data = httptools.downloadpage(page_url).data
 
-    op = scrapertools.get_match(data, '<input type="hidden" name="op" value="([^"]+)"')
-    usr_login = ""
-    id = scrapertools.get_match(data, '<input type="hidden" name="id" value="([^"]+)"')
-    fname = scrapertools.get_match(data, '<input type="hidden" name="fname" value="([^"]+)"')
-    referer = scrapertools.get_match(data, '<input type="hidden" name="referer" value="([^"]*)"')
-    hashstring = scrapertools.get_match(data, '<input type="hidden" name="hash" value="([^"]*)"')
-    imhuman = scrapertools.get_match(data, '<input type="submit".*?name="imhuman" value="([^"]+)"').replace(" ", "+")
-
-    import time
-    time.sleep(10)
-
-    post = "op=" + op + "&usr_login=" + usr_login + "&id=" + id + "&fname=" + fname + "&referer=" + referer + "&hash=" + hashstring + "&imhuman=" + imhuman
-    headers.append(["Referer", page_url])
-    body = scrapertools.cache_page(page_url, post=post, headers=headers)
-
-    patron = "<script type='text/javascript'>(eval\(function\(p,a,c,k,e,d.*?)</script>"
-    data = scrapertools.find_single_match(body, patron)
-    data = jsunpack.unpack(data)
-
-    media_urls = re.findall(r'\{label:"([^"]+)",file:"([^"]+)"\}', data)
+    # Extrae la URL
+    #{file:"http://188.240.220.186/drjhpzy4lqqwws4phv3twywfxej5nwmi4nhxlriivuopt2pul3o4bkge5hxa/video.mp4",label:"240p"}
     video_urls = []
-    for label, media_url in media_urls:
-        video_urls.append(
-            [scrapertools.get_filename_from_url(media_url)[-4:] + " (" + label + ") [vidto.me]", media_url])
+    media_urls = scrapertools.find_multiple_matches(data, '\{file\s*:\s*"([^"]+)",label\s*:\s*"([^"]+)"\}')
+    for media_url, label in media_urls:
+        ext = scrapertools.get_filename_from_url(media_url)[-4:]
+        video_urls.append(["%s (%s) [vidto.me]" % (ext, label), media_url])
 
-    patron = '<a id="lnk_download" href="([^"]+)"'
-    media_url = scrapertools.find_single_match(body, patron)
-    if media_url != "":
-        video_urls.append([scrapertools.get_filename_from_url(media_url)[-4:] + " (ORIGINAL) [vidto.me]", media_url])
-
+    video_urls.reverse()
     for video_url in video_urls:
-        logger.info("streamondemand.servers.vidtome %s - %s" % (video_url[0], video_url[1]))
+        logger.info("%s - %s" % (video_url[0], video_url[1]))
 
     return video_urls
 
 
+# Encuentra vídeos del servidor en el texto pasado
 def find_videos(data):
+
+    # Añade manualmente algunos erróneos para evitarlos
     encontrados = set()
     devuelve = []
 
-    patronvideos = r'//(?:www\.)?vidto\.me/(?:embed-)?([0-9A-Za-z]+)'
-    logger.info("streamondemand.servers.vidtome find_videos #" + patronvideos + "#")
+    #http://vidto.me/z3nnqbspjyne
+    #http://vidto.me/embed-z3nnqbspjyne
+    patronvideos = 'vidto.me/(?:embed-|)([A-z0-9]+)'
+    logger.info("#" + patronvideos + "#")
     matches = re.compile(patronvideos, re.DOTALL).findall(data)
 
     for match in matches:
         titulo = "[vidto.me]"
-        url = "http://vidto.me/" + match + ".html"
+        url = "http://vidto.me/embed-%s.html" % match
         if url not in encontrados:
             logger.info("  url=" + url)
             devuelve.append([titulo, url, 'vidtome'])
@@ -78,3 +67,4 @@ def find_videos(data):
             logger.info("  url duplicada=" + url)
 
     return devuelve
+
