@@ -281,3 +281,14 @@ def get_nfo(item):
         return info_nfo
     else:
         return scraper.get_nfo(item)
+
+def sort_episode_list(episodelist):
+    scraper_actual = ['tmdb', 'tvdb'][config.get_setting("scraper_tvshows", "biblioteca")]
+
+    if scraper_actual == "tmdb":
+        episodelist.sort(key=lambda e: (int(e.contentSeason), int(e.contentEpisodeNumber)))
+
+    elif scraper_actual == "tvdb":
+        episodelist.sort(key=lambda e: (int(e.contentEpisodeNumber), int(e.contentSeason)))
+
+    return episodelist
