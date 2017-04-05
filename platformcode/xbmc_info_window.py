@@ -245,7 +245,7 @@ class InfoWindow(xbmcgui.WindowXMLDialog):
         focus = self.getFocusId()
 
         # Accion 1: Flecha izquierda
-        if action == xbmcgui.ACTION_MOVE_LEFT:
+        if action == 1:
 
             if focus == ID_BUTTON_OK:
                 self.setFocus(self.getControl(ID_BUTTON_CANCEL))
@@ -264,7 +264,7 @@ class InfoWindow(xbmcgui.WindowXMLDialog):
                     self.setFocus(self.getControl(ID_BUTTON_PREVIOUS))
 
         # Accion 2: Flecha derecha
-        elif action == xbmcgui.ACTION_MOVE_RIGHT:
+        elif action == 2:
 
             if focus == ID_BUTTON_PREVIOUS:
                 if self.indexList + 1 != len(self.listData):
@@ -281,5 +281,5 @@ class InfoWindow(xbmcgui.WindowXMLDialog):
                 self.setFocus(self.getControl(ID_BUTTON_OK))
 
         # Pulsa ESC o Atrás, simula click en boton cancelar
-        if action in [xbmcgui.ACTION_PREVIOUS_MENU, xbmcgui.ACTION_NAV_BACK]:
+        if action in [10, 92]:
             self.onClick(ID_BUTTON_CANCEL)

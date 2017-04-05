@@ -53,7 +53,7 @@ def get_video_url( page_url , premium = False , user="" , password="", video_pas
         return ""
     
     # Lo descifra
-    from core import jsunpack
+    from lib import jsunpack
     descifrado = jsunpack.unpack(data)
     
     # Extrae la URL del vídeo

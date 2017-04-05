@@ -360,7 +360,7 @@ def play(item):
         logger.debug("##### play go.php data ##\n%s\n##" % data)
     elif "/link/" in item.url:
         data = scrapertools.anti_cloudflare(item.url, headers)
-        from core import jsunpack
+        from lib import jsunpack
 
         try:
             data = scrapertools.get_match(data, "(eval\(function\(p,a,c,k,e,d.*?)</script>")

@@ -43,7 +43,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
     data = scrapertools.find_single_match(data, "(eval.function.p,a,c,k,e,.*?)\s*</script>")
 
     if data != "":
-        from core import jsunpack
+        from lib import jsunpack
         data = jsunpack.unpack(data)
 
         # URL del vídeo

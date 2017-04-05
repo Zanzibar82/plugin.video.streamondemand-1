@@ -125,9 +125,12 @@
         <setting id="librarypath" type="folder" label="30067" default="" visible="eq(-8,1)"/>
 
         <setting type="sep"/>
+        <setting label="Libreria" type="lsep"/>
         <setting label="Nomi cartelle" type="lsep"/>
         <setting id="folder_tvshows" type="text" label="Serie TV" default="SERIES"/>
         <setting id="folder_movies" type="text" label="Film" default="CINE"/>
+        <setting id="library_set_content" type="bool" label="Autoconfigurare libreria di XBMC/Kodi per contenuti di streamondemand" default="false"/>
+        <setting id="library_ask_set_content" type="bool" label="" default="true" visible="false"/>
     </category>
 
     <category label="Altro"><!--30503 -->

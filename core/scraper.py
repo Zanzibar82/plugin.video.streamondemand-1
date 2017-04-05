@@ -71,7 +71,7 @@ def find_and_set_infoLabels(item):
     try:
         scraper = __import__('core.%s' % scraper_actual, fromlist=["core.%s" % scraper_actual])
     except ImportError:
-        exec "import core." + scraper_actual + " as scraper_module"
+        exec "import core." + scraper_actual + " as scraper"
 
     while scraper:
         # Llamamos a la funcion find_and_set_infoLabels del scraper seleccionado
@@ -81,6 +81,7 @@ def find_and_set_infoLabels(item):
         if scraper_result and item.infoLabels['code']:
             # code correcto
             logger.info("Identificador encontrado: %s" % item.infoLabels['code'])
+            scraper.completar_codigos(item)
             return True
         elif scraper_result:
             # Contenido encontrado pero no hay 'code'

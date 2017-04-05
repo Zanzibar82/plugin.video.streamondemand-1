@@ -45,7 +45,7 @@ def get_video_url( page_url , premium = False , user="" , password="", video_pas
 
     logger.info("packed="+packed)
 
-    from core import jsunpack
+    from lib import jsunpack
     unpacked = jsunpack.unpack(packed)
     logger.info("unpacked="+unpacked)
     '''
