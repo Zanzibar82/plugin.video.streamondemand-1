@@ -963,8 +963,8 @@ def play_torrent(item, xlistitem, mediaurl):
     logger.info("platformtools play_torrent")
     # Opciones disponibles para Reproducir torrents
     torrent_options = list()
-    torrent_options.append(["Cliente interno (necesario libtorrent)"])
-    torrent_options.append(["Cliente interno MCT (necesario libtorrent)"])
+    torrent_options.append(["Client interno (necessario libtorrent)"])
+    torrent_options.append(["Client interno MCT (necessario libtorrent)"])
 
     # Plugins externos se pueden añadir otros
     if xbmc.getCondVisibility('System.HasAddon("plugin.video.xbmctorrent")'):
