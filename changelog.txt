@@ -1,3 +1,8 @@
+v5.5.0
+- gobal merge fix
+- library, download, tvdb optimization
+- fix channels and servers
+
 v5.4.9
 - major upstreams fix
 
