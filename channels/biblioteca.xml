@@ -12,18 +12,13 @@
 	<bannermenu></bannermenu>
 
 	<update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
-    <version>9</version>
+    <version>10</version>
 
 	<changes>
 		<change>
-			<date>01/07/16</date>
-			<autor>SeiTaN</autor>
-			<description>Eliminado código innecesario.</description>
-		</change>
-		<change>
-			<date>30/04/2016</date>
-			<autor>Seitan</autor>
-			<description>Version inicial</description>
+			<date>03/04/2017</date>
+			<autor>Costaplus</autor>
+			<description>Beta soluzione file scaricati</description>
 		</change>
 	</changes>
 
@@ -39,15 +34,14 @@
 		<lvalues>Mai</lvalues>
 		<lvalues>Quando si avvia Kodi</lvalues>
 		<lvalues>Quotidiano</lvalues>
-		<lvalues>Quando si avvia Kodi e quotidiano</lvalues>
 	</settings>
 	<settings>
 		<id>updatelibrary_wait</id>
 		<type>list</type>
 		<label>   - Attendere prima di aggiornare</label>
 		<default>0</default>
+		<enabled>eq(-1,Quando si avvia Kodi)</enabled>
 		<visible>true</visible>
-		<enabled>eq(-1,Quando si avvia Kodi)|eq(-1,Quando si avvia Kodi e quotidiano)</enabled>
 		<lvalues>No</lvalues>
 		<lvalues>10 sec</lvalues>
 		<lvalues>20 sec</lvalues>
@@ -60,7 +54,7 @@
 		<label>   - Iniciar actualización programada a partir de las</label>
 		<default>1</default>
 		<visible>true</visible>
-		<enabled>eq(-2,Una sola volta al giorno)|eq(-2,Quando si avvia Kodi e quotidiano)</enabled>
+		<enabled>eq(-2,Una sola vez al día)|eq(-2,Al iniciar Kodi y al menos una vez al día)</enabled>
 		<lvalues>00:00</lvalues>
 		<lvalues>04:00</lvalues>
 		<lvalues>08:00</lvalues>
@@ -160,7 +154,6 @@
 		<label>    Nome server</label>
 		<visible>true</visible>
 		<enabled>eq(-1,Remota)</enabled>
-		<default></default>
 	</settings>
 	<settings>
 		<id>xbmc_puerto</id>
@@ -168,7 +161,6 @@
 		<label>    Porta server</label>
 		<enabled>!eq(-1,'')</enabled>
 		<visible>true</visible>
-		<default></default>
 	</settings>
 
 	<settings>

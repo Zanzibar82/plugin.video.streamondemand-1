@@ -6,7 +6,7 @@
 # ------------------------------------------------------------
 
 import os
-
+import xbmc
 from core import config
 from core import filetools
 from core import library
@@ -26,16 +26,74 @@ def mainlist(item):
     itemlist.append(Item(channel=item.channel, action="series", title="Serie",
                          category="Libreria serie",
                          thumbnail="http://media.tvalacarta.info/pelisalacarta/squares/thumb_biblioteca_series.png"))
+    itemlist.append(Item(channel=item.channel, action="elenco_file", title="Visualizza download terminati",
+                         category="Libreria",
+                         thumbnail="https://www.mirrorservice.org/sites/mirrors.xbmc.org/addons/isengard/service.nextup.notification/icon.png"))
 
+    return itemlist
+
+def elenco_file(item):
+    logger.info("[biblioteca.py] elenco_file")
+    itemlist=[]
+
+    lista=os.listdir(config.get_library_path())
+
+    for list in lista:
+        if list.endswith(tuple(['.flv','.mp4','.avi','.mkv'])):
+            itemlist.append(Item(channel=item.channel,
+                                 action="file",
+                                 title="[COLOR azure]" + list + "[/COLOR]",
+                                 url=config.get_library_path()+"/"+list,
+                                 thumbnail="",
+                                 fanart="",
+                                 fulltitle=list,
+                                 show="",
+                                 folder=False
+                                 ))
 
     return itemlist
 
 
+def file(item):
+    itemlist=[]
+    logger.info("[bibiolteca.py] file")
+    logger.info("[biblioteca.py] urlfile--->>>"+item.url)
+
+    risp = platformtools.dialog_select('Stream On Demand play video', ['Guarda','Rinomina','Elimina'])
+    try:
+
+        if risp == 0:
+            xbmc.Player().play(item.url)
+
+        if risp == 1:
+            nome=platformtools.dialog_input(item.fulltitle)
+            os.renames(item.url,config.get_library_path()+"/"+nome)
+            xbmc.executebuiltin("Container.Refresh")
+
+        if risp == 2:
+            if elimina_file(item):
+                os.remove(item.url)
+                xbmc.executebuiltin("Container.Refresh")
+    except:
+        pass
+
+    return itemlist
+
+
+def elimina_file(item):
+    logger.info("[bibiolteca.py] elimina_file")
+    linea1 ='[COLOR azure]Confermi eliminazione di:[/COLOR]'
+    linea2 =item.title + ' ?'
+    linea3 =''
+    risposta = platformtools.dialog_ok('Conferma eliminazione:', linea1, linea2, linea3)
+
+    return risposta
+
+
 def channel_config(item):
     return platformtools.show_channel_settings(channelpath=os.path.join(config.get_runtime_path(),
+
                                                                         "channels", item.channel))
-
-
 def peliculas(item):
     logger.info()
     itemlist = []
