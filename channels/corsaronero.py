@@ -116,7 +116,7 @@ def play(item):
 
     data = scrapertools.cache_page(item.url, headers=headers)
 
-    patron = '<a class="forbtn magnet" target="_blank" href="(magnet[^"]+)" title="Magnet" ></a>'
+    patron = '<a class="forbtn magnet"[^h]+href="(magnet[^"]+)" title="Magnet" ></a>'
     link = scrapertools.find_single_match(data, patron)
 
     itemlist.append(
