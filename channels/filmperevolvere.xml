@@ -8,11 +8,11 @@
 	<language>it</language>
 
 	<fanart></fanart>
-	<thumbnail>http://digilander.libero.it/dottor_vaffa/image.jpg</thumbnail>
-	<bannermenu>http://digilander.libero.it/dottor_vaffa/image.jpg</bannermenu>
+	<thumbnail>http://filmperevolvere.pcriot.com/wp-content/uploads/2017/03/cropped-cropped-ezgif-1-49f9d458f7-1.jpg</thumbnail>
+	<bannermenu>http://filmperevolvere.pcriot.com/wp-content/uploads/2017/03/cropped-cropped-ezgif-1-49f9d458f7-1.jpg</bannermenu>
 
 	<update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
-	<version>8</version>
+	<version>9</version>
 	<date>19/03/2017</date>
 	<changes>fix channel</changes>
 
