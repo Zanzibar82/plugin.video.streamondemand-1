@@ -85,7 +85,7 @@ def elimina_file(item):
     linea1 = '[COLOR azure]Confermi eliminazione di:[/COLOR]'
     linea2 = item.title + ' ?'
     linea3 = ''
-    risposta = platformtools.yesno('Conferma eliminazione:', linea1, linea2, linea3)
+    risposta = platformtools.dialog_yesno('Conferma eliminazione:', linea1, linea2, linea3)
 
     return risposta
 
