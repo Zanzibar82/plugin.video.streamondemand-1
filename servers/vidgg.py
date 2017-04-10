@@ -48,6 +48,7 @@ def get_video_url( page_url , premium = False , user="" , password="", video_pas
 
     for i, mediaurl in enumerate(mediaurls):
         title = scrapertools.get_filename_from_url(mediaurl)[-4:]+" Mirror %s [vidgg]" % str(i+1)
+        mediaurl += "|User-Agent=Mozilla/5.0"
         video_urls.append( [title, mediaurl])
 
     for video_url in video_urls:
