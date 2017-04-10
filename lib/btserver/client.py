@@ -429,8 +429,8 @@ class Client(object):
                 s.timeout = "Off"
             
             #Estado de la descarga
-            STATE_STR = ['En cola', 'Comprobando', 'Descargando metadata', \
-                    'Descargando', 'Finalizado', 'Seeding', 'Allocating', 'Comprobando fastresume']
+            STATE_STR = ['Queue', 'Verify', 'Download metadata', \
+                    'Download', 'Finalizing', 'Seeding', 'Allocating', 'Verify fastresume']
             s.str_state = STATE_STR[s.state]
             
             #Estado DHT

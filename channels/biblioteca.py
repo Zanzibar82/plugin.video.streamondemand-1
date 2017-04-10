@@ -36,14 +36,14 @@ def elenco_file(item):
     logger.info("[biblioteca.py] elenco_file")
     itemlist=[]
 
-    lista=os.listdir(config.get_library_path())
+    lista=filetools.listdir(config.get_library_path())
 
     for list in lista:
         if list.endswith(tuple(['.flv','.mp4','.avi','.mkv'])):
             itemlist.append(Item(channel=item.channel,
                                  action="file",
                                  title="[COLOR azure]" + list + "[/COLOR]",
-                                 url=config.get_library_path()+"/"+list,
+                                 url=filetools.join(config.get_library_path(), list),
                                  thumbnail="",
                                  fanart="",
                                  fulltitle=list,
@@ -55,24 +55,24 @@ def elenco_file(item):
 
 
 def file(item):
-    itemlist=[]
+    itemlist = []
     logger.info("[bibiolteca.py] file")
-    logger.info("[biblioteca.py] urlfile--->>>"+item.url)
+    logger.info("[biblioteca.py] urlfile--->>>" + item.url)
 
-    risp = platformtools.dialog_select('Stream On Demand play video', ['Guarda','Rinomina','Elimina'])
+    risp = platformtools.dialog_select('Stream On Demand play video', ['Guarda', 'Rinomina', 'Elimina'])
     try:
 
         if risp == 0:
             xbmc.Player().play(item.url)
 
-        if risp == 1:
-            nome=platformtools.dialog_input(item.fulltitle)
-            os.renames(item.url,config.get_library_path()+"/"+nome)
+        elif risp == 1:
+            nome = platformtools.dialog_input(item.fulltitle)
+            os.renames(item.url, filetools.join(config.get_library_path(), nome))
             xbmc.executebuiltin("Container.Refresh")
 
-        if risp == 2:
+        elif risp == 2:
             if elimina_file(item):
-                os.remove(item.url)
+                filetools.remove(item.url)
                 xbmc.executebuiltin("Container.Refresh")
     except:
         pass
@@ -82,18 +82,18 @@ def file(item):
 
 def elimina_file(item):
     logger.info("[bibiolteca.py] elimina_file")
-    linea1 ='[COLOR azure]Confermi eliminazione di:[/COLOR]'
-    linea2 =item.title + ' ?'
-    linea3 =''
-    risposta = platformtools.dialog_ok('Conferma eliminazione:', linea1, linea2, linea3)
+    linea1 = '[COLOR azure]Confermi eliminazione di:[/COLOR]'
+    linea2 = item.title + ' ?'
+    linea3 = ''
+    risposta = platformtools.dialog_yesno('Conferma eliminazione:', linea1, linea2, linea3)
 
     return risposta
 
 
 def channel_config(item):
     return platformtools.show_channel_settings(channelpath=os.path.join(config.get_runtime_path(),
-
                                                                         "channels", item.channel))
+
 def peliculas(item):
     logger.info()
     itemlist = []
