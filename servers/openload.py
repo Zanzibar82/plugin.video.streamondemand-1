@@ -27,7 +27,7 @@ def test_video_exists(page_url):
     if 'We’re Sorry!' in data:
         data = httptools.downloadpage(page_url.replace("/embed/", "/f/"), headers=header, cookies=False).data
         if 'We’re Sorry!' in data:
-            return False, "[Openload] File non trovato" 
+            return False, "[Openload] File non presente" 
 
     return True, ""
 
@@ -58,7 +58,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
 
         var_r = scrapertools.find_single_match(text_decode, "window\.[A-z]+\s*=\s*['\"]([^'\"]+)['\"]")
         var_encodes = scrapertools.find_multiple_matches(data, 'id="%s[^"]*">([^<]+)<' % var_r)
-        numeros = scrapertools.find_multiple_matches(data, '_0x[0-9a-f]+\s*=\s*([0-9]{4,}|0x[0-9a-f]{4,});')
+        numeros = scrapertools.find_multiple_matches(data, '_[A-Fa-f0-9]+x[A-Fa-f0-9]+\s*=\s*([0-9]{4,}|0x[A-Fa-f0-9]{4,});')
 
         videourl = ""
         for encode in var_encodes:
