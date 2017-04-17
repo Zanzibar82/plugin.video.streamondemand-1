@@ -512,7 +512,7 @@ def set_content(content_type, silent=False):
                               "<setting id='fanart' value='true' /><setting id='keeporiginaltitle' value='false' />" \
                               "<setting id='language' value='es' /><setting id='tmdbcertcountry' value='us' />" \
                               "<setting id='trailer' value='true' /></settings>"
-                strActualizar = "¿Desea configurar este Scraper en español como opción por defecto para películas?"
+                strActualizar = "Si desidera configurare questo Scraper in spagnolo come opzione predefinita per i film ?"
                 if not librarypath.endswith(sep):
                     librarypath += sep
                 strPath = librarypath + config.get_setting("folder_movies") + sep
@@ -526,7 +526,7 @@ def set_content(content_type, silent=False):
                               "<setting id='fallback' value='true' />" \
                               "<setting id='fanart' value='true' />" \
                               "<setting id='language' value='es' /></settings>"
-                strActualizar = "¿Desea configurar este Scraper en español como opción por defecto para series?"
+                strActualizar = "Si desidera configurare questo Scraper in spagnolo come opzione predefinita per le serie ?"
                 if not librarypath.endswith(sep):
                     librarypath += sep
                 strPath = librarypath + config.get_setting("folder_tvshows") + sep
