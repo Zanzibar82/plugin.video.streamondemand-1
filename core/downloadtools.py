@@ -523,7 +523,7 @@ def downloadbest(video_urls, title, continuar=False):
     return -2
 
 
-def downloadfile(url, nombrefichero, headers=None, silent=False, continuar=False):
+def downloadfile(url, nombrefichero, headers=None, silent=False, continuar=False, resumir=True):
     logger.info("streamondemand.core.downloadtools downloadfile: url=" + url)
     logger.info("streamondemand.core.downloadtools downloadfile: nombrefichero=" + nombrefichero)
 

@@ -76,7 +76,7 @@ def get_channel_parameters(channel_name):
             channel_parameters["fanart"] = os.path.join(config.get_runtime_path(), "resources", "images", "fanart",
                                                         channel_parameters["fanart"])
 
-        if channel_parameters["update_url"]=="":
+        if channel_parameters["update_url"] == "":
             channel_parameters["update_url"] = DEFAULT_UPDATE_URL
 
         channel_parameters["include_in_global_search"] = scrapertools.find_single_match(
@@ -88,6 +88,16 @@ def get_channel_parameters(channel_name):
             category_list.append(match)
 
         channel_parameters["categories"] = category_list
+        # Obtenemos si el canal tiene opciones de configuración
+        channel_parameters["has_settings"] = False
+        # esta regex devuelve 2 valores por elemento <settings>, el contenido del propio nodo y un \t, por lo que hay
+        # posteriormente coger solo el valor del indice 0.
+        matches = scrapertools.find_multiple_matches(data, "<settings>((.|\n)*?)<\/settings>")
+        for match in matches:
+            _id = scrapertools.find_single_match(match[0], "<id>([^<]*)</id>")
+            if _id and "include_in_" not in _id:
+                channel_parameters["has_settings"] = True
+                break
 
         logger.info(channel_name+" -> "+repr(channel_parameters))
 
@@ -187,7 +197,7 @@ def get_channel_setting(name, channel):
             if isinstance(dict_file, dict) and 'settings' in dict_file:
                 dict_settings = dict_file['settings']
         except EnvironmentError:
-            logger.info("ERROR al leer el archivo: {0}".format(file_settings))
+            logger.info("ERROR al leer el archivo: %s" % file_settings)
 
     if len(dict_settings) == 0 or name not in dict_settings:
         # Obtenemos controles del archivo ../channels/channel.xml
@@ -204,7 +214,7 @@ def get_channel_setting(name, channel):
             try:
                 open(file_settings, "wb").write(json_data)
             except EnvironmentError:
-                logger.info("[config.py] ERROR al salvar el archivo: {0}".format(file_settings))
+                logger.info("ERROR al salvar el archivo: %s" % file_settings)
 
     # Devolvemos el valor del parametro local 'name' si existe
     if name in dict_settings:
@@ -250,7 +260,7 @@ def set_channel_setting(name, value, channel):
             dict_file = jsontools.load_json(open(file_settings, "r").read())
             dict_settings = dict_file.get('settings', {})
         except EnvironmentError:
-            logger.info("ERROR al leer el archivo: {0}".format(file_settings))
+            logger.info("ERROR al leer el archivo: %s" % file_settings)
 
     dict_settings[name] = value
 
@@ -265,7 +275,7 @@ def set_channel_setting(name, value, channel):
         json_data = jsontools.dump_json(dict_file)
         open(file_settings, "w").write(json_data)
     except EnvironmentError:
-        logger.info("[config.py] ERROR al salvar el archivo: {0}".format(file_settings))
+        logger.info("ERROR al salvar el archivo: %s" % file_settings)
         return None
 
     return value
@@ -291,21 +301,21 @@ def get_channel_remote_url(channel_name):
     logger.info("streamondemand.core.channeltools get_channel_remote_url remote_channel_url="+remote_channel_url)
     logger.info("streamondemand.core.channeltools get_channel_remote_url remote_version_url="+remote_version_url)
     
-    return remote_channel_url , remote_version_url
+    return remote_channel_url, remote_version_url
 
 def get_channel_local_path(channel_name):
 
-    if channel_name<>"channelselector":
-        local_channel_path = os.path.join( config.get_runtime_path() , 'channels' , channel_name+".py" )
-        local_version_path = os.path.join( config.get_runtime_path() , 'channels' , channel_name+".xml" )
-        local_compiled_path = os.path.join( config.get_runtime_path() , 'channels' , channel_name+".pyo" )
+    if channel_name != "channelselector":
+        local_channel_path = os.path.join(config.get_runtime_path(), 'channels', channel_name + ".py")
+        local_version_path = os.path.join(config.get_runtime_path(), 'channels', channel_name + ".xml")
+        local_compiled_path = os.path.join(config.get_runtime_path(), 'channels', channel_name + ".pyo")
     else:
-        local_channel_path = os.path.join( config.get_runtime_path() , channel_name+".py" )
-        local_version_path = os.path.join( config.get_runtime_path() , channel_name+".xml" )
-        local_compiled_path = os.path.join( config.get_runtime_path() , channel_name+".pyo" )
+        local_channel_path = os.path.join(config.get_runtime_path(), channel_name + ".py")
+        local_version_path = os.path.join(config.get_runtime_path(), channel_name + ".xml")
+        local_compiled_path = os.path.join(config.get_runtime_path(), channel_name + ".pyo")
 
-    logger.info("streamondemand.core.channeltools get_channel_local_path local_channel_path="+local_channel_path)
-    logger.info("streamondemand.core.channeltools get_channel_local_path local_version_path="+local_version_path)
-    logger.info("streamondemand.core.channeltools get_channel_local_path local_compiled_path="+local_compiled_path)
+    logger.info("streamondemand.core.channeltools get_channel_local_path local_channel_path=" + local_channel_path)
+    logger.info("streamondemand.core.channeltools get_channel_local_path local_version_path=" + local_version_path)
+    logger.info("streamondemand.core.channeltools get_channel_local_path local_compiled_path=" + local_compiled_path)
     
-    return local_channel_path , local_version_path , local_compiled_path
+    return local_channel_path, local_version_path, local_compiled_path

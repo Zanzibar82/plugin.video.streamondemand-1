@@ -76,9 +76,12 @@ def dialog_progress(heading, line1, line2=" ", line3=" "):
 
 
 def dialog_progress_bg(heading, message=""):
-    dialog = xbmcgui.DialogProgressBG()
-    dialog.create(heading, message)
-    return dialog
+    try:
+      dialog = xbmcgui.DialogProgressBG()
+      dialog.create(heading, message)
+      return dialog
+    except:
+      return dialog_progress(heading, message)
 
 
 def dialog_input(default="", heading="", hidden=False):
@@ -266,20 +269,22 @@ def set_infolabels(listitem, item, player=False):
     @type item: item
     """
     if item.infoLabels:
-      listitem.setInfo("video", item.infoLabels)
+        if 'mediatype' not in item.infoLabels:
+            item.infoLabels['mediatype'] = item.contentType
+        listitem.setInfo("video", item.infoLabels)
       
     if player and not item.contentTitle:
         if item.fulltitle:
-          listitem.setInfo("video", {"Title": item.fulltitle})
+            listitem.setInfo("video", {"Title": item.fulltitle})
         else:
-          listitem.setInfo("video", {"Title": item.title})
+            listitem.setInfo("video", {"Title": item.title})
           
     elif not player:
         listitem.setInfo("video", {"Title": item.title})
         
     # Añadido para Kodi Krypton (v17)
     if config.get_platform(True)['num_version'] >= 17.0:
-      listitem.setArt({"poster": item.thumbnail})
+        listitem.setArt({"poster": item.thumbnail})
 
 
 def set_context_commands(item, parent_item):
@@ -344,17 +349,22 @@ def set_context_commands(item, parent_item):
                 command["from_action"] = item.action
             if "channel" in command:
                 command["from_channel"] = item.channel
-            context_commands.append(
-                (command["title"], "XBMC.RunPlugin(%s?%s)" % (sys.argv[0], item.clone(**command).tourl())))
+            if "goto" in command:
+                context_commands.append((command["title"], "XBMC.Container.Refresh (%s?%s)" %
+                                         (sys.argv[0], item.clone(**command).tourl())))
+            else:
+                context_commands.append(
+                    (command["title"], "XBMC.RunPlugin(%s?%s)" % (sys.argv[0], item.clone(**command).tourl())))
 
     # Opciones segun criterios, solo si el item no es un tag (etiqueta), ni es "Añadir a la biblioteca", etc...
     if item.action and item.action not in ["add_pelicula_to_library", "add_serie_to_library", "buscartrailer"]:
         # Mostrar informacion: si el item tiene plot suponemos q es una serie, temporada, capitulo o pelicula
-        if item.infoLabels['plot']:
+        if item.infoLabels['plot'] and (num_version_xbmc < 17.0 or item.contentType == 'season'):
             context_commands.append(("Informazioni", "XBMC.Action(Info)"))
 
         # ExtendedInfo: Si esta instalado el addon y se cumplen una serie de condiciones
-        if xbmc.getCondVisibility('System.HasAddon(script.extendedinfo)') and config.get_setting("extended_info") == "true":
+        if xbmc.getCondVisibility('System.HasAddon(script.extendedinfo)') \
+                and config.get_setting("extended_info") == "true":
             if item.contentType == "episode" and item.contentEpisodeNumber and item.contentSeason \
                     and (item.infoLabels['tmdb_id'] or item.contentSerieName):
                 param = "tvshow_id =%s, tvshow=%s, season=%s, episode=%s" \
@@ -455,7 +465,6 @@ def set_context_commands(item, parent_item):
         context_commands.append(("Super Favourites",
                                  "XBMC.RunScript(special://home/addons/plugin.program.super.favourites/LaunchSFMenu.py)"))
 
-    #context_commands.append((item.contentType, "XBMC.Action(Info)")) # For debug
     return sorted(context_commands, key=lambda comand: comand[0])
 
 
@@ -643,6 +652,11 @@ def show_video_info(data, caption="", item=None, scraper=Tmdb):
     from xbmc_info_window import InfoWindow
     return InfoWindow("InfoWindow.xml", config.get_runtime_path()).Start(data, caption=caption, item=item,
                                                                          scraper=scraper)
+
+
+def show_recaptcha(key, referer):
+    from recaptcha import Recaptcha
+    return Recaptcha("Recaptcha.xml", config.get_runtime_path()).Start(key, referer)
 
 
 def alert_no_disponible_server(server):
@@ -949,8 +963,8 @@ def play_torrent(item, xlistitem, mediaurl):
     logger.info("platformtools play_torrent")
     # Opciones disponibles para Reproducir torrents
     torrent_options = list()
-    torrent_options.append(["Cliente interno (necesario libtorrent)"])
-    torrent_options.append(["Cliente interno MCT (necesario libtorrent)"])
+    torrent_options.append(["Client interno (necessario libtorrent)"])
+    torrent_options.append(["Client interno MCT (necessario libtorrent)"])
 
     # Plugins externos se pueden añadir otros
     if xbmc.getCondVisibility('System.HasAddon("plugin.video.xbmctorrent")'):

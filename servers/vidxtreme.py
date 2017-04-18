@@ -7,7 +7,7 @@
 
 import re
 
-from core import jsunpack
+from lib import jsunpack
 from core import logger
 from core import scrapertools
 

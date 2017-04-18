@@ -40,6 +40,10 @@ TAG_ACTIVE = "active"
 TAG_LANGUAGE = "language"
 TAG_QUALITY_NOT_ALLOWED = "quality_not_allowed"
 
+COLOR = {"parent_item": "yellow", "error": "red", "striped_even_active": "blue",
+         "striped_even_inactive": "0xff00bfff", "striped_odd_active": "0xff008000",
+         "striped_odd_inactive": "0xff00fa9a", "selected": "blue"
+         }
 
 class Filter:
     active = False
@@ -62,7 +66,7 @@ def context():
     configuración para mostrar la opción de filtro, actualmente sólo se permite en xbmc, se cambiará cuando
     'platformtools.show_channel_settings' esté disponible para las distintas plataformas
     '''
-    if config.is_xbmc():
+    if config.is_xbmc() or config.get_platform() == "mediaserver":
         _context = [{"title": "Menu Filtro",
                      "action": "config_item",
                      "channel": "filtertools"}]
@@ -87,9 +91,9 @@ context = context()
 
 
 def show_option(itemlist, channel, list_idiomas, list_calidad):
-    itemlist.append(Item(channel=__channel__, title="[COLOR yellow]Configurar filtro para series...[/COLOR]",
-                         action="load", list_idiomas=list_idiomas, list_calidad=list_calidad,
-                         from_channel=channel))
+    itemlist.append(Item(channel=__channel__, title="[COLOR {0}]Configurar filtro para series...[/COLOR]".
+                         format(COLOR.get("parent_item", "auto")),
+                         action="load", list_idiomas=list_idiomas, list_calidad=list_calidad, from_channel=channel))
 
     return itemlist
 
@@ -175,11 +179,11 @@ def get_links(list_item, channel):
             for i in list_item:
                 lista.append(i.tourl())
 
-            new_itemlist.append(Item(channel=__channel__, action="no_filter",
-                                     title="[COLOR red]No hay elementos con filtro [{0}] y ![{1}], pulsa para mostrar "
+            new_itemlist.append(Item(channel=__channel__, action="no_filter", lista=lista, show=list_item[0].show,
+                                     title="[COLOR {0}]No hay elementos con filtro [{1}] y ![{2}], pulsa para mostrar "
                                            "sin filtro[/COLOR]"
-                                     .format(_filter.language, _filter.quality_not_allowed), context="borrar filtro",
-                                     lista=lista, from_channel=channel, show=list_item[0].show))
+                                     .format(COLOR.get("error", "auto"), _filter.language, _filter.quality_not_allowed),
+                                     context="borrar filtro", from_channel=channel))
 
     else:
         new_itemlist = list_item
@@ -284,15 +288,16 @@ def mainlist(channel, list_idiomas, list_calidad):
 
     idx = 0
     for tvshow in sorted(dict_series):
-        if dict_series[tvshow][TAG_ACTIVE]:
-            tag_color = "0xff008000"
-        else:
-            tag_color = "0xff00fa9a"
         if idx % 2 == 0:
             if dict_series[tvshow][TAG_ACTIVE]:
-                tag_color = "blue"
+                tag_color = COLOR.get("striped_even_active", "auto")
             else:
-                tag_color = "0xff00bfff"
+                tag_color = COLOR.get("striped_even_inactive", "auto")
+        else:
+            if dict_series[tvshow][TAG_ACTIVE]:
+                tag_color = COLOR.get("striped_odd_active", "auto")
+            else:
+                tag_color = COLOR.get("striped_odd_inactive", "auto")
 
         idx += 1
         name = dict_series.get(tvshow, {}).get(TAG_NAME, tvshow)
@@ -389,9 +394,10 @@ def config_item(item):
         # concatenamos list_controls con list_controls_calidad
         list_controls.extend(list_controls_calidad)
 
+    title = "Filtrado de enlaces para: [COLOR {0}]{1}[/COLOR]".format(COLOR.get("selected", "auto"), item.show)
+
     platformtools.show_channel_settings(list_controls=list_controls, callback='guardar_valores', item=item,
-                                        caption="Filtrado de enlaces para: [COLOR blue]{0}[/COLOR]".format(item.show),
-                                        custom_button=custom_button)
+                                        caption=title, custom_button=custom_button)
 
 
 def borrar_filtro(item):
@@ -402,8 +408,8 @@ def borrar_filtro(item):
         tvshow = item.show.strip().lower()
 
         heading = "¿Está seguro que desea eliminar el filtro?"
-        line1 = "Pulse 'Si' para eliminar el filtro de [COLOR blue]{0}[/COLOR], pulse 'No' o cierre la ventana para " \
-                "no hacer nada.".format(item.show.strip())
+        line1 = "Pulse 'Si' para eliminar el filtro de [COLOR {0}]{1}[/COLOR], pulse 'No' o cierre la ventana para " \
+                "no hacer nada.".format(COLOR.get("selected", "auto"), item.show.strip())
 
         if platformtools.dialog_yesno(heading, line1) == 1:
             lang_selected = dict_series.get(tvshow, {}).get(TAG_LANGUAGE, "")
@@ -419,6 +425,9 @@ def borrar_filtro(item):
 
             heading = "{0} [{1}]".format(item.show.strip(), lang_selected)
             platformtools.dialog_notification(heading, message)
+
+            if config.get_platform() == "mediaserver":
+                platformtools.itemlist_refresh()
 
 
 def guardar_valores(item, dict_data_saved):
@@ -463,6 +472,9 @@ def guardar_valores(item, dict_data_saved):
 
         heading = "{0} [{1}]".format(item.show.strip(), lang_selected)
         platformtools.dialog_notification(heading, message)
+
+        if config.get_platform() == "mediaserver":
+            platformtools.itemlist_refresh()
 
 
 def update_json_data(dict_series, filename):

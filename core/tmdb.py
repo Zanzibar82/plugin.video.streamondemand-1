@@ -399,7 +399,9 @@ def find_and_set_infoLabels(item):
     if tmdb_result:
         infoLabels['tmdb_id'] = tmdb_result['id']
         # todo mirar si se puede eliminar y obtener solo desde get_nfo()
-        infoLabels['url_scraper'] = "https://www.themoviedb.org/%s/%s" % (tipo_busqueda, infoLabels['tmdb_id'])
+        infoLabels['url_scraper'] = ["https://www.themoviedb.org/%s/%s" % (tipo_busqueda, infoLabels['tmdb_id'])]
+        if infoLabels['tvdb_id']:
+            infoLabels['url_scraper'].append("http://thetvdb.com/index.php?tab=series&id=%s" % infoLabels['tvdb_id'])
         item.infoLabels = infoLabels
         set_infoLabels_item(item)
 
@@ -423,9 +425,24 @@ def get_nfo(item):
         info_nfo = "https://www.themoviedb.org/tv/%s/season/%s/episode/%s\n" % \
                    (item.infoLabels['tmdb_id'], item.contentSeason, item.contentEpisodeNumber)
     else:
-        info_nfo = item.infoLabels['url_scraper'] + "\n"
+        info_nfo = ', '.join(item.infoLabels['url_scraper']) + "\n"
 
     return info_nfo
+
+
+def completar_codigos(item):
+    """
+    Si es necesario comprueba si existe el identificador de tvdb y sino existe trata de buscarlo
+    """
+    if item.contentType != "movie" and not item.infoLabels['tvdb_id']:
+        # Lanzar busqueda por imdb_id en tvdb
+        from core.tvdb import Tvdb
+        ob = Tvdb(imdb_id=item.infoLabels['imdb_id'])
+        item.infoLabels['tvdb_id'] = ob.get_id()
+    if item.infoLabels['tvdb_id']:
+        url_scraper = "http://thetvdb.com/index.php?tab=series&id=%s" % item.infoLabels['tvdb_id']
+        if url_scraper not in item.infoLabels['url_scraper']:
+            item.infoLabels['url_scraper'].append(url_scraper)
 
 
 
@@ -910,7 +927,7 @@ class Tmdb(object):
         return True
 
     def get_list_resultados(self, num_result=20):
-        logger.info("self %s" % str(self))
+        #logger.info("self %s" % str(self))
         # TODO documentar
         res = []
 
@@ -964,6 +981,11 @@ class Tmdb(object):
                 genre_list.append(i['name'])
 
         return ', '.join(genre_list)
+
+    def search_by_id(self, id, source='tmdb', tipo='movie'):
+        self.busqueda_id = id
+        self.busqueda_tipo = tipo
+        self.__by_id(source=source)
 
     def get_id(self):
         """
@@ -1330,12 +1352,16 @@ class Tmdb(object):
 
             items.extend(self.get_episodio(ret_infoLabels['season'], episodio).items())
 
+        #logger.info("ret_infoLabels" % ret_infoLabels)
 
         for k, v in items:
             if not v:
                 continue
             elif type(v) == str:
                 v = re.sub(r"\n|\r|\t", "", v)
+                # fix
+                if v == "None":
+                    continue
 
             if k == 'overview':
                 if origen:

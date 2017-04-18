@@ -24,7 +24,7 @@
 # ------------------------------------------------------------
 
 try:
-    from python_libtorrent import get_libtorrent
+    from python_libtorrent import get_libtorrent, get_platform
     lt = get_libtorrent()
 except Exception, e:
     import libtorrent as lt
@@ -86,7 +86,6 @@ class Client(object):
         self.last_pieces_priorize = 5
         self.state_file="state"
         self.torrent_paramss={'save_path':self.temp_path,'storage_mode':lt.storage_mode_t.storage_mode_sparse}
-
 
 
         #State
@@ -430,8 +429,8 @@ class Client(object):
                 s.timeout = "Off"
             
             #Estado de la descarga
-            STATE_STR = ['En cola', 'Comprobando', 'Descargando metadata', \
-                    'Descargando', 'Finalizado', 'Seeding', 'Allocating', 'Comprobando fastresume']
+            STATE_STR = ['Queue', 'Verify', 'Download metadata', \
+                    'Download', 'Finalizing', 'Seeding', 'Allocating', 'Verify fastresume']
             s.str_state = STATE_STR[s.state]
             
             #Estado DHT

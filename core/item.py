@@ -126,8 +126,6 @@ class InfoLabels(dict):
     def tostring(self, separador=', '):
         ls = []
         dic = dict(super(InfoLabels, self).items())
-        if 'mediatype' not in dic.keys():
-            dic['mediatype'] = self.__missing__('mediatype')
 
         for i in sorted(dic.items()):
             i_str = str(i)[1:-1]
@@ -191,14 +189,14 @@ class Item(object):
             value = self.decode_html(value)
 
         # Al modificar cualquiera de estos atributos content...
-        if name in ["contentTitle", "contentPlot", "contentSerieName", "contentType", "contentEpisodeTitle",
+        if name in ["contentTitle", "contentPlot", "plot", "contentSerieName", "contentType", "contentEpisodeTitle",
                     "contentSeason", "contentEpisodeNumber", "contentThumbnail", "show", "contentQuality"]:
             # ... marcamos hasContentDetails como "true"...
             self.__dict__["hasContentDetails"] = "true"
             # ...y actualizamos infoLables
             if name == "contentTitle":
                 self.__dict__["infoLabels"]["title"] = value
-            elif name == "contentPlot":
+            elif name == "contentPlot" or name == "plot":
                 self.__dict__["infoLabels"]["plot"] = value
             elif name == "contentSerieName" or name == "show":
                 self.__dict__["infoLabels"]["tvshowtitle"] = value
@@ -214,9 +212,6 @@ class Item(object):
                 self.__dict__["infoLabels"]["thumbnail"] = value
             elif name == "contentQuality":
                 self.__dict__["infoLabels"]["quality"] = value
-
-        elif name == "plot":
-            self.__dict__["infoLabels"]["plot"] = value
 
         elif name == "duration":
             # String q representa la duracion del video en segundos
@@ -326,11 +321,14 @@ class Item(object):
         dic = self.__dict__.copy()
 
         # Añadimos los campos content... si tienen algun valor
-        for key in ["contentTitle", "contentPlot", "contentSerieName", "contentType", "contentEpisodeTitle",
-                    "contentSeason", "contentEpisodeNumber", "contentThumbnail", "plot"]:
+        for key in ["contentTitle", "contentPlot", "contentSerieName", "contentEpisodeTitle",
+                    "contentSeason", "contentEpisodeNumber", "contentThumbnail"]:
             value = self.__getattr__(key)
             if value:
                 dic[key] = value
+
+        if 'mediatype' in self.__dict__["infoLabels"]:
+            dic["contentType"] = self.__dict__["infoLabels"]['mediatype']
 
         ls = []
         for var in sorted(dic):

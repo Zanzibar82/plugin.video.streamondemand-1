@@ -12,7 +12,7 @@ import time
 import urllib
 
 from core import config
-from core import jsunpack
+from lib import jsunpack
 from core import logger
 from core import scrapertools
 

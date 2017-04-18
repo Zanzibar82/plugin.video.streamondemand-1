@@ -19,8 +19,8 @@
         <setting id="check_for_plugin_updates" type="bool" label="30001" default="true"/>
         <setting id="check_for_channel_updates" type="bool" label="30004" default="true"/>
 
-        <setting id="plugin_version_number" type="number" label="Plugin version number" default="5490" visible="false"/>
-        <setting id="plugin_version_tag" type="text" label="Plugin version tag" default="5.4.9" visible="false"/>
+        <setting id="plugin_version_number" type="number" label="Plugin version number" default="5510" visible="false"/>
+        <setting id="plugin_version_tag" type="text" label="Plugin version tag" default="5.5.1" visible="false"/>
         <setting id="channels_version_number" type="number" label="Channels version number" default="20170101" visible="false"/>
         <setting id="servers_version_number" type="number" label="Channels version number" default="20170101" visible="false"/>
     </category>
@@ -125,9 +125,12 @@
         <setting id="librarypath" type="folder" label="30067" default="" visible="eq(-8,1)"/>
 
         <setting type="sep"/>
+        <setting label="Libreria" type="lsep"/>
         <setting label="Nomi cartelle" type="lsep"/>
         <setting id="folder_tvshows" type="text" label="Serie TV" default="SERIES"/>
         <setting id="folder_movies" type="text" label="Film" default="CINE"/>
+        <setting id="library_set_content" type="bool" label="Autoconfigurare libreria di XBMC/Kodi per contenuti di streamondemand" default="false"/>
+        <setting id="library_ask_set_content" type="bool" label="" default="true" visible="false"/>
     </category>
 
     <category label="Altro"><!--30503 -->

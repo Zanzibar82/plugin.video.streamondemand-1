@@ -44,7 +44,6 @@ def getmainlist(preferred_thumb=""):
     itemlist.append( Item( title=config.get_localized_string(30121) , channel="channelselector" , action="filterchannels" , channel_type="all", category="all" , thumbnail= os.path.join(config.get_runtime_path() , "resources" , "images", "main_menu_all.png"),viewmode="movie") )
     itemlist.append( Item(title=config.get_localized_string(30119) , channel="channelselector" , action="getchanneltypes", thumbnail = os.path.join(config.get_runtime_path() , "resources" , "images", "main_menu_category.png"),viewmode="movie") )
     itemlist.append( Item(title="Ricerca Globale" , channel="buscadorall" , action="mainlist" , thumbnail = os.path.join(config.get_runtime_path() , "resources" , "images", "main_menu_search.png"),viewmode="movie") )
-    itemlist.append( Item(title="Oggi in TV" , channel="filmontv" , action="mainlist" , thumbnail = os.path.join(config.get_runtime_path() , "resources" , "images", "main_menu_filmontv.png"),viewmode="movie") )
     itemlist.append( Item(title=config.get_localized_string(30102) , channel="favoritos" , action="mainlist" , thumbnail = os.path.join(config.get_runtime_path() , "resources" , "images", "main_menu_fav.png"),viewmode="movie") )
     if config.get_library_support():
         itemlist.append( Item(title=config.get_localized_string(30131) , channel="biblioteca" , action="mainlist", thumbnail = os.path.join(config.get_runtime_path() , "resources" , "images", "main_menu_library.png"),viewmode="movie") )
@@ -128,6 +127,7 @@ def getchanneltypes(preferred_thumb=""):
                          viewmode="movie"))
     itemlist.append(Item(title="Saghe", channel="saghe", action="mainlist",
                          category="saghe", channel_type="saghe", thumbnail = os.path.join(config.get_runtime_path() , "resources" , "images", "cat_menu_saghe.png")))
+    itemlist.append( Item(title="Oggi in TV" , channel="filmontv" , action="mainlist" , thumbnail = os.path.join(config.get_runtime_path() , "resources" , "images", "main_menu_filmontv.png"),viewmode="movie") )
     logger.info("channelselector.getchanneltypes Ordenados:")
     for channel_type in valid_types:
         logger.info("channelselector.getchanneltypes channel_type="+channel_type)
@@ -232,6 +232,8 @@ def filterchannels(category,preferred_thumb=""):
             channel_parameters["thumbnail"] = channel_parameters["bannermenu"]
 
         channelslist.insert( 0 , Item( title="[COLOR gray]Inserisci un URL[/COLOR]"  ,action="mainlist", channel="tengourl" , thumbnail=channel_parameters["thumbnail"], type="generic" ,viewmode="movie" ))
+        channel_parameters = channeltools.get_channel_parameters("searchchannel")
+        channelslist.insert(0, Item(title="[COLOR gray]Cerca canale[/COLOR]", action="search", channel="searchchannel", thumbnail=channel_parameters["thumbnail"], type="generic", viewmode="movie"))
 
     return channelslist
 

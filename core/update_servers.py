@@ -27,6 +27,7 @@
 
 import glob
 import os
+import time
 from threading import Thread
 import threading
 
@@ -58,6 +59,7 @@ def update_servers():
         t.start()
         # ----------------------------
         progress.update(percentage, ' Update server: ' + server_name)
+        t.join()
         # ----------------------------
         while True:
             num_threads = threading.activeCount()

@@ -16,7 +16,7 @@ def test_video_exists(page_url):
 
     data = scrapertools.cache_page(url=page_url)
     if "File was deleted" in data:
-        return False, "Il file inesistent o cancellato."
+        return False, "Il video è stato rimosso"
     elif "Video is processing now" in data:
         return False, "Processando il file"
     else:

@@ -237,6 +237,7 @@ def episodios(item):
             if scrapedtitle != 'Categorie':
                 scrapedtitle = scrapedtitle.replace('&#215;', 'x')
                 scrapedtitle = scrapedtitle.replace('×', 'x')
+                scrapedtitle = scrapedtitle.replace(';', '')
                 itemlist.append(
                     Item(channel=__channel__,
                          action="findvideos",
@@ -255,11 +256,11 @@ def episodios(item):
     # Descarga la página
     data = scrapertools.cache_page(item.url)
     data = scrapertools.decodeHtmlentities(data)
-    data = scrapertools.get_match(data, '<p><strong>(.*?)<div id="disqus_thread">')
+    data = scrapertools.get_match(data, '<p>(?:<strong>|)(.*?)<div id="disqus_thread">')
 
     lang_titles = []
     starts = []
-    patron = r"Stagione.*?ITA"
+    patron = r"Stagione.*?(?:ITA|\d+)"
     matches = re.compile(patron, re.IGNORECASE).finditer(data)
     for match in matches:
         season_title = match.group()

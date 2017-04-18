@@ -1,13 +1,13 @@
 <?xml version="1.0" ?>
 <server>
 	<active>true</active>
-	<changes>Versión incial</changes>
-	<date>25/03/2016</date>
+	<changes>Fix</changes>
+	<date>23/03/2017</date>
 	<free>true</free>
-	<id>vidtome</id>
-	<name>vidtome</name>
+	<id>vidlox</id>
+	<name>vidloxtv</name>
 	<premium></premium>
-	<thumbnail>http://media.tvalacarta.info/servers/server_vidtome.png</thumbnail>
+	<thumbnail>https://vidlox.tv/imgs/vidlox_white_colored.svg</thumbnail>
 	<update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/</update_url>
-	<version>3</version>
+	<version>2</version>
 </server>

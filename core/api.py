@@ -36,7 +36,7 @@ import scrapertools
 import urllib
 from item import Item
 
-MAIN_URL = "https://api.tvalacarta.info/v2"
+MAIN_URL = "http://api.tvalacarta.info/v2"
 API_KEY = "nzgJy84P9w54H2w"
 DEFAULT_HEADERS = [ ["User-Agent",config.PLUGIN_NAME+" "+config.get_platform()] ]
 

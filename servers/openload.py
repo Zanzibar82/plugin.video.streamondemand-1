@@ -27,7 +27,7 @@ def test_video_exists(page_url):
     if 'We’re Sorry!' in data:
         data = httptools.downloadpage(page_url.replace("/embed/", "/f/"), headers=header, cookies=False).data
         if 'We’re Sorry!' in data:
-            return False, "[Openload] File non trovato" 
+            return False, "[Openload] File non presente" 
 
     return True, ""
 
@@ -56,38 +56,49 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         for t in text_encode:
             text_decode += aadecode(t)
 
-        var_r = scrapertools.find_single_match(text_decode, "window.r\s*=\s*['\"]([^'\"]+)['\"]")
+        var_r = scrapertools.find_single_match(text_decode, "window\.[A-z]+\s*=\s*['\"]([^'\"]+)['\"]")
         var_encodes = scrapertools.find_multiple_matches(data, 'id="%s[^"]*">([^<]+)<' % var_r)
+        numeros = scrapertools.find_multiple_matches(data, '_[A-Fa-f0-9]+x[A-Fa-f0-9]+\s*=\s*([0-9]{4,}|0x[A-Fa-f0-9]{4,});')
 
         videourl = ""
         for encode in var_encodes:
-            text_decode = []
+            text_decode = ""
             try:
-                idx1 = max(2, ord(encode[0]) - 52)
-                idx2 = min(idx1, len(encode) - 28)
-                idx3 = encode[idx2:idx2+30]
+                rango1 = encode[:56]
                 decode1 = []
-                for i in range(0, len(idx3), 3):
-                    decode1.append(int(idx3[i:i+3], 8))
-                idx4 = encode[0:idx2] + encode[idx2+30:]
+                for i in range(0, len(rango1), 8):
+                    decode1.append(int(rango1[i:i+8], 16))
+                rango1 = encode[56:]
                 j = 0
                 i = 0
-                while i < len(idx4):
-                    data_1 = int(idx4[i:i+2], 16)
-                    data_2 = idx4[i:i+3]
-                    i += 2
-                    if (j % 3) == 0:
-                        data_1 = int(data_2, 8)
-                        i += 1
-                    elif j % 2 == 0 and j != 0 and ord(idx4[j-1]) < 60:
-                        data_1 = int(data_2, 10)
-                        i += 1
+                while i < len(rango1):
+                    index1 = 64
+                    value1 = 0
+                    value2 = 0
+                    value3 = 0
+                    while True:
+                        if (i + 1) >= len(rango1):
+                            index1 = 143
+                        value3 = int(rango1[i:i+2], 16)
+                        i += 2
+                        data = value3 & 63
+                        value2 += data << value1
+                        value1 += 6
+                        if value3 < index1:
+                            break
 
-                    value = data_1 ^ 213 ^ decode1[j % 6]
+                    value4 = value2 ^ decode1[j % 7]
+                    for n in numeros:
+                        if not n.isdigit():
+                            n = int(n, 16)
+                        value4 ^= int(n)
+                    value5 = index1 * 2 + 127 
+                    for h in range(4):
+                        valorfinal = (value4 >> 8 * h) & (value5)
+                        valorfinal = chr(valorfinal)
+                        if valorfinal != "%":
+                            text_decode += valorfinal
                     j += 1
-                    text_decode.append(chr(value))
-
-                text_decode = "".join(text_decode)
             except:
                 continue
 
@@ -132,7 +143,7 @@ def find_videos(text):
 
     referer = ""
     if "|Referer=" in text:
-        referer = "|"+text.split("|Referer=", 1)[1]
+        referer = "|" + text.split("|Referer=", 1)[1]
     patronvideos = '(?:openload|oload).../(?:embed|f)/([0-9a-zA-Z-_]+)'
     logger.info("#" + patronvideos + "#")
 

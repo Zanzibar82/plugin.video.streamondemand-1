@@ -3,7 +3,7 @@
     <id>cinesuggestions</id>
     <name>CineSuggestions</name>
 
-    <active>true</active>
+    <active>false</active>
     <adult>false</adult>
     <language>it</language>
 

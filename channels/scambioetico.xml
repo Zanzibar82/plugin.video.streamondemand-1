@@ -11,8 +11,7 @@
     <thumbnail>http://forum.tntvillage.scambioetico.org/style_images/mkportal-636/tntlogo2012.png</thumbnail>
     <bannermenu>http://forum.tntvillage.scambioetico.org/style_images/mkportal-636/tntlogo2012.png</bannermenu>
 
-    <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/
-    </update_url>
+    <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
     <version>1</version>
     <date>22/06/2016</date>
     <changes>update</changes>
