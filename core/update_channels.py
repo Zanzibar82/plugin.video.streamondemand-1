@@ -27,7 +27,6 @@
 
 import glob
 import os
-import time
 from threading import Thread
 import threading
 
@@ -59,7 +58,6 @@ def update_channels():
         t.start()
         # ----------------------------
         progress.update(percentage, ' Update channel: ' + channel_id)
-        t.join()
         # ----------------------------
         while True:
             num_threads = threading.activeCount()
