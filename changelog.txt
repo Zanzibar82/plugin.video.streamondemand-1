@@ -1,3 +1,7 @@
+v5.5.1
+- global search, update channels/server fix... perhaps :-)
+- minor release
+
 v5.5.0
 - gobal merge fix
 - library, download, tvdb optimization

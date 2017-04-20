@@ -1,12 +1,33 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
-# streamondemand - XBMC Plugin
-# update_channels.py
+# streamondemand 5
+# Copyright 2015 tvalacarta@gmail.com
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
+#
+# Distributed under the terms of GNU General Public License v3 (GPLv3)
+# http://www.gnu.org/licenses/gpl-3.0.html
 # ------------------------------------------------------------
+# This file is part of streamondemand 5.
+#
+# streamondemand 5 is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# streamondemand 5 is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with streamondemand 5.  If not, see <http://www.gnu.org/licenses/>.
+# ------------------------------------------------------------
+# update_channels.py
+# ------------------------------------------------------------
+
 import glob
 import os
-from multiprocessing.pool import ThreadPool
+import time
 from threading import Thread
 
 from core import config
@@ -19,9 +40,7 @@ DEBUG = config.get_setting("debug")
 def update_channels():
     channel_path = os.path.join(config.get_runtime_path(), "channels", '*.xml')
 
-    channel_files = sorted(glob.glob(channel_path))
-
-    pool = ThreadPool(processes=10)
+    channel_files = glob.glob(channel_path)
 
     # ----------------------------
     import xbmcgui
@@ -34,19 +53,18 @@ def update_channels():
         percentage = index * 100 / len(channel_files)
         # ----------------------------
         channel_id = os.path.basename(channel)[:-4]
-        pool.apply_async(updater.update_channel, (channel_id,))
+        t = Thread(target=updater.update_channel, args=[channel_id])
+        t.setDaemon(True)
+        t.start()
         # ----------------------------
         progress.update(percentage, ' Update channel: ' + channel_id)
+        t.join()
         # ----------------------------
 
     # ----------------------------
     progress.close()
     # ----------------------------
 
-    pool.close()
-    pool.join()
-
 
 ### Run
 Thread(target=update_channels).start()
-

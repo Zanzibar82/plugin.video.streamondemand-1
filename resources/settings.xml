@@ -19,8 +19,8 @@
         <setting id="check_for_plugin_updates" type="bool" label="30001" default="true"/>
         <setting id="check_for_channel_updates" type="bool" label="30004" default="true"/>
 
-        <setting id="plugin_version_number" type="number" label="Plugin version number" default="5500" visible="false"/>
-        <setting id="plugin_version_tag" type="text" label="Plugin version tag" default="5.5.0" visible="false"/>
+        <setting id="plugin_version_number" type="number" label="Plugin version number" default="5510" visible="false"/>
+        <setting id="plugin_version_tag" type="text" label="Plugin version tag" default="5.5.1" visible="false"/>
         <setting id="channels_version_number" type="number" label="Channels version number" default="20170101" visible="false"/>
         <setting id="servers_version_number" type="number" label="Channels version number" default="20170101" visible="false"/>
     </category>
