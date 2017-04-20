@@ -166,7 +166,7 @@ def episodi(item):
         patron = '<div class="list [active]*" data-id="%s">(.*?)</div>\s*</div>' % value
         blocco = scrapertools.find_single_match(data, patron)
 
-        patron = '(<a data-id="\d+.*?" data-href="([^"]+)" data-original="([^"]+") class=".*?">)[^>]+>[^>]+>([^<]+)</div>'
+        patron = '(<a data-id="\d+.*?" data-href="([^"]+)" data-original="([^"]+)" class=".*?">)[^>]+>[^>]+>([^<]+)</div>'
         matches = re.compile(patron, re.DOTALL).findall(blocco)
         for scrapedextra, scrapedurl, scrapedimg, scrapedtitle in matches:
             scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.replace("Episodio", "")).strip()

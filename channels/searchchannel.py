@@ -26,7 +26,9 @@ def search(item, texto):
         if channel_parameters['active'] == "true":
             file = os.path.basename(file)
             if DEBUG: logger.info("File .xml trovato: " + file)
-            if texto.lower() in file:
+            texto = texto.lower().replace("+", "")
+            name = channel_parameters['title'].lower().replace(" ", "")
+            if texto in name:
                 itemlist.append(Item(title=channel_parameters['title'], action="mainlist", channel=file, thumbnail=channel_parameters["thumbnail"], type="generic", viewmode="movie"))
 
     return itemlist
