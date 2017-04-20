@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<channel>
+    <id>occhiodelwrestling</id>
+    <name>Occhio Del Wrestling</name>
+
+    <active>true</active>
+    <adult>false</adult>
+    <language>it</language>
+
+    <thumbnail>http://www.wrestlingrevolution.it/images/new/slideshow/occhiodelwrestling.jpg</thumbnail>
+    <bannermenu>http://www.wrestlingrevolution.it/images/new/slideshow/occhiodelwrestling.jpg</bannermenu>
+
+    <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
+    <version>1</version>
+    <date>20/04/2017</date>
+    <changes>new channel</changes>
+
+    <categories>
+        <category>movie</category>
+    </categories>
+
+ 	<settings>
+		<id>include_in_global_search</id>
+		<type>bool</type>
+		<label>Includi ricerca globale</label>
+		<default>false</default>
+		<enabled>false</enabled>
+		<visible>false</visible>
+	</settings>
+</channel>

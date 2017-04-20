@@ -20,7 +20,7 @@ def test_video_exists(page_url):
     data = scrapertools.cache_page(page_url)
 
     if "This video doesn't exist." in data:
-        return False, 'The requested video was not found.'
+        return False, 'Il video non è stato trovato.'
 
     return True, ""
 
