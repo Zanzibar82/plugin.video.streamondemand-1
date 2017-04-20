@@ -437,7 +437,7 @@ def set_content(content_type, silent=False):
                         strSettings = '<settings>\n' \
                                       '    <setting id="fanart" value="true" />\n' \
                                       '    <setting id="keeporiginaltitle" value="false" />\n' \
-                                      '    <setting id="language" value="es" />\n' \
+                                      '    <setting id="language" value="it" />\n' \
                                       '</settings>'
                         path_settings = xbmc.translatePath("special://profile/addon_data/metadata.tvshows.themoviedb.org/settings.xml")
                         tv_themoviedb_addon_path = filetools.dirname(path_settings)
@@ -510,9 +510,9 @@ def set_content(content_type, silent=False):
                 scanRecursive = 2147483647
                 strSettings = "<settings><setting id='RatingS' value='TMDb' /><setting id='certprefix' value='Rated ' />" \
                               "<setting id='fanart' value='true' /><setting id='keeporiginaltitle' value='false' />" \
-                              "<setting id='language' value='es' /><setting id='tmdbcertcountry' value='us' />" \
+                              "<setting id='language' value='it' /><setting id='tmdbcertcountry' value='us' />" \
                               "<setting id='trailer' value='true' /></settings>"
-                strActualizar = "Si desidera configurare questo Scraper in spagnolo come opzione predefinita per i film ?"
+                strActualizar = "Si desidera configurare questo scraper in italiano come opzione predefinita per i film ?"
                 if not librarypath.endswith(sep):
                     librarypath += sep
                 strPath = librarypath + config.get_setting("folder_movies") + sep
@@ -525,8 +525,8 @@ def set_content(content_type, silent=False):
                               "<setting id='dvdorder' value='false' />" \
                               "<setting id='fallback' value='true' />" \
                               "<setting id='fanart' value='true' />" \
-                              "<setting id='language' value='es' /></settings>"
-                strActualizar = "Si desidera configurare questo Scraper in spagnolo come opzione predefinita per le serie ?"
+                              "<setting id='language' value='it' /></settings>"
+                strActualizar = "Si desidera configurare questo scraper in italiano come opzione predefinita per le serie ?"
                 if not librarypath.endswith(sep):
                     librarypath += sep
                 strPath = librarypath + config.get_setting("folder_tvshows") + sep
