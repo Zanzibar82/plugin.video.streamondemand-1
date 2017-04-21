@@ -141,7 +141,7 @@ def lista_serie(item):
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle.strip())
         itemlist.append(infoSod(
             Item(channel=__channel__,
-                 action="episodi",
+                 action="episodios",
                  title=scrapedtitle,
                  fulltitle=scrapedtitle,
                  url=scrapedurl,
@@ -153,7 +153,7 @@ def lista_serie(item):
 # ================================================================================================================
 
 # ----------------------------------------------------------------------------------------------------------------
-def episodi(item):
+def episodios(item):
     logger.info("[SerieTVU.py]==> episodi")
     itemlist = []
 
@@ -187,14 +187,14 @@ def episodi(item):
                  title="Aggiungi alla libreria",
                  url=item.url,
                  action="add_serie_to_library",
-                 extra="episodi",
+                 extra="episodios",
                  show=item.show))
         itemlist.append(
             Item(channel=__channel__,
                  title="Scarica tutti gli episodi della serie",
                  url=item.url,
                  action="download_all_episodes",
-                 extra="episodi",
+                 extra="episodios",
                  show=item.show))
     return itemlist
 
