@@ -23,7 +23,6 @@ DEBUG = config.get_setting("debug")
 
 host = "http://www.pianetastreaming.net"
 
-
 def isGeneric():
     return True
 
