@@ -26,7 +26,6 @@ host = "http://www.pianetastreaming.net"
 def isGeneric():
     return True
 
-
 def mainlist(item):
     logger.info("streamondemand.pianetastreaming mainlist")
     itemlist = [Item(channel=__channel__,
