@@ -32,7 +32,6 @@ headers = [
 def isGeneric():
     return True
 
-
 def mainlist(item):
     logger.info("streamondemand.dreamsub mainlist")
     itemlist = [Item(channel=__channel__,
