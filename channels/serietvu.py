@@ -75,33 +75,6 @@ def search(item, texto):
 # ================================================================================================================
 
 # ----------------------------------------------------------------------------------------------------------------
-def ultimifilm(item):
-    logger.info("[SerieTVU.py]==> ultimifilm")
-    itemlist = []
-
-    data = scrapertools.anti_cloudflare(item.url, headers=headers)
-    blocco = scrapertools.get_match(data, '<div class="es-carousel">(.*?)</div></li></ul>')
-    patron = '<h5><a href="(.*?)".*?>(.*?)</a></h5>'
-    matches = re.compile(patron, re.DOTALL).findall(blocco)
-
-    for scrapedurl, scrapedtitle in matches:
-        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle)
-        itemlist.append(infoSod(
-            Item(channel=__channel__,
-                 action="findvideos",
-                 contentType="tv",
-                 title=scrapedtitle,
-                 fulltitle=scrapedtitle,
-                 url=scrapedurl,
-                 extra="tv",
-                 thumbnail=item.thumbnail,
-                 folder=True), tipo="tv"))
-
-    return itemlist
-
-# ================================================================================================================
-
-# ----------------------------------------------------------------------------------------------------------------
 def categorie(item):
     logger.info("[SerieTVU.py]==> categorie")
     itemlist = []
@@ -126,7 +99,7 @@ def categorie(item):
 # ================================================================================================================
 
 # ----------------------------------------------------------------------------------------------------------------
-# (Il problema è del sito stesso, non del canale) - Non è possibile aggiungere l'item "Successivo" perchè il sito mostra l'homepage quando viene cliccato
+# (Il problema è del sito stesso, non del canale) - Non è possibile aggiungere l'item "Successivo" perchè il sito ritorna all'homepage quando viene cliccato
 def lista_serie(item):
     logger.info("[SerieTVU.py]==> lista_serie")
     itemlist = []
@@ -154,7 +127,7 @@ def lista_serie(item):
 
 # ----------------------------------------------------------------------------------------------------------------
 def episodios(item):
-    logger.info("[SerieTVU.py]==> episodi")
+    logger.info("[SerieTVU.py]==> episodios")
     itemlist = []
 
     data = scrapertools.anti_cloudflare(item.url, headers=headers)
