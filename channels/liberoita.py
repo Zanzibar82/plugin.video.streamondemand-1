@@ -25,10 +25,8 @@ host = "http://liberoita.club"
 
 DEBUG = config.get_setting("debug")
 
-
 def isGeneric():
     return True
-
 
 def mainlist(item):
     logger.info("streamondemand.liberoita mainlist")

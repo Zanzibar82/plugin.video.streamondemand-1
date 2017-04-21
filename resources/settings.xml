@@ -29,7 +29,7 @@
     <category label="30500">
 
         <setting type="sep"/>
-        <setting id="hidepremium" type="bool" label="Nascondi i server pagamento senza credito" default="false"/>
+        <setting id="hidepremium" type="bool" label="Nascondi i server pagamento senza credito" default="true"/>
 
         <setting type="sep"/>
         <setting id="realdebridpremium" type="bool" label="Real-Debrid" default="false"/>

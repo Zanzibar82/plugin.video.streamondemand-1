@@ -12,9 +12,9 @@
        <bannermenu>http://filmhdstreaming.org/css/images/logo3.png</bannermenu>
 
        <update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
-       <version>4</version>
+       <version>5</version>
        <date>05/02/2017</date>
-       <changes>Fix Logo</changes>
+       <changes>Content not working!</changes>
 
        <categories>
           <category>movie</category>
@@ -25,9 +25,9 @@
           <id>include_in_global_search</id>
           <type>bool</type>
           <label>Includi ricerca globale</label>
-          <default>true</default>
-          <enabled>true</enabled>
-          <visible>true</visible>
+          <default>false</default>
+          <enabled>false</enabled>
+          <visible>false</visible>
        </settings>
     </channel>
 

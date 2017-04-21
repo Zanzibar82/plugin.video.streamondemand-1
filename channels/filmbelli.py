@@ -25,7 +25,6 @@ DEBUG = config.get_setting("debug")
 
 host = "http://www.filmbelli.gratis"
 
-
 def isGeneric():
     return True
 
