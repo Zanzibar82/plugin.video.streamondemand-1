@@ -27,14 +27,14 @@
 
 import glob
 import os
-import time
 from threading import Thread
+import threading
 
 from core import config
 from core import updater
 
 DEBUG = config.get_setting("debug")
-
+MAX_THREADS = 150
 
 ### Procedures
 def update_servers():
@@ -58,8 +58,10 @@ def update_servers():
         t.start()
         # ----------------------------
         progress.update(percentage, ' Update server: ' + server_name)
-        t.join()
         # ----------------------------
+        while True:
+            num_threads = threading.activeCount()
+            if (num_threads < MAX_THREADS): break
 
     # ----------------------------
     progress.close()
