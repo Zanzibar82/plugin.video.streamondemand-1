@@ -27,22 +27,24 @@
 
 import glob
 import os
-from threading import Thread
 import threading
+from threading import Thread
 
 from core import config
 from core import updater
 
 DEBUG = config.get_setting("debug")
-MAX_THREADS = 150
+MAX_THREADS = 32
 
-### Procedures
+
+# Procedures
 def update_channels():
     channel_path = os.path.join(config.get_runtime_path(), "channels", '*.xml')
 
     channel_files = glob.glob(channel_path)
 
     # ----------------------------
+    import xbmc
     import xbmcgui
     progress = xbmcgui.DialogProgressBG()
     progress.create("Update channels list")
@@ -59,14 +61,13 @@ def update_channels():
         # ----------------------------
         progress.update(percentage, ' Update channel: ' + channel_id)
         # ----------------------------
-        while True:
-            num_threads = threading.activeCount()
-            if (num_threads < MAX_THREADS): break
+        while threading.active_count() >= MAX_THREADS:
+            xbmc.sleep(500)
 
     # ----------------------------
     progress.close()
     # ----------------------------
 
 
-### Run
+# Run
 Thread(target=update_channels).start()
