@@ -27,7 +27,7 @@ def test_video_exists(page_url):
     if 'We’re Sorry!' in data:
         data = httptools.downloadpage(page_url.replace("/embed/", "/f/"), headers=header, cookies=False).data
         if 'We’re Sorry!' in data:
-            return False, "[Openload] File non presente" 
+            return False, "[Openload] File elimanato" 
 
     return True, ""
 
@@ -59,16 +59,18 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         var_r = scrapertools.find_single_match(text_decode, "window\.[A-z]+\s*=\s*['\"]([^'\"]+)['\"]")
         var_encodes = scrapertools.find_multiple_matches(data, 'id="%s[^"]*">([^<]+)<' % var_r)
         numeros = scrapertools.find_multiple_matches(data, '_[A-Fa-f0-9]+x[A-Fa-f0-9]+\s*=\s*([0-9]{4,}|0x[A-Fa-f0-9]{4,});')
+        op1, op2 = scrapertools.find_single_match(data, '\(0x(\d),0x(\d)\);')
 
         videourl = ""
         for encode in var_encodes:
             text_decode = ""
             try:
-                rango1 = encode[:56]
+                mult = int(op1) * int(op2)
+                rango1 = encode[:mult]
                 decode1 = []
                 for i in range(0, len(rango1), 8):
                     decode1.append(int(rango1[i:i+8], 16))
-                rango1 = encode[56:]
+                rango1 = encode[mult:]
                 j = 0
                 i = 0
                 while i < len(rango1):
@@ -87,7 +89,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
                         if value3 < index1:
                             break
 
-                    value4 = value2 ^ decode1[j % 7]
+                    value4 = value2 ^ decode1[j % (mult/8)]
                     for n in numeros:
                         if not n.isdigit():
                             n = int(n, 16)
