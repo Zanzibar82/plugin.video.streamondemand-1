@@ -46,7 +46,53 @@ def mainlist(item):
                      title="[COLOR azure]Anime [/COLOR]- [COLOR lightsalmon]Lista Completa[/COLOR]",
                      url=host + "/lista-anime/",
                      thumbnail=CategoriaThumbnail,
-                     fanart=CategoriaFanart)]
+                     fanart=CategoriaFanart),
+                Item(channel=__channel__,
+                     action="search",
+                     title="[COLOR yellow]Cerca ...[/COLOR]",
+                     thumbnail="http://dc467.4shared.com/img/fEbJqOum/s7/13feaf0c8c0/Search")]
+
+    return itemlist
+
+
+# =================================================================
+
+# -----------------------------------------------------------------
+def search(item, texto):
+    log("search", "search")
+    item.url = host + "/?s=" + texto
+    try:
+        return search_anime(item)
+    # Se captura la excepción, para no interrumpir al buscador global si un canal falla
+    except:
+        import sys
+        for line in sys.exc_info():
+            logger.error("%s" % line)
+        return []
+
+# =================================================================
+
+# -----------------------------------------------------------------
+def search_anime(item):
+    log("search_anime", "search_anime")
+    itemlist = []
+
+    data = scrapertools.cache_page(item.url)
+
+    patron = '<a href="([^"]+)"><img.*?src="([^"]+)".*?title="([^"]+)".*?/>'
+    matches = re.compile(patron, re.DOTALL).findall(data)
+
+    for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
+        scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle)
+        if "Sub Ita Download & Streaming" in scrapedtitle:
+            itemlist.append(
+                Item(channel=__channel__,
+                    action="episodios",
+                    title=scrapedtitle,
+                    url=scrapedurl,
+                    fulltitle=scrapedtitle,
+                    show=scrapedtitle,
+                    thumbnail=scrapedthumbnail))
 
     return itemlist
 
