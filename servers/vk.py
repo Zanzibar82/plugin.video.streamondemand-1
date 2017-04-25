@@ -12,7 +12,7 @@ from core import scrapertools
 
 
 def test_video_exists(page_url):
-    logger.info("streamondemand.servers.vk test_video_exists(page_url='%s')" % page_url)
+    logger.info("(page_url='%s')" % page_url)
 
     data = scrapertools.cache_page(page_url)
 
@@ -24,28 +24,28 @@ def test_video_exists(page_url):
 
 # Returns an array of possible video url's from the page_url
 def get_video_url(page_url, premium=False, user="", password="", video_password=""):
-    logger.info("streamondemand.servers.vk get_video_url(page_url='%s')" % page_url)
+    logger.info("(page_url='%s')" % page_url)
 
     video_urls = []
 
-    # Lee la página y extrae el ID del vídeo
-    data = scrapertools.cache_page(page_url)
 
     try:
-        patron = '<param name=.flashvars. value([^>]+)>'
-        data = scrapertools.get_match(data, patron)
-        patron = ';url([^\=]+)\=([^\&]+)\&'
+        oid, id = scrapertools.find_single_match(page_url, 'oid=([^&]+)&id=(\d+)')
     except:
-        patron = 'var vars = {[^}]+}'
-        data = scrapertools.get_match(data, patron).replace('\\/', '/')
-        patron = '"url(\d+)":"([^"]+)"'
+        oid, id = scrapertools.find_single_match(page_url, 'video(\d+)_(\d+)')
 
-    matches = re.compile(patron, re.DOTALL).findall(data)
-    for calidad, media_url in matches:
-        video_urls.append([scrapertools.get_filename_from_url(media_url)[-4:] + " [vk:" + calidad + "]", media_url])
+    from core import httptools
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    url = "http://vk.com/al_video.php?act=show_inline&al=1&video=%s_%s" % (oid, id)
+    data = httptools.downloadpage(url, headers=headers).data
+
+    matches = scrapertools.find_multiple_matches(data, '<source src="([^"]+)" type="video/(\w+)')
+    for media_url, ext in matches:
+        calidad = scrapertools.find_single_match(media_url, '(\d+)\.%s' % ext)
+        video_urls.append(["." + ext + " [vk:" + calidad + "]", media_url])
 
     for video_url in video_urls:
-        logger.info("streamondemand.servers.vk %s - %s" % (video_url[0], video_url[1]))
+        logger.info(" %s - %s" % (video_url[0], video_url[1]))
 
     return video_urls
 
@@ -63,7 +63,7 @@ def find_videos(data):
     data = data.replace("&amp;", "&")
     data = data.replace("&#038;", "&")
     patronvideos = '(/video_ext.php\?oid=[^&]+&id=[^&]+&hash=[a-z0-9]+)'
-    logger.info("streamondemand.servers.vk find_videos #" + patronvideos + "#")
+    logger.info(" find_videos #" + patronvideos + "#")
     matches = re.compile(patronvideos).findall(data)
 
     for match in matches:
@@ -79,12 +79,12 @@ def find_videos(data):
 
     # http://vk.com/video97482389_161509127?section=all
     patronvideos = '(vk\.[a-z]+\/video[0-9]+_[0-9]+)'
-    logger.info("streamondemand.servers.vk find_videos #" + patronvideos + "#")
+    logger.info(" #" + patronvideos + "#")
     matches = re.compile(patronvideos, re.DOTALL).findall(data)
 
     for match in matches:
         titulo = "[vk]"
-        url = "http ://" + match
+        url = "http://" + match
 
         if url not in encontrados:
             logger.info("  url=" + url)

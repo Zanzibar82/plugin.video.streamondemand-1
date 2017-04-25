@@ -7,33 +7,38 @@
 
 import re
 
+from core import httptools
 from core import logger
 from core import scrapertools
 
-USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17"
 
-def get_video_url( page_url , premium = False , user="" , password="", video_password="" ):
-    logger.info("streamondemand.servers.yourupload get_video_url(page_url='%s')" % page_url)
+def test_video_exists(page_url):
+    logger.info("(page_url='%s')" % page_url)
 
-    data = scrapertools.cache_page(page_url)
-    url = scrapertools.find_single_match(data,"file\: '([^']+)'")
+    data = httptools.downloadpage(page_url).data
+    if ("File was deleted" or "File not found") in data:
+        return False, "[Yourupload] El archivo no existe o ha sido borrado"
 
-    headers = []
-    headers.append([ "User-Agent", USER_AGENT] )
-    headers.append([ "Referer", page_url])
-    headers.append([ "X-Requested-With" , "ShockwaveFlash/19.0.0.185"])
+    return True, ""
 
-    media_url = scrapertools.get_header_from_response(url,headers=headers,header_to_get="location")
-    logger.info("streamondemand.servers.mp4upload media_url="+media_url)
-    media_url = media_url.replace("?null&start=0","")
-    logger.info("streamondemand.servers.mp4upload media_url="+media_url)
-    #media_url = media_url + "|" + urllib.urlencode({'User-Agent' : USER_AGENT})
+def get_video_url(page_url, premium=False, user="", password="", video_password=""):
+    logger.info("(page_url='%s')" % page_url)
 
     video_urls = []
-    video_urls.append([scrapertools.get_filename_from_url(url)[-4:]+" [yourupload]",media_url])
+    data = httptools.downloadpage(page_url).data
+    url = scrapertools.find_single_match(data, '<meta property="og:video" content="([^"]+)"')
+    if not url:
+        url = scrapertools.find_single_match(data, "file:\s*'([^']+)'")
+    if url:
+        url = "https://www.yourupload.com%s" % url
+        referer = {'Referer': page_url}
+        location = httptools.downloadpage(url, headers=referer, follow_redirects=False, only_headers=True)
+        media_url = location.headers["location"].replace("?start=0", "").replace("https", "http")
+        media_url += "|Referer=%s" % url
+        video_urls.append([scrapertools.get_filename_from_url(media_url)[-4:] + " [yourupload]", media_url])
 
     for video_url in video_urls:
-        logger.info("streamondemand.servers.yourupload %s - %s" % (video_url[0],video_url[1]))
+        logger.info("%s - %s" % (video_url[0], video_url[1]))
 
     return video_urls
 
@@ -44,33 +49,20 @@ def find_videos(data):
     devuelve = []
 
     #http://www.yourupload.com/embed/2PU6jqindD1Q
-    patronvideos  = 'yourupload.com/embed/([A-Za-z0-9]+)'
-    logger.info("streamondemand.servers.yourupload find_videos #"+patronvideos+"#")
-    matches = re.compile(patronvideos,re.DOTALL).findall(data)
-
-    for match in matches:
-        titulo = "[yourupload]"
-        url = "http://www.yourupload.com/embed/"+match
-        if url not in encontrados and match!="embed":
-            logger.info("  url="+url)
-            devuelve.append( [ titulo , url , 'yourupload' ] )
-            encontrados.add(url)
-        else:
-            logger.info("  url duplicada="+url)
 
     #http://embed.yourupload.com/2PU6jqindD1Q
-    patronvideos  = 'embed.yourupload.com/([A-Za-z0-9]+)'
-    logger.info("streamondemand.servers.yourupload find_videos #"+patronvideos+"#")
-    matches = re.compile(patronvideos,re.DOTALL).findall(data)
+    patronvideos = 'yourupload.com/(?:watch/|embed/|)([A-z0-9]+)'
+    logger.info("#" + patronvideos + "#")
+    matches = re.compile(patronvideos, re.DOTALL).findall(data)
 
     for match in matches:
         titulo = "[yourupload]"
-        url = "http://www.yourupload.com/embed/"+match
+        url = "http://www.yourupload.com/embed/" + match
         if url not in encontrados:
-            logger.info("  url="+url)
-            devuelve.append( [ titulo , url , 'yourupload' ] )
+            logger.info("  url=" + url)
+            devuelve.append([titulo, url, 'yourupload'])
             encontrados.add(url)
         else:
-            logger.info("  url duplicada="+url)
+            logger.info("  url duplicada=" + url)
             
     return devuelve

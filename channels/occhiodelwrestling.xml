@@ -15,9 +15,9 @@
     <date>20/04/2017</date>
     <changes>new channel</changes>
 
-    <categories>
-        <category>movie</category>
-    </categories>
+	<categories>
+		<category>documentary</category>
+	</categories>
 
  	<settings>
 		<id>include_in_global_search</id>

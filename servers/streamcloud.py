@@ -12,16 +12,16 @@ from core import scrapertools
 
 
 def test_video_exists( page_url ):
-    logger.info("[streamcloud.py] test_video_exists(page_url='%s')" % page_url)
+    logger.info("page_url='%s')" % page_url)
 
     data = scrapertools.cache_page( url = page_url )
-    if "<h1>File Not Found</h1>" in data:
+    if "<h1>404 Not Found</h1>" in data:
         return False,"El archivo no existe<br/>en streamcloud o ha sido borrado."
     else:
         return True,""
 
 def get_video_url( page_url , premium = False , user="" , password="", video_password="" ):
-    logger.info("[streamcloud.py] url="+page_url)
+    logger.info("url="+page_url)
 
     # Lo pide una vez
     headers = [['User-Agent','Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14']]
@@ -38,8 +38,8 @@ def get_video_url( page_url , premium = False , user="" , password="", video_pas
         data = scrapertools.cache_page( page_url , post=post)
 
         if 'id="justanotice"' in data:
-            logger.info("[streamcloud.py] data="+data)
-            logger.info("[streamcloud.py] Ha saltado el detector de adblock")
+            logger.info("data="+data)
+            logger.info("Ha saltado el detector de adblock")
             return []
 
         # Extrae la URL
@@ -49,7 +49,7 @@ def get_video_url( page_url , premium = False , user="" , password="", video_pas
     video_urls.append( [ scrapertools.get_filename_from_url(media_url)[-4:]+" [streamcloud]",media_url])
 
     for video_url in video_urls:
-        logger.info("[streamcloud.py] %s - %s" % (video_url[0],video_url[1]))
+        logger.info("%s - %s" % (video_url[0],video_url[1]))
 
     return video_urls
 
@@ -74,18 +74,18 @@ def find_videos(text):
 
     # http://streamcloud.eu/cwvhcluep67i
     patronvideos  = '(streamcloud.eu/[a-z0-9]+)'
-    logger.info("[streamcloud.py] find_videos #"+patronvideos+"#")
+    logger.info("find_videos #"+patronvideos+"#")
     matches = re.compile(patronvideos,re.DOTALL).findall(text)
 
     for match in matches:
         titulo = "[streamcloud]"
         url = "http://"+match
         if url not in encontrados:
-            logger.info("  url="+url)
+            logger.info("url="+url)
             devuelve.append( [ titulo , url , 'streamcloud' ] )
             encontrados.add(url)
         else:
-            logger.info("  url duplicada="+url)
+            logger.info("url duplicada="+url)
 
     return devuelve
 
