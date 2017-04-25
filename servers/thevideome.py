@@ -4,6 +4,7 @@
 # Conector para thevideo.me
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 # ------------------------------------------------------------
+# fix by DrZ3r0
 
 import re
 import urllib

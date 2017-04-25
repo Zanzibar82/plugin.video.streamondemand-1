@@ -12,15 +12,16 @@ import time
 import urllib
 
 from core import config
-from lib import jsunpack
+from core import httptools
 from core import logger
 from core import scrapertools
+from lib import jsunpack
 
 
 def test_video_exists(page_url):
-    logger.info("streamondemand.servers.flashx test_video_exists(page_url='%s')" % page_url)
+    logger.info("(page_url='%s')" % page_url)
 
-    data = scrapertools.downloadpageWithoutCookies(page_url.replace("playvid-", ""))
+    data = httptools.downloadpage(page_url, cookies=False).data
 
     if 'File Not Found' in data:
         return False, "[FlashX] Nessun file"
@@ -31,17 +32,17 @@ def test_video_exists(page_url):
 
 
 def get_video_url(page_url, premium=False, user="", password="", video_password=""):
-    logger.info("streamondemand.servers.flashx url=" + page_url)
+    logger.info("url=" + page_url)
 
     # Lo pide una vez
-    data = scrapertools.downloadpageWithoutCookies(page_url)
+    data = httptools.downloadpage(page_url, cookies=False).data
     # Si salta aviso, se carga la pagina de comprobacion y luego la inicial
     if "You try to access this video with Kodi" in data:
         url_reload = scrapertools.find_single_match(data, 'try to reload the page.*?href="([^"]+)"')
         url_reload = "http://www.flashx.tv" + url_reload[1:]
         try:
-            data = scrapertools.downloadpageWithoutCookies(url_reload)
-            data = scrapertools.downloadpageWithoutCookies(page_url)
+            data = httptools.downloadpage(url_reload, cookies=False).data
+            data = httptools.downloadpage(page_url, cookies=False).data
         except:
             pass
 
@@ -66,7 +67,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
                   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-US,en;q=0.5',
                   'Accept-Encoding': 'gzip, deflate, br', 'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1',
                   'Cookie': ''}
-        data = scrapertools.downloadpage(page_url, headers=headers.items())
+        data = httptools.downloadpage(page_url, headers=headers, replace_headers=True).data
         flashx_id = scrapertools.find_single_match(data, 'name="id" value="([^"]+)"')
         fname = scrapertools.find_single_match(data, 'name="fname" value="([^"]+)"')
         hash_f = scrapertools.find_single_match(data, 'name="hash" value="([^"]+)"')
@@ -78,24 +79,24 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         headers['Host'] = "files.fx.fastcontentdelivery.com"
         headers['Referer'] = "https://www.flashx.tv/"
         headers['Accept'] = "*/*"
-        coding = scrapertools.downloadpage(coding_url, headers=headers.items())
+        coding = httptools.downloadpage(coding_url, headers=headers, replace_headers=True).data
 
         coding_url = 'https://www.flashx.tv/counter.cgi?fx=%s' % base64.encodestring(file_id)
         headers['Host'] = "www.flashx.tv"
-        coding = scrapertools.downloadpage(coding_url, headers=headers.items())
+        coding = httptools.downloadpage(coding_url, headers=headers, replace_headers=True).data
 
         coding_url = 'https://www.flashx.tv/flashx.php?fxfx=3'
         headers['X-Requested-With'] = 'XMLHttpRequest'
-        coding = scrapertools.downloadpage(coding_url, headers=headers.items())
+        coding = httptools.downloadpage(coding_url, headers=headers, replace_headers=True).data
 
         try:
-           time.sleep(int(wait_time)+1)
+            time.sleep(int(wait_time) + 1)
         except:
-           time.sleep(6)
+            time.sleep(6)
 
         headers.pop('X-Requested-With')
         headers['Content-Type'] = 'application/x-www-form-urlencoded'
-        data = scrapertools.downloadpage('https://www.flashx.tv/dl?playthis', post=post, headers=headers.items())
+        data = httptools.downloadpage('https://www.flashx.tv/dl?playthis', post, headers, replace_headers=True).data
 
         matches = scrapertools.find_multiple_matches(data, "(eval\(function\(p,a,c,k.*?)\s+</script>")
         for match in matches:
@@ -127,14 +128,14 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
                 filetools.write(subtitle, data)
             except:
                 import traceback
-                logger.info("streamondemand.servers.flashx Error al descargar el subtítulo: "+traceback.format_exc())
+                logger.info("pelisalacarta.servers.flashx Error al descargar el subtítulo: "+traceback.format_exc())
 
     for media_url, label in media_urls:
         if not media_url.endswith("png") and not media_url.endswith(".srt"):
             video_urls.append(["." + media_url.rsplit('.', 1)[1] + " [flashx]", media_url, 0, subtitle])
 
     for video_url in video_urls:
-        logger.info("streamondemand.servers.flashx %s - %s" % (video_url[0], video_url[1]))
+        logger.info("%s - %s" % (video_url[0], video_url[1]))
 
     return video_urls
 
@@ -148,7 +149,7 @@ def find_videos(data):
     # http://flashx.tv/z3nnqbspjyne
     # http://www.flashx.tv/embed-li5ydvxhg514.html
     patronvideos = 'flashx.(?:tv|pw|to)/(?:embed.php\?c=|embed-|playvid-|)([A-z0-9]+)'
-    logger.info("streamondemand.servers.flashx find_videos #" + patronvideos + "#")
+    logger.info("#" + patronvideos + "#")
     matches = re.compile(patronvideos, re.DOTALL).findall(data)
 
     for match in matches:

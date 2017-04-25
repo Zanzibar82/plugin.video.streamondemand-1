@@ -7,14 +7,15 @@
 
 import re
 
+from core import httptools
 from core import jsontools
 from core import logger
 from core import scrapertools
 
 
 def test_video_exists( page_url ):
-    logger.info("streamondemand.servers.vidgg test_video_exists(page_url='%s')" % page_url)
-    data = jsontools.load_json(scrapertools.cache_page("http://www.vidgg.to/api-v2/alive.php?link=" + page_url))
+    logger.info("(page_url='%s')" % page_url)
+    data = jsontools.load_json(httptools.downloadpage("http://www.vidgg.to/api-v2/alive.php?link=" + page_url).data)
     if data["data"] == "NOT_FOUND" or data["data"] == "FAILED":
         return False, "[Vidgg] Il file non esiste o è stato rimosso"
     elif data["data"] == "CONVERTING":
@@ -24,10 +25,10 @@ def test_video_exists( page_url ):
 
 
 def get_video_url( page_url , premium = False , user="" , password="", video_password="" ):
-    logger.info("streamondemand.servers.vidgg get_video_url(page_url='%s')" % page_url)
+    logger.info("(page_url='%s')" % page_url)
 
     video_urls = []
-    data = scrapertools.cache_page(page_url)
+    data = httptools.downloadpage(page_url).data
 
     mediaurls = scrapertools.find_multiple_matches(data, '<source src="([^"]+)"')
     if not mediaurls:
@@ -39,11 +40,11 @@ def get_video_url( page_url , premium = False , user="" , password="", video_pas
 
         # Primera url, se extrae una url erronea necesaria para sacar el enlace
         url = "http://www.vidgg.to//api/player.api.php?cid2=undefined&cid=undefined&numOfErrors=0&user=undefined&cid3=undefined&key=%s&file=%s&pass=undefined" % (key, id_file)
-        data = scrapertools.cache_page(url)
+        data = httptools.downloadpage(url).data
         
         url_error = scrapertools.find_single_match(data, 'url=([^&]+)&')
         url = "http://www.vidgg.to//api/player.api.php?cid2=undefined&cid=undefined&numOfErrors=1&errorUrl=%s&errorCode=404&user=undefined&cid3=undefined&key=%s&file=%s&pass=undefined" % (url_error, key, id_file)
-        data = scrapertools.cache_page(url)
+        data = httptools.downloadpage(url).data
         mediaurls = scrapertools.find_multiple_matches(data, 'url=([^&]+)&')
 
     for i, mediaurl in enumerate(mediaurls):
@@ -52,7 +53,7 @@ def get_video_url( page_url , premium = False , user="" , password="", video_pas
         video_urls.append( [title, mediaurl])
 
     for video_url in video_urls:
-        logger.info("[vidgg.py] %s - %s" % (video_url[0],video_url[1]))
+        logger.info(" %s - %s" % (video_url[0],video_url[1]))
 
     return video_urls
 
@@ -63,7 +64,7 @@ def find_videos(data):
 
     # http://vidgg.to/video/cf8ec93a67c45
     patronvideos  = "(?:vidgg.to|vid.gg)/(?:embed/|video/)([a-z0-9]+)"
-    logger.info("streamondemand.servers.vidgg find_videos #"+patronvideos+"#")
+    logger.info(" #"+patronvideos+"#")
     matches = re.compile(patronvideos,re.DOTALL).findall(data)
 
     for match in matches:

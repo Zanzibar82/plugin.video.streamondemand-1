@@ -5,106 +5,75 @@
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 
-import base64
 import re
 import urllib
 
+from core import jsontools
+from core import httptools
 from core import logger
 from core import scrapertools
 
 
-def get_video_url( page_url , premium = False , user="" , password="", video_password="" ):
-    logger.info("[netutv.py] url="+page_url)
+def get_video_url(page_url, premium=False, user="", password="", video_password=""):
+    logger.info("url=" + page_url)
 
-    headers = [ ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0'] ]
-
-    ## "/netu/tv/"
-    if "www.yaske.net" in page_url:
-
-
-        ## Encode a la url para pasarla como valor de parámetro
-        urlEncode = urllib.quote_plus(page_url)
-
-        ## Carga los datos
-        id_video = scrapertools.get_match( page_url , "embed_([A-Za-z0-9]+)")
-        data = scrapertools.cache_page( page_url , headers=headers )
-
-        headers.append(['Referer', page_url])
-        try:
-            ## Nueva id del video
-            page_url_the_new_video_id = scrapertools.get_match( data , 'script src="([^"]+)"></script>')
-            data_with_new_video_id = scrapertools.cache_page( page_url_the_new_video_id , headers=headers )
-
-            ## Algunos enlaces necesitan el paso pervio de la siguiente línea para coseguir la id
-            data_with_new_video_id = urllib.unquote( data_with_new_video_id )
-            new_id_video = scrapertools.get_match( data_with_new_video_id , "var vid='([^']+)';")
-
-            ## Petición a hqq.tv con la nueva id de vídeo
-            b64_data = get_b64_data(new_id_video, headers)
-
-            ## Doble decode y escape
-            utf8 = double_b64(b64_data)
-        except:
-            ## Recoge los datos
-            b64_data = scrapertools.get_match( data , '<script language="javascript" type="text/javascript" src="data:text/javascript;charset=utf-8;base64,([^"]+)"></script>')
-
-            ## Doble decode y escape
-            utf8 = double_b64(b64_data)
-
-            ## Nueva id del video
-            new_id_video = scrapertools.get_match( utf8 , 'value="([^"]+)"')
-
-            ## Petición a hqq.tv con la nueva id de vídeo y recoger los datos 
-            b64_data = get_b64_data(new_id_video, headers)
-
-            ## Doble decode y escape
-            utf8 = double_b64(b64_data)
-
-        ### at ###
-        match_at = '<input name="at" id="text" value="([^"]+)">'
-        at = scrapertools.get_match(utf8, match_at)
-
-        ### m3u8 ###
-        ## Recoger los bytes ofuscados que contiene la url del m3u8
-        b_m3u8_2 = get_obfuscated( new_id_video, at, urlEncode, headers )
-
-        ### tb_m3u8 ###
-        ## Obtener la url del m3u8
-        url_m3u8 = tb(b_m3u8_2)
+    if "hash=" in page_url:
+        data = urllib.unquote(httptools.downloadpage(page_url).data)
+        id_video = scrapertools.find_single_match(data, "vid\s*=\s*'([^']+)'")
     else:
-        ## Encode a la url para pasarla como valor de parámetro con hqq como host
-        urlEncode = urllib.quote_plus( page_url.replace("netu","hqq") )
+        id_video = page_url.rsplit("=", 1)[1]
+    page_url_hqq = "http://hqq.tv/player/embed_player.php?vid=%s&autoplay=no" % id_video
+    data_page_url_hqq = httptools.downloadpage(page_url_hqq, add_referer=True).data
 
-        ### at ###
-        id_video = page_url.split("=")[1]
+    js_wise = scrapertools.find_single_match(data_page_url_hqq, "<script type=[\"']text/javascript[\"']>\s*;?(eval.*?)</script>")
+    data_unwise = jswise(js_wise).replace("\\", "")
+    at = scrapertools.find_single_match(data_unwise, 'var at\s*=\s*"([^"]+)"')
+    http_referer = scrapertools.find_single_match(data_unwise, 'var http_referer\s*=\s*"([^"]+)"')
 
-        ## Petición a hqq.tv con la nueva id de vídeo y recoger los datos 
-        b64_data = get_b64_data(id_video, headers)
+    url = "http://hqq.tv/sec/player/embed_player.php?iss=&vid=%s&at=%s&autoplayed=yes&referer=on" \
+          "&http_referer=%s&pass=&embed_from=&need_captcha=0&hash_from=" % (id_video, at, http_referer)
+    data_player = httptools.downloadpage(url, add_referer=True).data
+    data_unescape = scrapertools.find_multiple_matches(data_player, 'document.write\(unescape\("([^"]+)"')
+    data = ""
+    for d in data_unescape:
+        data += urllib.unquote(d)
 
-        ## Doble decode y escape
-        utf8 = double_b64(b64_data)
+    subtitle = scrapertools.find_single_match(data, 'value="sublangs=Spanish.*?sub=([^&]+)&')
+    if not subtitle:
+        subtitle = scrapertools.find_single_match(data, 'value="sublangs=English.*?sub=([^&]+)&')
+    data_unwise_player = ""
+    js_wise = scrapertools.find_single_match(data_player, "<script type=[\"']text/javascript[\"']>\s*;?(eval.*?)</script>")
+    if js_wise:
+        data_unwise_player = jswise(js_wise).replace("\\", "")
         
-        match_at = '<input name="at" type="text" value="([^"]+)">'
-        at = scrapertools.get_match(utf8, match_at)
+    vars_data = scrapertools.find_single_match(data, '/player/get_md5.php",\s*\{(.*?)\}')
+    matches = scrapertools.find_multiple_matches(vars_data, '\s*([^:]+):\s*([^,]*)[,"]')
+    params = {}
+    for key, value in matches:
+        if key == "adb":
+            params[key] = "0/"
+        elif '"' in value:
+            params[key] = value.replace('"', '')
+        else:
+            value_var = scrapertools.find_single_match(data, 'var\s*%s\s*=\s*"([^"]+)"' % value)
+            if not value_var and data_unwise_player:
+                value_var = scrapertools.find_single_match(data_unwise_player, 'var\s*%s\s*=\s*"([^"]+)"' % value)
+            params[key] = value_var
 
-        ### b_m3u8 ###
-        headers.append(['Referer', page_url])
+    params = urllib.urlencode(params)
+    head = {'X-Requested-With': 'XMLHttpRequest', 'Referer': url}
+    data = httptools.downloadpage("http://hqq.tv/player/get_md5.php?" + params, headers=head).data
 
-        ## Recoger los bytes ofuscados que contiene la url del m3u8
-        b_m3u8_2 = get_obfuscated( id_video, at, urlEncode, headers )
-
-        ### tb ###
-        ## Obtener la url del m3u8
-        url_m3u8 = tb(b_m3u8_2)
-
-    ### m3u8 ###
-    media_url = url_m3u8
+    media_urls = []
+    url_data = jsontools.load_json(data)
+    media_url = tb(url_data["html5_file"].replace("#", ""))
 
     video_urls = []
-    video_urls.append( [ scrapertools.get_filename_from_url(media_url)[-4:]+" [netu.tv]",media_url])
+    media = media_url + "|User-Agent=Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X)"
+    video_urls.append([scrapertools.get_filename_from_url(media_url)[-4:] + " [netu.tv]", media, 0, subtitle])
 
     for video_url in video_urls:
-        logger.info("[netutv.py] %s - %s" % (video_url[0],video_url[1]))
+        logger.info("%s - %s" % (video_url[0], video_url[1]))
 
     return video_urls
 
@@ -124,78 +93,37 @@ def find_videos(data):
     # http://waaw.tv/player/embed_player.php?vid=82U4BRSOB4UU&autoplay=no
     # http://waaw.tv/watch_video.php?v=96WDAAA71A8K
     patterns = [
-        '/netu/tv/embed_(.*?$)',
-        'hqq.tv/[^=]+=([a-zA-Z0-9]+)',
-        'netu.tv/[^=]+=([a-zA-Z0-9]+)',
-        'waaw.tv/[^=]+=([a-zA-Z0-9]+)',
-        'netu.php\?nt=([a-zA-Z0-9]+)'
+        '/netu/tv/(embed_)(.*?$)',
+        'hqq.tv/([^=]+)=([a-zA-Z0-9]+)',
+        'netu.tv/([^=]+)=([a-zA-Z0-9]+)',
+        'waaw.tv/([^=]+)=([a-zA-Z0-9]+)',
+        'netu.php\?(nt=)([a-zA-Z0-9]+)'
     ]
 
-    if '/netu/tv/embed_' in data:
-        url = "http://www.yaske.net/archivos/netu/tv/embed_%s"
-    else:
-        url = "http://netu.tv/watch_video.php?v=%s"
+    url = "http://netu.tv/watch_video.php?v=%s"
 
     for pattern in patterns:
 
-        logger.info("[netutv.py] find_videos #"+pattern+"#")
+        logger.info("#" + pattern + "#")
         matches = re.compile(pattern,re.DOTALL).findall(data)
 
-        for match in matches:
+        for prefix, match in matches:
             titulo = "[netu.tv]"
-            url = url % match
+            if "hash.php" in prefix:
+                url = "http://hqq.tv/player/hash.php?hash=%s" % match
+            else:
+                url = url % match
             if url not in encontrados:
-                logger.info("  url="+url)
-                devuelve.append( [ titulo , url , 'netutv' ] )
+                logger.info(" url=" + url)
+                devuelve.append([titulo, url, 'netutv'])
                 encontrados.add(url)
                 break
             else:
-                logger.info("  url duplicada="+url)
+                logger.info(" url duplicada=" + url)
 
     return devuelve
 
 
-## --------------------------------------------------------------------------------
-## --------------------------------------------------------------------------------
-
-## Decode
-def b64(text, inverse=False):
-    if inverse:
-        text = text[::-1]
-    return base64.decodestring(text)
-
-## Petición a hqq.tv con la nueva id de vídeo
-def get_b64_data(new_id_video, headers):
-    page_url_hqq = "http://hqq.tv/player/embed_player.php?vid="+new_id_video+"&autoplay=no"
-    data_page_url_hqq = scrapertools.cache_page( page_url_hqq , headers=headers )
-    b64_data = scrapertools.get_match(data_page_url_hqq, 'base64,([^"]+)"')
-    return b64_data
-
-## Doble decode y unicode-escape
-def double_b64(b64_data):
-    b64_data_inverse = b64(b64_data)
-    b64_data_2 = scrapertools.get_match(b64_data_inverse, "='([^']+)';")
-
-    utf8_data_encode = b64(b64_data_2,True)
-    utf8_encode = scrapertools.get_match(utf8_data_encode, "='([^']+)';")
-
-    utf8_decode = utf8_encode.replace("%","\\").decode('unicode-escape')
-    return utf8_decode
-
-## Recoger los bytes ofuscados que contiene el m3u8
-def get_obfuscated(id_video, at, urlEncode, headers):
-    url = "http://hqq.tv/sec/player/embed_player.php?vid="+id_video+"&at="+at+"&autoplayed=yes&referer=on&http_referer="+urlEncode+"&pass="
-    data = scrapertools.cache_page( url, headers=headers )
-
-    match_b_m3u8_1 = '</div>.*?<script>document.write[^"]+"([^"]+)"'
-    b_m3u8_1 = urllib.unquote( scrapertools.get_match(data, match_b_m3u8_1) )
-
-    if b_m3u8_1 == "undefined": b_m3u8_1 = urllib.unquote( data )
-
-    match_b_m3u8_2 = '"#([^"]+)"'
-    b_m3u8_2 = scrapertools.get_match(b_m3u8_1, match_b_m3u8_2)
-
-    return b_m3u8_2
 
 ## Obtener la url del m3u8
 def tb(b_m3u8_2):
@@ -209,3 +137,42 @@ def tb(b_m3u8_2):
 
 ## --------------------------------------------------------------------------------
 ## --------------------------------------------------------------------------------
+def jswise(wise):
+    ## js2python
+    def js_wise(wise):
+
+        w, i, s, e = wise
+
+        v0 = 0; v1 = 0; v2 = 0
+        v3 = []; v4 = []
+
+        while True:
+            if v0 < 5: v4.append(w[v0])
+            elif v0 < len(w): v3.append(w[v0])
+            v0+= 1
+            if v1 < 5: v4.append(i[v1])
+            elif v1 < len(i): v3.append(i[v1])
+            v1+= 1
+            if v2 < 5: v4.append(s[v2])
+            elif v2 < len(s): v3.append(s[v2])
+            v2+= 1
+            if len(w) + len(i) + len(s) + len(e) == len(v3) + len(v4) + len(e): break
+
+        v5 = "".join(v3); v6 = "".join(v4)
+        v1 = 0
+        v7 = []
+
+        for v0 in range(0, len(v3), 2):
+            v8 = -1
+            if ord(v6[v1]) % 2: v8 = 1
+            v7.append(chr(int(v5[v0:v0+2], 36) - v8))
+            v1+= 1
+            if v1 >= len(v4): v1 = 0
+        return "".join(v7)
+
+    ## loop2unobfuscated
+    while True:
+        wise = re.search("var\s.+?\('([^']+)','([^']+)','([^']+)','([^']+)'\)", wise, re.DOTALL)
+        if not wise: break
+        ret = wise = js_wise(wise.groups())
+    return ret

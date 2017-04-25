@@ -1,50 +1,51 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #------------------------------------------------------------
 # streamondemand - XBMC Plugin
 # Conector para animeid, animeflv, jkanime
 # http://www.mimediacenter.info/foro/viewforum.php?f=36
 #------------------------------------------------------------
 
-import re, urlparse, urllib, urllib2
-import os
+import re
+import urllib2
 
-from core import scrapertools
 from core import logger
-from core import config
-from core import unwise
+from core import scrapertools
 
-def get_video_url(page_url , premium = False , user="" , password="" , video_password="" ):
+
+def get_video_url(page_url, premium=False, user="", password="", video_password=""):
     video_urls = []
     if 'jkanime' in page_url:
         request_headers = {
-        "Accept-Language": "en-US,en;q=0.5",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:40.0) Gecko/20100101 Firefox/40.0",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Connection": "keep-alive" 
+            "Accept-Language": "en-US,en;q=0.5",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:40.0) Gecko/20100101 Firefox/40.0",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Connection": "keep-alive"
         }
-        jk_url = page_url.replace("/jk.php?u=stream/","/stream/")
+        jk_url = page_url.replace("/jk.php?u=stream/", "/stream/")
         request = urllib2.Request(jk_url, headers=request_headers)
         response = urllib2.urlopen(request)
-        video_urls.append( [".mp4 [redirects]",response.geturl()])
+        video_urls.append([".mp4 [redirects]", response.geturl()])
     else:
         headers = []
-        headers.append( [ "User-Agent" , "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.94 Safari/537.36" ] )
-        headers.append( [ "Accept-Encoding","gzip,deflate,sdch" ] )
-        page_url = page_url.replace("https://animeflv.net/embed_izanagi.php?key=","https://s2.animeflv.net/izanagi.php?id=")
-        page_url = page_url.replace("http://animeflv.net/embed_yotta.php?key=","http://s1.animeflv.net/yotta.php?id=")
-        data = scrapertools.cache_page(page_url,headers=headers)
+        headers.append(["User-Agent",
+                        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.94 Safari/537.36"])
+        headers.append(["Accept-Encoding", "gzip,deflate,sdch"])
+        page_url = page_url.replace("https://animeflv.net/embed_izanagi.php?key=",
+                                    "https://s2.animeflv.net/izanagi.php?id=")
+        page_url = page_url.replace("http://animeflv.net/embed_yotta.php?key=", "https://s1.animeflv.com/gdrive.php?id=")
+        data = scrapertools.cache_page(page_url, headers=headers)
         data = data.replace("\\\\", "")
         data = data.replace("\\/", "/")
-        patronvideos  = '"file":"(.+?)"'
-        matches = re.compile(patronvideos,re.DOTALL).findall(data)
+        patronvideos = '"file":"(.+?)"'
+        matches = re.compile(patronvideos, re.DOTALL).findall(data)
         for match in matches:
-            video_urls.append( [".mp4 [redirects]",match])
+            video_urls.append([".mp4 [redirects]", match])
         
-        patronvideos  = '(http://www.animeid.+?)"'
-        matches = re.compile(patronvideos,re.DOTALL).findall(data)
+        patronvideos = '(http://www.animeid.+?)"'
+        matches = re.compile(patronvideos, re.DOTALL).findall(data)
         for match in matches:
             response = urllib2.urlopen(match)
-            video_urls.append( [".mp4 [redirects]",response.geturl()])
+            video_urls.append([".mp4 [redirects]", response.geturl()])
     
     return video_urls
 
@@ -53,64 +54,64 @@ def get_video_url(page_url , premium = False , user="" , password="" , video_pas
 def find_videos(data):
     encontrados = set()
     devuelve = []    
-    patronvideos  = '(https://animeflv.net/embed_izanagi.php\?key=.+?),'
-    logger.info("[redirects.py] find_videos #"+patronvideos+"#")
-    matches = re.compile(patronvideos,re.DOTALL).findall(data)
+    patronvideos = '(https://animeflv.net/embed_izanagi.php\?key=.+?),'
+    logger.info("#" + patronvideos + "#")
+    matches = re.compile(patronvideos, re.DOTALL).findall(data)
 
     titulo = "[izanagi]"
     for match in matches:
         url = match
         if url not in encontrados:
-            logger.info("  url="+url)
-            devuelve.append( [ titulo , url , 'redirects' ] )
+            logger.info("  url=" + url)
+            devuelve.append([titulo, url, 'redirects'])
             encontrados.add(url)
         else:
-            logger.info("  url duplicada="+url)
+            logger.info("  url duplicada=" + url)
 
-    patronvideos  = "(http://animeflv.net/embed_yotta.php\?key=.+?)\\\\"
-    logger.info("[redirects.py] find_videos #"+patronvideos+"#")
-    matches = re.compile(patronvideos,re.DOTALL).findall(data)
+    patronvideos = "(https://s1.animeflv.com/gdrive.php?id=.+?)\\\\"
+    logger.info("#" + patronvideos + "#")
+    matches = re.compile(patronvideos, re.DOTALL).findall(data)
 
     for match in matches:
         titulo = "[yotta]"
         url = match
 
         if url not in encontrados:
-            logger.info("  url="+url)
-            devuelve.append( [ titulo , url , 'redirects' ] )
+            logger.info("  url=" + url)
+            devuelve.append([titulo, url, 'redirects'])
             encontrados.add(url)
         else:
-            logger.info("  url duplicada="+url)
+            logger.info("  url duplicada=" + url)
             
     
-    patronvideos  = "(http://www.animeid..{2,3}/embed/.+?/)"
-    logger.info("[redirects.py] find_videos #"+patronvideos+"#")
-    matches = re.compile(patronvideos,re.DOTALL).findall(data)
+    patronvideos = "(http://www.animeid..{2,3}/embed/.+?/)"
+    logger.info("#" + patronvideos + "#")
+    matches = re.compile(patronvideos, re.DOTALL).findall(data)
     
     titulo = "[animeimoe]"
     for match in matches:
         url = match
 
         if url not in encontrados:
-            logger.info("  url="+url)
-            devuelve.append( [ titulo , url , 'redirects' ] )
+            logger.info("  url=" + url)
+            devuelve.append([titulo, url, 'redirects'])
             encontrados.add(url)
         else:
-            logger.info("  url duplicada="+url)
+            logger.info("  url duplicada=" + url)
             
-    patronvideos  = "(https://jkanime.net/jk.php\?u=stream/jkmedia.+?)\s"
-    logger.info("[redirects.py] find_videos #"+patronvideos+"#")
-    matches = re.compile(patronvideos,re.DOTALL).findall(data)
+    patronvideos = "(https://jkanime.net/jk.php\?u=stream/jkmedia.+?)\s"
+    logger.info("#" + patronvideos + "#")
+    matches = re.compile(patronvideos, re.DOTALL).findall(data)
     
     titulo = "[jkanime]"
     for match in matches:
-        url = match.replace('"','')
+        url = match.replace('"', '')
 
         if url not in encontrados:
-            logger.info("  url="+url)
-            devuelve.append( [ titulo , url , 'redirects' ] )
+            logger.info("  url=" + url)
+            devuelve.append([titulo, url, 'redirects'])
             encontrados.add(url)
         else:
-            logger.info("  url duplicada="+url)
+            logger.info("  url duplicada=" + url)
 
     return devuelve

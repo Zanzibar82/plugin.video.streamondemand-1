@@ -42,9 +42,9 @@ def get_video_url( page_url , premium = False , user="" , password="", video_pas
         data = scrapertools.cache_page(page_url)
         #Si el archivo tiene enlace de streaming se redirige a upstream
         if "Streaming link:" in data:
-            page_url = "http://uptostream.com/"+scrapertools.find_single_match(page_url,'uptobox.com/([a-z0-9]+)')
+            page_url = "http://uptostream.com/iframe/"+scrapertools.find_single_match(page_url,'uptobox.com/([a-z0-9]+)')
             data = scrapertools.cache_page(page_url)
-            video_urls = uptostream(page_url)
+            video_urls = uptostream(data)
         else:
             #Si no lo tiene se utiliza la descarga normal
             video_urls = uptobox(page_url, data)
@@ -56,15 +56,19 @@ def get_video_url( page_url , premium = False , user="" , password="", video_pas
 
 
 def uptostream(data):
+    subtitle = scrapertools.find_single_match(data, "kind='subtitles' src='//([^']+)'")
+    if subtitle:
+        subtitle = "http://" + subtitle
     video_urls = []
-    patron = "<source src='//([^']+)' type='video/([^']+)' data-res='([^']+)'"
+    patron = "<source src='//([^']+)' type='video/([^']+)' data-res='([^']+)' (?:data-default=\"true\" |)(?:lang='([^']+)'|)"
     media = scrapertools.find_multiple_matches(data, patron)
-    for match in media:
-        media_url = "http://"+match[0]
-        extension = "."+match[1] + " ("+match[2]+")"
-        video_urls.append( [ extension+" [uptostream]", media_url])
+    for url, tipo, res, lang in media:
+        media_url = "http://"+url
+        extension = ".%s (%s)" % (tipo, res)
+        if lang:
+            extension = extension.replace(")", "/%s)" % lang[:3])
+        video_urls.append( [ extension+" [uptostream]", media_url, 0, subtitle])
     
-    video_urls.sort(reverse=True)   
     return video_urls
 
 
@@ -75,13 +79,12 @@ def uptobox(url, data):
     for inputname, inputvalue in matches:
         post += inputname + "=" + inputvalue + "&"
 
-    data = scrapertools.cache_page(url, post=post)
-    media = scrapertools.find_single_match(data, '<!--DOWNLOAD BUTTON-->[\s\S]+<a href="([^"]+)">')
+    data = scrapertools.cache_page(url, post=post[:-1])
+    media = scrapertools.find_single_match(data, '<a href="([^"]+)">\s*<span class="button_upload green">')
     #Solo es necesario codificar la ultima parte de la url
     url_strip = urllib.quote(media.rsplit('/', 1)[1])
     media_url = media.rsplit('/', 1)[0] +"/"+url_strip
-    extension = media_url[-4:]
-    video_urls.append( [ extension+" [uptobox]", media_url])
+    video_urls.append( [ media_url[-4:]+" [uptobox]", media_url])
 
     return video_urls
 

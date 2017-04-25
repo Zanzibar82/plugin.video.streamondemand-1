@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<server>
+	<active>true</active>
+	<version>1</version>
+	<free>true</free>
+	<id>filez</id>
+	<name>filez</name>
+	<premium></premium>
+	<thumbnail>http://i.imgur.com/HasfjUH.png</thumbnail>
+	<update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/servers/</update_url>
+</server>

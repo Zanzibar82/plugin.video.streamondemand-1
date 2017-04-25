@@ -7,45 +7,48 @@
 
 import re
 
-from lib import jsunpack
 from core import logger
 from core import scrapertools
+from core import httptools
+from lib import jsunpack
 
-headers = [['User-Agent','Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0']]
+headers = [['User-Agent', 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0']]
 host = "http://streamplay.to/"
 
-def test_video_exists( page_url ):
-    logger.info("streamondemand.streamplay test_video_exists(page_url='%s')" % page_url)
-    data = scrapertools.cache_page(page_url)
+
+def test_video_exists(page_url):
+    logger.info("(page_url='%s')" % page_url)
+    referer = page_url.replace("embed-", "")[:-5]
+    data = httptools.downloadpage(page_url, headers={'Referer': referer}).data
     if data == "File was deleted":
-        return False, "[Streamplay] Il video non esiste o è stato rimosso"
+        return False, "[Streamplay] El archivo no existe o ha sido borrado"
 
     return True, ""
 
 
-def get_video_url( page_url , premium = False , user="" , password="", video_password="" ):
-    logger.info("streamondemand.streamplay get_video_url(page_url='%s')" % page_url)
-    data = scrapertools.cache_page(page_url)
+def get_video_url(page_url, premium=False, user="", password="", video_password=""):
+    logger.info("(page_url='%s')" % page_url)
+    referer = page_url.replace("embed-", "")[:-5]
+    data = httptools.downloadpage(page_url, headers={'Referer': referer}).data
 
     jj_encode = scrapertools.find_single_match(data, "(\w+=~\[\];.*?\)\(\)\)\(\);)")
     jj_decode = None
     jj_patron = None
     reverse = False
-    substring = False
     splice = False
     if jj_encode:
         jj_decode = jjdecode(jj_encode)
     if jj_decode:
         jj_patron = scrapertools.find_single_match(jj_decode, "/([^/]+)/")
-    if not "(" in jj_patron: jj_patron = "(" + jj_patron
-    if not ")" in jj_patron: jj_patron += ")"
+        if "(" not in jj_patron: jj_patron = "(" + jj_patron
+        if ")" not in jj_patron: jj_patron += ")"
 
-    if "x72x65x76x65x72x73x65" in jj_decode: reverse = True
-    if "x73x75x62x73x74x72x69x6Ex67" in jj_decode: substring = True
-    if "x73x70x6Cx69x63x65" in jj_decode: splice = True
+        jhex_decode = jhexdecode(jj_decode)
+        if "reverse" in jhex_decode: reverse = True
+        if "splice" in jhex_decode: splice = True
 
     matches = scrapertools.find_single_match(data, "<script type=[\"']text/javascript[\"']>(eval.*?)</script>")
-    data = jsunpack.unpack(data).replace("\\", "")
+    data = jsunpack.unpack(matches).replace("\\", "")
 
     data = scrapertools.find_single_match(data.replace('"', "'"), "sources\s*=[^\[]*\[([^\]]+)\]")
     matches = scrapertools.find_multiple_matches(data, "[src|file]:'([^']+)'")
@@ -53,39 +56,35 @@ def get_video_url( page_url , premium = False , user="" , password="", video_pas
     for video_url in matches:
         _hash = scrapertools.find_single_match(video_url, '\w{40,}')
         if splice:
-            splice = int(scrapertools.find_single_match(jj_decode, "\((\d),\d\);"))
+            splice = eval(scrapertools.find_single_match(jhex_decode, "splice\((\d[^,]*),\d\);"))
             if reverse:
                 h = list(_hash)
-                h.pop(-splice-1)
+                h.pop(-splice - 1)
                 _hash = "".join(h)
             else:
                 h = list(_hash)
                 h.pop(splice)
                 _hash = "".join(h)
-        if substring:
-            substring = int(scrapertools.find_single_match(jj_decode, "_\w+.\d...(\d)...;"))
-            if reverse:
-                _hash = _hash[:-substring]
-            else:
-                _hash = _hash[substring:]
         if reverse:
             video_url = re.sub(r'\w{40,}', _hash[::-1], video_url)
         filename = scrapertools.get_filename_from_url(video_url)[-4:]
         if video_url.startswith("rtmp"):
             rtmp, playpath = video_url.split("vod/", 1)
-            video_url = "%s playpath=%s swfUrl=%splayer6/jwplayer.flash.swf pageUrl=%s" % (rtmp + "vod/", playpath, host, page_url)
+            video_url = "%s playpath=%s swfUrl=%splayer6/jwplayer.flash.swf pageUrl=%s" % (
+            rtmp + "vod/", playpath, host, page_url)
             filename = "RTMP"
         elif video_url.endswith(".m3u8"):
-            video_url += "|User-Agent=" + headers[0][1]
+            video_url += "|User-Agent=%s&Referer=%s" % (headers[0][1], page_url)
         elif video_url.endswith("/v.mp4"):
-            video_url_flv = re.sub(r'/v.mp4$','/v.flv',video_url)
-            video_urls.append([".flv [streamplay]", re.sub(r'%s' % jj_patron, r'\1', video_url_flv)])
+            video_url += "|User-Agent=%s&Referer=%s" % (headers[0][1], page_url)
+            video_url_flv = re.sub(r'/v.mp4\|', '/v.flv|', video_url)
+            video_urls.append(["flv [streamplay]", re.sub(r'%s' % jj_patron, r'\1', video_url_flv)])
 
         video_urls.append([filename + " [streamplay]", re.sub(r'%s' % jj_patron, r'\1', video_url)])
 
-    video_urls.sort(key=lambda x:x[0], reverse=True)
+    video_urls.sort(key=lambda x: x[0], reverse=True)
     for video_url in video_urls:
-        logger.info("[streamplay.py] %s - %s" % (video_url[0], video_url[1]))
+        logger.info(" %s - %s" % (video_url[0], video_url[1]))
 
     return video_urls
 
@@ -97,18 +96,18 @@ def find_videos(data):
 
     # http://streamplay.to/ubhrqw1drwlx
     patronvideos = "streamplay.to/(?:embed-|)([a-z0-9]+)(?:.html|)"
-    logger.info("streamondemand.streamplay find_videos #"+patronvideos+"#")
+    logger.info("#" + patronvideos + "#")
     matches = re.compile(patronvideos, re.DOTALL).findall(data)
 
     for match in matches:
         titulo = "[streamplay]"
         url = "http://streamplay.to/embed-%s.html" % match
         if url not in encontrados:
-            logger.info("  url="+url)
+            logger.info("  url=" + url)
             devuelve.append([titulo, url, 'streamplay'])
             encontrados.add(url)
         else:
-            logger.info("  url duplicada="+url)
+            logger.info("  url duplicada=" + url)
 
     return devuelve
 
@@ -138,12 +137,33 @@ def jjdecode(t):
 
     p = scrapertools.find_multiple_matches(t, '\\"\+j\.(\d{3})\+j\.(\d{3})\+')
     for c in p:
-        t = re.sub(r'\\"\+j\.%s\+j\.%s\+' % (c[0], c[1]), chr(int("".join(c),2)) + '"+', t)
+        t = re.sub(r'\\"\+j\.%s\+j\.%s\+' % (c[0], c[1]), chr(int("".join(c), 2)) + '"+', t)
 
     p = scrapertools.find_multiple_matches(t, 'j\.(\d{3})')
     for c in p:
         t = re.sub(r'j\.%s' % c, '"' + str(int(c, 2)) + '"', t)
 
-    r = re.sub(r'"\+"|\\\\','',t[1:-1])
+    r = re.sub(r'"\+"|\\\\', '', t[1:-1])
+
+    return r
+
+
+def jhexdecode(t):
+    r = re.sub(r'_\d+x\w+x(\d+)', 'var_' + r'\1', t)
+    r = re.sub(r'_\d+x\w+', 'var_0', r)
+
+    def to_hx(c):
+        h = int("%s" % c.groups(0), 16)
+        if 19 < h < 160:
+            return chr(h)
+        else:
+            return ""
+
+    r = re.sub(r'(?:\\|)x(\w{2})', to_hx, r).replace('var ', '')
+
+    f = eval(scrapertools.find_single_match(r, '\s*var_0\s*=\s*([^;]+);'))
+    for i, v in enumerate(f):
+        r = r.replace('[var_0[%s]]' % i, "." + f[i])
+        if v == "": r = r.replace('var_0[%s]' % i, '""')
 
     return r
