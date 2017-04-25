@@ -32,7 +32,6 @@ headers = [
     ['Referer', host]
 ]
 
-
 def isGeneric():
     return True
 
