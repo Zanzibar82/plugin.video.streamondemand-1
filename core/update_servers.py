@@ -41,7 +41,7 @@ MAX_THREADS = 32
 def update_servers():
     server_path = os.path.join(config.get_runtime_path(), "servers", '*.xml')
 
-    server_files = glob.glob(server_path)
+    server_files = sorted(glob.glob(server_path))
 
     # ----------------------------
     import xbmc

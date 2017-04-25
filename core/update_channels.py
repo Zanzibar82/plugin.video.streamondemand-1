@@ -41,7 +41,7 @@ MAX_THREADS = 32
 def update_channels():
     channel_path = os.path.join(config.get_runtime_path(), "channels", '*.xml')
 
-    channel_files = glob.glob(channel_path)
+    channel_files = sorted(glob.glob(channel_path))
 
     # ----------------------------
     import xbmc
