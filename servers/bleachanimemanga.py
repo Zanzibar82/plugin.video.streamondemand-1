@@ -34,7 +34,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
         videourl = match
         logger.info(match)
         videourl = urllib.unquote(videourl)
-        videourl = 'http://www.bleachanimemanga.org/' + videourl
+        videourl = videourl
         video_urls.append( [ "[bleachanimemanga]" , videourl ] )
 
     for video_url in video_urls:
