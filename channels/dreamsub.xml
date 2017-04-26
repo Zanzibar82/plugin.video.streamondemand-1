@@ -12,9 +12,9 @@
 	<bannermenu>http://www.dreamsub.it/res/img/logo.png</bannermenu>
 
 	<update_url>https://raw.githubusercontent.com/streamondemand/plugin.video.streamondemand/master/channels/</update_url>
-	<version>3</version>
-	<date>05/02/2017</date>
-	<changes>content not working!</changes>
+	<version>4</version>
+	<date>26/04/2017</date>
+	<changes>Fix slow loading</changes>
 
 	<categories>
         	<category>serie</category>
