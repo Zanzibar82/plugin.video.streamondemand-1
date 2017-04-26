@@ -139,23 +139,21 @@ def episodios(item):
 
     for scrapedurl, title1, title2, title3  in matches:
         scrapedurl = host + scrapedurl
-        scrapedplot = ""
-        scrapedthumbnail = ""
         scrapedtitle = title1 + " " + title2 + title3
         scrapedtitle = scrapedtitle.replace("Download", "")
         scrapedtitle = scrapedtitle.replace("Streaming", "")
         scrapedtitle = scrapedtitle.replace("& ", "")
 
-        itemlist.append(infoSod(
+        itemlist.append(
             Item(channel=__channel__,
                  action="findvideos",
                  fulltitle=scrapedtitle,
                  show=scrapedtitle,
                  title="[COLOR azure]" + scrapedtitle + "[/COLOR]",
                  url=scrapedurl,
-                 thumbnail=scrapedthumbnail,
-                 plot=scrapedplot,
-                 folder=True), tipo='tv'))
+                 thumbnail=item.thumbnail,
+                 plot=item.plot,
+                 folder=True))
 
     return itemlist
 
