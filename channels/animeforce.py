@@ -84,7 +84,7 @@ def search_anime(item):
 
     for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
         scrapedtitle = scrapertools.decodeHtmlentities(scrapedtitle)
-        if "Sub Ita Download & Streaming" in scrapedtitle:
+        if "Sub Ita Download & Streaming" in scrapedtitle or "Sub Ita Streaming":
             itemlist.append(
                 Item(channel=__channel__,
                     action="episodios",
@@ -131,7 +131,7 @@ def episodios(item):
 
     data = scrapertools.cache_page(item.url)
 
-    patron = '<td style="[^"]*?">\s*<strong>(.*?)</strong>\s*</td>\s*<td style="[^"]*?">\s*<a href="([^"]+?)"\s*target="_blank">\s*<img.*?src="([^"]+?)".*?/>\s*</a>\s*</td>'
+    patron = '<td style="[^"]*?">\s*.*?<strong>(.*?)</strong>.*?\s*</td>\s*<td style="[^"]*?">\s*<a href="([^"]+?)"[^>]+>\s*<img.*?src="([^"]+?)".*?/>\s*</a>\s*</td>'
     matches = re.compile(patron, re.DOTALL).findall(data)
 
     for scrapedtitle, scrapedurl, scrapedimg in matches:
