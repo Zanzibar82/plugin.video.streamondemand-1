@@ -21,10 +21,10 @@ def test_video_exists(page_url):
     
     data = httptools.downloadpage(page_url).data
     if "<title>watch </title>" in data.lower():
-        return False, "[powvideo] El archivo no existe o  ha sido borrado"
+        return False, "[powvideo] Video non trovato"
     
     if "el archivo ha sido borrado por no respetar" in data.lower():
-        return False, "[powvideo] El archivo no existe o ha sido borrado por no respetar los Terminos de uso"
+        return False, "[powvideo] Il video è stato cancellato per non aver rispettato le condizioni di utilizzo"
     return True, ""
 
 

@@ -17,7 +17,7 @@ def test_video_exists(page_url):
     logger.info("(page_url='%s')" % page_url)
     data = httptools.downloadpage(page_url).data
     if '"title":"Video Not Found"' in data:
-        return False, "[Vimple] El archivo no existe o ha sido borrado"
+        return False, "[Vimple] Video non trovato"
 
     return True, ""
 

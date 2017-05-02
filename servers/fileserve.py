@@ -26,7 +26,7 @@ def test_video_exists( page_url ):
         patron  = '<li class="title"><h1>(File not available)</h1>'
         matches = re.compile(patron,re.DOTALL).findall(data)
         if len(matches)>0:
-            return False,"El archivo ya no está disponible<br/>en fileserve o ha sido borrado"
+            return False,"Il video non è più disponibile su fileserve"
     
     return True,""
 

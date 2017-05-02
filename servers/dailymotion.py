@@ -15,7 +15,7 @@ def test_video_exists(page_url):
     
     response = httptools.downloadpage(page_url)
     if response.code == 404:
-        return False, "[Dailymotion] El archivo no existe o ha sido borrado"
+        return False, "[Dailymotion] Il video è stato rimosso"
 
     return True, ""
 

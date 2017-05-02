@@ -18,7 +18,7 @@ def test_video_exists(page_url):
     data = httptools.downloadpage(page_url).data
 
     if "This video is not yet ready" in data:
-        return False, "[Bitvid] El fichero está en proceso todavía o ha sido eliminado"
+        return False, "[Bitvid] Il video non Ã¨ ancora pronto"
 
     return True, ""
 
@@ -44,7 +44,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
     
     return video_urls
 
-# Encuentra vídeos del servidor en el texto pasado
+# Encuentra vï¿½deos del servidor en el texto pasado
 def find_videos(data):
     encontrados = set()
     devuelve = []    

@@ -26,7 +26,7 @@ def test_video_exists( page_url ):
         patron  = '<div style="text-align:center;"> (Este archivo no existe)'
         matches = re.compile(patron,re.DOTALL).findall(data)
         if len(matches)>0:
-            return False,matches[0]
+            return False,"Video non trovato"
     
     return True,""
 

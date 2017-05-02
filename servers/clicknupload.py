@@ -15,7 +15,7 @@ def test_video_exists( page_url ):
     logger.info("streamondemand.servers.clicknupload test_video_exists(page_url='%s')" % page_url)
     
     data = scrapertools.cache_page( page_url )
-    if "File Not Found" in data: return False, "[Clicknupload] El archivo no existe o ha sido borrado"
+    if "File Not Found" in data: return False, "[Clicknupload] Video non trovato"
 
     return True,""
 

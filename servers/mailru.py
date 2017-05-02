@@ -17,7 +17,7 @@ def test_video_exists(page_url):
     page_url = page_url.replace("embed/", "").replace(".html", ".json")
     data = httptools.downloadpage(page_url).data
     if '"error":"video_not_found"' in data or '"error":"Can\'t find VideoInstance"' in data:
-        return False, "[Mail.ru] El archivo no existe o ha sido borrado"
+        return False, "[Mail.ru] Video non trovato"
 
     return True, ""
 

@@ -23,9 +23,9 @@ def test_video_exists(page_url):
     if location:
         return True, ""
     elif "uploaded.net/410" in location:
-        return False, "El archivo ya no está disponible<br/>en uploaded.to (ha sido borrado)"
+        return False, "Il video non è più disponibile su uploaded.to (Video cancellato)"
     elif "uploaded.net/404" in location:
-        return False, "El archivo no existe<br/>en uploaded.to (enlace no válido)"
+        return False, "Il video non esiste su uploaded.to (URL Non valido)"
     else:
         return True, ""
 

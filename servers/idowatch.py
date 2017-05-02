@@ -16,7 +16,7 @@ def test_video_exists(page_url):
     logger.info("(page_url='%s')" % page_url)
     data = scrapertools.cache_page(page_url)
     if "File Not Found" in data:
-        return False, "[Idowatch] El archivo no existe o ha sido borrado"
+        return False, "[Idowatch] Video non trovato"
     return True, ""
 
 

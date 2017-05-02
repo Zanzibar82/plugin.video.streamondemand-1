@@ -18,7 +18,7 @@ def test_video_exists( page_url ):
     # Video erróneo: 
     data = scrapertools.cache_page( page_url )
     if '<a href="/RemoveDetail.aspx">' in data:
-        return False,"El archivo ya no está disponible<br/>en fileflyer (ha sido borrado)"
+        return False,"Il video non è più disponibile su fileflyer.com (Video cancellato)"
     else:
         return True,""
 

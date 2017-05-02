@@ -18,7 +18,7 @@ def test_video_exists( page_url ):
     # Video erróneo: 
     data = scrapertools.cache_page( page_url )
     if '<h2 class="error">Download error</h2>' in data:
-        return False,"El enlace no es válido<br/>o ha sido borrado de gigasize"
+        return False,"Il video non esiste più su gigasize"
     else:
         return True,""
 

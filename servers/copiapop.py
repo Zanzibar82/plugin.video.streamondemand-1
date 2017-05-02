@@ -24,7 +24,7 @@ def test_video_exists(page_url):
 
     data = httptools.downloadpage(page_url).data
     if ("File was deleted" or "Not Found" or "File was locked by administrator") in data:
-        return False, "[Copiapop] El archivo no existe o ha sido borrado"
+        return False, "[Copiapop] Video non trovato"
 
     return True, ""
 

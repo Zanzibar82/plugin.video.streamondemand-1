@@ -19,7 +19,7 @@ def test_video_exists( page_url ):
     data = httptools.downloadpage(page_url.replace('/embed/?v=', '/video/')).data
 
     if "This file no longer exists" in data:
-        return False, "El archivo no existe<br/>en divxstage o ha sido borrado."
+        return False, "[divxstage] Video non trovato."
 
     return True, ""
 

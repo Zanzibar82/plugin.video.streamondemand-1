@@ -15,7 +15,7 @@ def test_video_exists( page_url ):
     logger.info("streamondemand.servers.playwire test_video_exists(page_url='%s')" % page_url)
     
     data = scrapertools.cachePage( page_url )
-    if ("File was deleted" or "Not Found") in data: return False, "[playwire] El archivo no existe o ha sido borrado"
+    if ("File was deleted" or "Not Found") in data: return False, "[playwire] Video non trovato"
 
     return True,""
 

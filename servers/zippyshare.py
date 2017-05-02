@@ -23,9 +23,9 @@ def test_video_exists(page_url):
         data = httptools.downloadpage(page_url).data
     
         if error_message_file_not_exists in data:
-            message = 'File does not exist.'
+            message = 'Il video non esiste più.'
         elif error_message_file_deleted in data:
-            message = 'File deleted.'
+            message = 'Il video è stato eliminato.'
         else:
             result = True
     except Exception as ex:

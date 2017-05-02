@@ -17,7 +17,7 @@ def test_video_exists(page_url):
     
     data = httptools.downloadpage(page_url).data
     if "video_error.mp4" in data:
-        return False, "[Stormo] El archivo no existe o ha sido borrado"
+        return False, "[Stormo] Video non trovato"
 
     return True, ""
 

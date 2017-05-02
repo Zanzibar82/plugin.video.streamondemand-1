@@ -17,9 +17,9 @@ def test_video_exists(page_url):
     data = httptools.downloadpage(page_url).data
 
     if "This file no longer exists on our servers" in data:
-        return False, "[wholecloud] El archivo ha sido eliminado o no existe"
+        return False, "[wholecloud] Video non trovato"
     if "This video is not yet ready" in data:
-        return False, "[wholecloud] El archivo no está listo, se está subiendo o convirtiendo"
+        return False, "[wholecloud] Video in elaborazione"
     
     return True, ""
 

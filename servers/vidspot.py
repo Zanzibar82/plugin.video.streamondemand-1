@@ -18,7 +18,7 @@ def test_video_exists(page_url):
     data = scrapertools.cache_page("http://anonymouse.org/cgi-bin/anon-www.cgi/" + page_url)
     if "File Not Found" in data or "Archivo no encontrado" in data or '<b class="err">Deleted' in data \
             or '<b class="err">Removed' in data or '<font class="err">No such' in data:
-        return False, "No existe o ha sido borrado de vidspot"
+        return False, "Video non trovato"
 
     return True, ""
 
