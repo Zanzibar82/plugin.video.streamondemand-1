@@ -178,16 +178,20 @@ def episodiosearch(item):
                  plot=scrapedplot,
                  folder=True))
 
-    # paginación
-    patron = '<div id="navigation">.*?\d+</a> <a href="([^"]+)"'
-    next_page = scrapertools.find_single_match(data, patron)
-    if next_page != "":
+    if config.get_library_support() and len(itemlist) != 0:
         itemlist.append(
             Item(channel=__channel__,
-                 title="[COLOR orange]Episodi precedenti...[/COLOR]",
-                 url=next_page,
-                 action="episodios",
-                 extra=item.extra,
-                 thumbnail="http://2.bp.blogspot.com/-fE9tzwmjaeQ/UcM2apxDtjI/AAAAAAAAeeg/WKSGM2TADLM/s1600/pager+old.png"))
+                 title="Aggiungi alla libreria",
+                 url=item.url,
+                 action="add_serie_to_library",
+                 extra="episodios",
+                 show=item.show))
+        itemlist.append(
+            Item(channel=__channel__,
+                 title="Scarica tutti gli episodi della serie",
+                 url=item.url,
+                 action="download_all_episodes",
+                 extra="episodios",
+                 show=item.show))
 
     return itemlist
