@@ -19,7 +19,7 @@ def test_video_exists(page_url):
     response = httptools.downloadpage(page_url, follow_redirects=False)
     
     if not response.sucess or response.headers.get("location"):
-        return False, "[Playwatch] El fichero no existe o ha sido borrado"
+        return False, "[Playwatch] Video non trovato"
 
     return True, ""
 

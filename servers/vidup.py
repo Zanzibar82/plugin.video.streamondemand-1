@@ -18,7 +18,7 @@ def test_video_exists(page_url):
     data = httptools.downloadpage(page_url).data
     
     if "Not Found" in data:
-        return False, "[Vidup.me] El fichero no existe o ha sido borrado"
+        return False, "[Vidup.me] Video non trovato"
 
     return True, ""
 

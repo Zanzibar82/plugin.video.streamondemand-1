@@ -16,7 +16,7 @@ def test_video_exists(page_url):
     logger.info("(page_url='%s')" % page_url)
 
     data = scrapertools.cache_page(page_url)
-    if ("File was deleted" or "Not Found") in data: return False, "[Allvid] El archivo no existe o ha sido borrado"
+    if ("File was deleted" or "Not Found") in data: return False, "[Allvid] Il video è stato rimosso"
 
     return True, ""
 

@@ -22,7 +22,7 @@ def test_video_exists(page_url):
     data = scrapertools.cache_page(page_url, headers=headers)
 
     if re.search("""File Not Found""", data):
-        return False, 'File Not Found or Removed.'
+        return False, 'Video non trovato'
 
     return True, ""
 

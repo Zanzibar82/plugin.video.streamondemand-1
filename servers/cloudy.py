@@ -15,7 +15,7 @@ def test_video_exists(page_url):
     logger.info("(page_url='%s')" % page_url)
     data = httptools.downloadpage(page_url).data
     if "This video is being prepared" in data:
-        return False, "[Cloudy] El archivo no existe o ha sido borrado"
+        return False, "[Cloudy] Video non trovato"
     
     return True, ""
 

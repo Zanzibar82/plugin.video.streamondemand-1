@@ -17,7 +17,7 @@ def test_video_exists(page_url):
     data = scrapertools.cache_page(page_url)
 
     if "404 Page no found" in data:
-        return False, "[nosvideo] El archivo no existe o ha sido borrado"
+        return False, "[nosvideo] Video non trovato"
 
     return True, ""
 

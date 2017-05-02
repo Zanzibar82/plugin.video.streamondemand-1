@@ -21,7 +21,7 @@ def test_video_exists(page_url):
     data = httptools.downloadpage(page_url).data
     
     if "The file is being converted" in data:
-        return False, "File processato"
+        return False, "File in elaborazione"
     elif "no longer exists" in data:
         return False, "File cancellato"
 

@@ -27,7 +27,7 @@ def test_video_exists(page_url):
     data = scrapertools.cache_page(url, headers=headers)
 
     if "File was deleted from FastVideo" in data:
-        return False, "The file not exists or was removed from FastVideo."
+        return False, "Il video Ã¨ stato cancellato."
 
     return True, ""
 
@@ -47,7 +47,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
     headers.append(['Referer', page_url])
 
     _headers = urllib.urlencode(dict(headers))
-    # URL del vídeo
+    # URL del vï¿½deo
     vurl = media_url + '|' + _headers
 
     video_urls = [[scrapertools.get_filename_from_url(media_url)[-4:] + " [fastvideo.me]", vurl]]
@@ -58,7 +58,7 @@ def get_video_url(page_url, premium=False, user="", password="", video_password=
     return video_urls
 
 
-# Encuentra vídeos de este servidor en el texto pasado
+# Encuentra vï¿½deos de este servidor en el texto pasado
 def find_videos(data):
     encontrados = set()
     devuelve = []

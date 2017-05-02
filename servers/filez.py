@@ -17,7 +17,7 @@ def test_video_exists(page_url):
     data = httptools.downloadpage(page_url, follow_redirects=False)
 
     if data.headers.get("location"):
-        return False, "[filez] El archivo ha sido eliminado o no existe"
+        return False, "[filez] Il video è stato cancellato"
     
     return True, ""
 

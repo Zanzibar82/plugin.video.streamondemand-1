@@ -18,7 +18,7 @@ def test_video_exists( page_url ):
     data = scrapertools.cache_page(page_url)
 
     if "Streaming link:" in data: return True,""
-    elif "Unfortunately, the file you want is not available." in data: return False, "[Uptobox] El archivo no existe o ha sido borrado"
+    elif "Unfortunately, the file you want is not available." in data: return False, "[Uptobox] File non disponibile o cancellato"
     wait = scrapertools.find_single_match(data, "You have to wait ([0-9]+) (minute|second)")
     if len(wait)>0:
         tiempo = wait[1].replace("minute","minuto/s").replace("second","segundos")

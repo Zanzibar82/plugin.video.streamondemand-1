@@ -26,7 +26,7 @@ def test_video_exists( page_url ):
         patron  = '<div class="no_download_msg">([^<]+)<'
         matches = re.compile(patron,re.DOTALL).findall(data)
         if len(matches)>0:
-            return False,"El archivo ya no está disponible<br/>en depositfiles o ha sido borrado"
+            return False,"[Depositfiles] Video non trovato"
     
     return True,""
 

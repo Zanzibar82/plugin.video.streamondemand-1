@@ -17,7 +17,7 @@ def test_video_exists(page_url):
     data = httptools.downloadpage(page_url).data
 
     if "Object not found" in data:
-        return False, "[Fastplay] El archivo no existe o ha sido borrado"
+        return False, "[Fastplay] Video non trovato"
 
     return True, ""
 

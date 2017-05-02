@@ -19,7 +19,7 @@ def test_video_exists(page_url):
     data = httptools.downloadpage(page_url).data
     
     if "File was deleted" in data:
-        return False, "[Vidgot] El fichero ha sido borrado de novamov"
+        return False, "[Vidgot] Il video è stato cancellato"
 
     return True, ""
 

@@ -26,12 +26,12 @@ def test_video_exists( page_url ):
     patron  = '<h1>(Error - Archivo no disponible)</h1>'
     matches = re.compile(patron,re.DOTALL).findall(data)
     if len(matches)>0:
-        return False,"File not found"
+        return False,"Video non trovato"
     
     patron = '<b>(Por favor seleccione el archivo a cargar)'
     matches = re.compile(patron,re.DOTALL).findall(data)
     if len(matches)>0:
-        return False,"Enlace no válido"
+        return False,"Link non valido"
 
     return True,""
 

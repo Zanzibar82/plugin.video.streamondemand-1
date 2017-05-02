@@ -34,7 +34,7 @@ def test_video_exists( page_url ):
         disp = disp.strip()
         if disp:
             disp = "Disponible gratuitamente: %s" % disp
-        return False, "[Crunchyroll] Error, se necesita cuenta premium. %s" % disp
+        return False, "[Crunchyroll] Errore, è necessario un account premium. %s" % disp
     
     return True, ""
 

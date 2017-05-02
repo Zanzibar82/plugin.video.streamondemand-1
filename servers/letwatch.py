@@ -17,9 +17,9 @@ def test_video_exists(page_url):
 
     data = scrapertools.cache_page(page_url)
     if ("File was deleted" or "Not Found") in data:
-        return False, "[Letwatch] El archivo no existe o ha sido borrado"
+        return False, "[Letwatch] Il video non è stato trovato"
     if "Video is processing now" in data:
-        return False, "El vídeo está siendo procesado todavía"
+        return False, "Il video è in elaborazione"
 
     return True, ""
 

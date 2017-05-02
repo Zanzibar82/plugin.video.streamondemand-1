@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <server>
 	<active>true</active>
-	<version>1</version>
+	<version>2</version>
 	<free>true</free>
 	<id>fastplay</id>
 	<name>fastplay</name>

@@ -21,7 +21,7 @@ def test_video_exists(page_url):
     referer = page_url.replace("embed-", "")[:-5]
     data = httptools.downloadpage(page_url, headers={'Referer': referer}).data
     if data == "File was deleted":
-        return False, "[Streamplay] El archivo no existe o ha sido borrado"
+        return False, "[Streamplay] Il video è stato cancellato"
 
     return True, ""
 

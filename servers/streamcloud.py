@@ -16,7 +16,7 @@ def test_video_exists( page_url ):
 
     data = scrapertools.cache_page( url = page_url )
     if "<h1>404 Not Found</h1>" in data:
-        return False,"El archivo no existe<br/>en streamcloud o ha sido borrado."
+        return False,"Video non trovato"
     else:
         return True,""
 
@@ -53,7 +53,7 @@ def get_video_url( page_url , premium = False , user="" , password="", video_pas
 
     return video_urls
 
-# Encuentra vídeos de este servidor en el texto pasado
+# Encuentra vï¿½deos de este servidor en el texto pasado
 def find_videos(text):
     devuelve = []
 

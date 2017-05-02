@@ -15,7 +15,7 @@ def test_video_exists( page_url ):
     logger.info("streamondemand.servers.pCloud test_video_exists(page_url='%s')" % page_url)
     
     data = scrapertools.cache_page( page_url )
-    if "Invalid link" in data: return False, "[pCloud] El archivo no existe o ha sido borrado"
+    if "Invalid link" in data: return False, "[pCloud] Video non trovato"
 
     return True,""
 
