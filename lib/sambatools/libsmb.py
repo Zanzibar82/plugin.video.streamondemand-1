@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------
-# pelisalacarta - XBMC Plugin
-# Acceso a directorios con samba
-# http://www.mimediacenter.info/foro/viewforum.php?f=36
+# streamondemand - XBMC Plugin
+# Accesso in scrittura a directories protocollo SMB
+# Write access to SMB protocol direcories
+# original source: https://raw.githubusercontent.com/tvalacarta/pelisalacarta/develop/python/main-classic/lib/sambatools/libsmb.py
+# Thank the original author.
+# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
 # ------------------------------------------------------------
 import os
 import sys
@@ -321,9 +324,10 @@ class SMBFile(object):
     def truncate(self, size = None):
         if not self.canwrite:
             raise IOError("File not open for writing")
+        data = self.read(size)
         f = self.tmpfile()
         self.pos = 0
-        f.write(self.read(size))
+        f.write(data)
         f.seek(0)
         self.remote.storeFileFromOffset(self.share, self.path, f, self.pos, truncate = True)
       
